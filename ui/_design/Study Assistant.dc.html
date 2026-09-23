@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="styles.css">
+<style>
+html,body{height:100%;margin:0}
+a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
+@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+textarea::placeholder{color:var(--color-neutral-600)}
+</style>
+</helmet>
+<div style="display:flex;height:100vh;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);gap:var(--space-3);padding:var(--space-3);box-sizing:border-box">
+
+  <sc-if value="{{ showSidebar }}" hint-placeholder-val="{{ true }}">
+  <aside style="width:268px;flex-shrink:0;background:var(--color-surface);border-radius:var(--radius-lg);display:flex;flex-direction:column;padding:var(--space-4);gap:var(--space-4);box-sizing:border-box">
+    <div style="display:flex;align-items:center;gap:10px;padding:4px 4px 0">
+      <div style="width:30px;height:30px;border-radius:999px;background:var(--color-accent);display:flex;align-items:center;justify-content:center">
+        <div style="width:12px;height:12px;border-radius:999px;background:var(--color-bg)"></div>
+      </div>
+      <div style="font-family:var(--font-heading);font-size:20px;line-height:1">Tutor</div>
+    </div>
+    <button onClick="{{ newChat }}" style="display:flex;align-items:center;gap:8px;justify-content:center;height:44px;border-radius:999px;border:0;background:var(--color-accent);color:#fff;font-family:var(--font-heading);font-size:15px;cursor:pointer" style-hover="background:var(--color-accent-600)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+      New chat
+    </button>
+    <div style="display:flex;flex-direction:column;gap:2px;flex:1;overflow:auto;margin:0 -6px">
+      <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--color-neutral-700);padding:4px 10px 6px">Recent</div>
+      <sc-for list="{{ chatList }}" as="c" hint-placeholder-count="4">
+        <sc-if value="{{ c.active }}">
+          <button onClick="{{ c.open }}" style="text-align:left;border:0;background:var(--color-bg);border-radius:var(--radius-md);padding:10px 12px;font-family:var(--font-body);font-size:14px;font-weight:600;color:var(--color-text);cursor:pointer;display:flex;flex-direction:column;gap:2px;box-shadow:var(--shadow-sm)">
+            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c.title }}</span>
+            <span style="font-size:12px;font-weight:400;color:var(--color-neutral-700)">{{ c.subject }}</span>
+          </button>
+        </sc-if>
+        <sc-if value="{{ c.inactive }}">
+          <button onClick="{{ c.open }}" style="text-align:left;border:0;background:transparent;border-radius:var(--radius-md);padding:10px 12px;font-family:var(--font-body);font-size:14px;color:var(--color-text);cursor:pointer;display:flex;flex-direction:column;gap:2px" style-hover="background:var(--color-neutral-200)">
+            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c.title }}</span>
+            <span style="font-size:12px;color:var(--color-neutral-700)">{{ c.subject }}</span>
+          </button>
+        </sc-if>
+      </sc-for>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:999px;background:var(--color-neutral-200)">
+      <div style="width:34px;height:34px;border-radius:999px;background:var(--color-accent-2-300);color:var(--color-accent-2-900);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">AR</div>
+      <div style="display:flex;flex-direction:column;line-height:1.25">
+        <span style="font-size:14px;font-weight:600">Aisha Rahman</span>
+        <span style="font-size:12px;color:var(--color-neutral-700)">Year 11 · Hepburn</span>
+      </div>
+    </div>
+  </aside>
+  </sc-if>
+
+  <main style="flex:1;min-width:0;display:flex;flex-direction:column;position:relative">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:var(--space-2) var(--space-4)">
+      <div style="font-size:14px;color:var(--color-neutral-700);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ headerTitle }}</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--color-accent-2-800);background:var(--color-accent-2-200);padding:6px 12px;border-radius:999px;flex-shrink:0">
+        <div style="width:7px;height:7px;border-radius:999px;background:var(--color-accent-2-600)"></div>
+        Coursework-safe mode
+      </div>
+    </div>
+
+    <div ref="{{ scrollRef }}" style="flex:1;overflow:auto;min-height:0">
+      <div style="max-width:760px;margin:0 auto;padding:var(--space-6) var(--space-6) var(--space-8);box-sizing:border-box;display:flex;flex-direction:column;gap:var(--space-6)">
+
+        <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:var(--space-6);padding-top:8vh">
+            <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+              <div style="width:56px;height:56px;border-radius:999px;background:var(--color-accent-2-300);margin-bottom:var(--space-3);position:relative">
+                <div style="position:absolute;width:26px;height:26px;border-radius:999px;background:var(--color-accent);right:-10px;bottom:-4px"></div>
+              </div>
+              <h1 style="margin:0;font-size:44px;text-wrap:pretty">Good afternoon, Aisha.<br>What are we working on?</h1>
+              <p style="margin:0;font-size:16px;color:var(--color-neutral-700);max-width:520px;text-wrap:pretty">I'll help you understand things, not do them for you. Pick a mode below, or start with one of these.</p>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:var(--space-3)">
+              <sc-for list="{{ suggestions }}" as="s" hint-placeholder-count="4">
+                <button onClick="{{ s.use }}" style="text-align:left;border:0;background:var(--color-surface);border-radius:var(--radius-lg);padding:var(--space-4);cursor:pointer;display:flex;flex-direction:column;gap:6px;font-family:var(--font-body);color:var(--color-text);min-height:112px" style-hover="background:var(--color-accent-200)">
+                  <span style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--color-accent-700)">{{ s.subject }}</span>
+                  <span style="font-size:15px;line-height:1.4;text-wrap:pretty">{{ s.text }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-for list="{{ messages }}" as="m" hint-placeholder-count="0">
+          <sc-if value="{{ m.isUser }}">
+            <div style="display:flex;justify-content:flex-end">
+              <div style="max-width:78%;background:var(--color-accent-200);color:var(--color-accent-900);padding:12px 18px;border-radius:24px 24px 8px 24px;font-size:15px;line-height:1.55;white-space:pre-wrap;text-wrap:pretty">{{ m.text }}</div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ m.isAssistant }}">
+            <div style="display:flex;gap:14px;align-items:flex-start">
+              <div style="width:30px;height:30px;border-radius:999px;background:var(--color-accent-2-300);flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:2px">
+                <div style="width:11px;height:11px;border-radius:999px;background:var(--color-accent)"></div>
+              </div>
+              <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px;padding-top:4px">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--color-accent-2-700)">{{ m.modeLabel }}</span>
+                </div>
+                <sc-if value="{{ m.thinking }}">
+                  <div style="display:flex;gap:6px;padding:6px 0">
+                    <sc-for list="{{ dots }}" as="d">
+                      <div style="width:8px;height:8px;border-radius:999px;background:var(--color-accent-2-600);animation:blink 1.2s infinite {{ d.delay }}"></div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+                <sc-for list="{{ m.paras }}" as="p">
+                  <p style="margin:0;font-size:15.5px;line-height:1.65;white-space:pre-wrap;text-wrap:pretty">{{ p }}</p>
+                </sc-for>
+                <sc-if value="{{ m.done }}">
+                  <div style="display:flex;gap:4px;margin-left:-8px">
+                    <button onClick="{{ m.copy }}" style="display:flex;align-items:center;gap:6px;border:0;background:transparent;border-radius:999px;padding:6px 10px;font-family:var(--font-body);font-size:13px;color:var(--color-neutral-700);cursor:pointer" style-hover="background:var(--color-surface);color:var(--color-text)">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>
+                      {{ m.copyLabel }}
+                    </button>
+                    <button onClick="{{ m.simpler }}" style="display:flex;align-items:center;gap:6px;border:0;background:transparent;border-radius:999px;padding:6px 10px;font-family:var(--font-body);font-size:13px;color:var(--color-neutral-700);cursor:pointer" style-hover="background:var(--color-surface);color:var(--color-text)">Explain more simply</button>
+                    <button onClick="{{ m.quiz }}" style="display:flex;align-items:center;gap:6px;border:0;background:transparent;border-radius:999px;padding:6px 10px;font-family:var(--font-body);font-size:13px;color:var(--color-neutral-700);cursor:pointer" style-hover="background:var(--color-surface);color:var(--color-text)">Quiz me on this</button>
+                  </div>
+                </sc-if>
+              </div>
+            </div>
+          </sc-if>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="padding:0 var(--space-6) var(--space-3)">
+      <div style="max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:8px">
+        <div style="background:var(--color-neutral-100);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);padding:14px 14px 12px 20px;display:flex;flex-direction:column;gap:10px">
+          <textarea value="{{ input }}" onChange="{{ onInput }}" onKeyDown="{{ onKey }}" rows="2" placeholder="{{ placeholder }}" style="border:0;outline:none;background:transparent;resize:none;font-family:var(--font-body);font-size:16px;line-height:1.5;color:var(--color-text);padding:4px 0;width:100%"></textarea>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <button title="Attach a file" style="width:38px;height:38px;border-radius:999px;border:0;background:transparent;color:var(--color-neutral-700);cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:var(--color-surface);color:var(--color-text)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="m21.4 11.1-9.2 9.2a6 6 0 0 1-8.5-8.5l8.6-8.6a4 4 0 0 1 5.7 5.7l-8.6 8.6a2 2 0 0 1-2.8-2.8l8.5-8.5"></path></svg>
+            </button>
+            <div style="display:flex;gap:2px;background:var(--color-surface);border-radius:999px;padding:3px">
+              <sc-for list="{{ modes }}" as="md" hint-placeholder-count="3">
+                <sc-if value="{{ md.active }}">
+                  <button onClick="{{ md.pick }}" style="border:0;border-radius:999px;padding:7px 14px;background:var(--color-bg);box-shadow:var(--shadow-sm);font-family:var(--font-body);font-size:13px;font-weight:700;color:var(--color-text);cursor:pointer">{{ md.label }}</button>
+                </sc-if>
+                <sc-if value="{{ md.inactive }}">
+                  <button onClick="{{ md.pick }}" style="border:0;border-radius:999px;padding:7px 14px;background:transparent;font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--color-neutral-800);cursor:pointer" style-hover="color:var(--color-text);background:var(--color-neutral-300)">{{ md.label }}</button>
+                </sc-if>
+              </sc-for>
+            </div>
+            <div style="flex:1"></div>
+            <sc-if value="{{ canSend }}">
+              <button onClick="{{ send }}" title="Send" style="width:42px;height:42px;border-radius:999px;border:0;background:var(--color-accent);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:var(--color-accent-600)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"></path></svg>
+              </button>
+            </sc-if>
+            <sc-if value="{{ cannotSend }}" hint-placeholder-val="{{ true }}">
+              <div style="width:42px;height:42px;border-radius:999px;background:var(--color-neutral-300);color:var(--color-neutral-600);display:flex;align-items:center;justify-content:center">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"></path></svg>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--color-neutral-700);padding-left:20px">{{ modeHint }}</div>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showSidebar&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;}, &quot;liveAI&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;}}">
+const MODES = [
+  { id: 'explain', label: 'Explain', hint: 'Explain mode — step-by-step explanations with examples.', ph: 'Ask about anything you’re studying…',
+    sys: 'Explain the concept clearly and step by step for a secondary school student, with one concrete example.' },
+  { id: 'quiz', label: 'Quiz me', hint: 'Quiz mode — one question at a time, with feedback on your answer.', ph: 'Name a topic and I’ll quiz you…',
+    sys: 'Act as a quiz tutor. Ask ONE short question at a time on the topic, wait for the answer, then give brief feedback and the next question.' },
+  { id: 'feedback', label: 'Check my work', hint: 'Feedback mode — I point out what to improve; I won’t rewrite it for you.', ph: 'Paste a paragraph or answer to get feedback…',
+    sys: 'Give constructive feedback on the student’s work: what works, what to improve, and a guiding question. Never rewrite it for them.' },
+];
+const SUGGESTIONS = [
+  { subject: 'Biology', text: 'Why does the light-dependent stage need water?', mode: 'explain' },
+  { subject: 'Maths', text: 'Quiz me on completing the square', mode: 'quiz' },
+  { subject: 'History', text: 'Check my intro on the causes of WWI', mode: 'feedback' },
+  { subject: 'Chemistry', text: 'What actually is a mole, in plain words?', mode: 'explain' },
+];
+const SEED = [
+  { id: 'c1', title: 'Photosynthesis — light reactions', subject: 'Biology · Today', messages: [
+    { role: 'user', text: 'Can you explain the light-dependent reactions simply?' },
+    { role: 'assistant', mode: 'explain', text: 'Think of the light-dependent reactions as the chloroplast charging its batteries.\n\nLight hits chlorophyll in the thylakoid membranes and excites electrons. To replace them, water is split — that’s where the oxygen we breathe comes from.\n\nThose energised electrons pass along a chain of proteins, and their energy is used to make ATP and NADPH. These two molecules then power the Calvin cycle, where carbon dioxide is turned into glucose.\n\nQuick check: can you say which two products of this stage get passed on to the Calvin cycle?' },
+  ]},
+  { id: 'c2', title: 'Quadratics practice', subject: 'Maths · Yesterday', messages: [
+    { role: 'user', text: 'Quiz me on factorising quadratics' },
+    { role: 'assistant', mode: 'quiz', text: 'Let’s start gently.\n\nQuestion 1: Factorise x² + 7x + 12.\n\nTake your time — reply with your answer and I’ll tell you how you did.' },
+  ]},
+  { id: 'c3', title: 'Macbeth essay feedback', subject: 'English · Mon', messages: [] },
+  { id: 'c4', title: 'Supply and demand curves', subject: 'Economics · Last week', messages: [] },
+];
+const CANNED = {
+  explain: 'Here’s the short version, then we can go deeper.\n\nStart with the core idea: break the problem into the parts you already know, and connect each one to the next with a reason, not just a fact.\n\nTry explaining the first step back to me in your own words — that’s the fastest way to find the gap.',
+  quiz: 'Great — let’s go.\n\nQuestion 1: In one sentence, what is the main idea of this topic?\n\nReply with your answer and I’ll give you feedback.',
+  feedback: 'What works: your point is clear and you back it up with evidence.\n\nTo improve: link your evidence back to the question explicitly — tell the reader why it matters.\n\nA question to guide your edit: what would someone who disagrees with you say, and how would you answer them?',
+};
+
+class Component extends DCLogic {
+  state = { chats: SEED.map(c => ({ ...c, messages: c.messages.map(m => ({ ...m, shown: m.text })) })), activeId: null, input: '', mode: 'explain', busy: false, copied: -1 };
+  scrollRef = React.createRef();
+
+  componentDidUpdate() { const el = this.scrollRef.current; if (el && this.state.busy) el.scrollTop = el.scrollHeight; }
+  componentWillUnmount() { clearInterval(this.timer); }
+
+  active() { return this.state.chats.find(c => c.id === this.state.activeId); }
+
+  updateActive(fn) {
+    this.setState(s => ({ chats: s.chats.map(c => c.id === s.activeId ? fn(c) : c) }));
+  }
+
+  async send(textArg, modeArg) {
+    const text = (textArg ?? this.state.input).trim();
+    if (!text || this.state.busy) return;
+    const mode = modeArg || this.state.mode;
+    if (!this.state.activeId) {
+      const id = 'c' + Date.now();
+      const title = text.length > 38 ? text.slice(0, 38) + '…' : text;
+      await new Promise(r => this.setState(s => ({ chats: [{ id, title, subject: 'New · Just now', messages: [] }, ...s.chats], activeId: id }), r));
+    }
+    this.updateActive(c => ({ ...c, messages: [...c.messages, { role: 'user', text }, { role: 'assistant', mode, text: '', shown: '', thinking: true }] }));
+    this.setState({ input: '', busy: true, mode });
+    setTimeout(() => { const el = this.scrollRef.current; if (el) el.scrollTop = el.scrollHeight; }, 30);
+
+    const history = this.active().messages.filter(m => m.text).map(m => `${m.role === 'user' ? 'Student' : 'Tutor'}: ${m.text}`).join('\n\n');
+    const sys = MODES.find(m => m.id === mode).sys;
+    let reply;
+    try {
+      if (this.props.liveAI === false || !window.claude) throw 0;
+      reply = await window.claude.complete(`You are Tutor, a warm, encouraging study assistant at a British international boarding school. ${sys} Keep it under 150 words. Use plain text only — no markdown, no bullet symbols, no headings; separate paragraphs with a blank line.\n\n${history}\n\nStudent: ${text}\n\nTutor:`);
+    } catch (e) { await new Promise(r => setTimeout(r, 900)); reply = CANNED[mode]; }
+    reply = String(reply).trim();
+
+    const words = reply.split(/(\s+)/);
+    let i = 0;
+    this.updateActive(c => { const ms = [...c.messages]; ms[ms.length - 1] = { ...ms[ms.length - 1], text: reply, thinking: false }; return { ...c, messages: ms }; });
+    clearInterval(this.timer);
+    this.timer = setInterval(() => {
+      i = Math.min(words.length, i + 4);
+      const shown = words.slice(0, i).join('');
+      this.updateActive(c => { const ms = [...c.messages]; ms[ms.length - 1] = { ...ms[ms.length - 1], shown }; return { ...c, messages: ms }; });
+      if (i >= words.length) { clearInterval(this.timer); this.setState({ busy: false }); }
+    }, 35);
+  }
+
+  renderVals() {
+    const { chats, activeId, input, mode, busy, copied } = this.state;
+    const chat = this.active();
+    const msgs = chat ? chat.messages : [];
+    const lastIdx = msgs.length - 1;
+    const modeObj = MODES.find(m => m.id === mode);
+    return {
+      showSidebar: this.props.showSidebar ?? true,
+      chatList: chats.map(c => ({ ...c, active: c.id === activeId, inactive: c.id !== activeId, open: () => !busy && this.setState({ activeId: c.id }) })),
+      newChat: () => !busy && this.setState({ activeId: null, input: '' }),
+      headerTitle: chat ? chat.title : 'New chat',
+      isEmpty: msgs.length === 0,
+      suggestions: SUGGESTIONS.map(s => ({ ...s, use: () => this.send(s.text, s.mode) })),
+      messages: msgs.map((m, idx) => {
+        const shown = m.shown ?? m.text;
+        const done = m.role === 'assistant' && !m.thinking && shown.length >= m.text.length && !(busy && idx === lastIdx);
+        return {
+          isUser: m.role === 'user', isAssistant: m.role === 'assistant', text: m.text,
+          thinking: !!m.thinking, done,
+          modeLabel: (MODES.find(x => x.id === m.mode) || MODES[0]).label,
+          paras: m.thinking ? [] : shown.split(/\n\s*\n/).filter(Boolean),
+          copyLabel: copied === idx ? 'Copied' : 'Copy',
+          copy: () => { navigator.clipboard?.writeText(m.text); this.setState({ copied: idx }); setTimeout(() => this.setState({ copied: -1 }), 1400); },
+          simpler: () => this.send('Can you explain that more simply?', 'explain'),
+          quiz: () => this.send('Quiz me on what you just explained.', 'quiz'),
+        };
+      }),
+      dots: [{ delay: '0s' }, { delay: '.2s' }, { delay: '.4s' }],
+      scrollRef: this.scrollRef,
+      input,
+      onInput: e => this.setState({ input: e.target.value }),
+      onKey: e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.send(); } },
+      placeholder: modeObj.ph,
+      modeHint: modeObj.hint,
+      modes: MODES.map(m => ({ ...m, active: m.id === mode, inactive: m.id !== mode, pick: () => this.setState({ mode: m.id }) })),
+      canSend: !!input.trim() && !busy,
+      cannotSend: !input.trim() || busy,
+      send: () => this.send(),
+    };
+  }
+}
+</script>
+</body>
+</html>

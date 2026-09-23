@@ -1,0 +1,7 @@
+# oriel.ai — user data lives in ~/Library/Application Support/oriel.ai, never here
+__pycache__/
+*.pyc
+.DS_Store
+/build/
+/dist/
+*.log

@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+html,body{height:100%;margin:0;background:#fcfcfb}
+*{box-sizing:border-box}
+a{color:oklch(0.5 0.15 262)}a:hover{color:oklch(0.42 0.15 262)}
+@keyframes blink{0%,80%,100%{opacity:.2}40%{opacity:1}}
+textarea::placeholder,input::placeholder{color:#8f8f89}
+:focus-visible{outline:2px solid oklch(0.55 0.15 262);outline-offset:2px}
+</style>
+</helmet>
+<div style="display:flex;height:100vh;background:#fcfcfb;color:#1d1d1b;font-family:'Geist',system-ui,sans-serif;font-size:15px;line-height:1.55;position:relative;overflow:hidden">
+
+  <sc-if value="{{ sidebarOpen }}" hint-placeholder-val="{{ true }}">
+  <aside data-screen-label="Sidebar" style="width:264px;flex-shrink:0;background:#f4f4f2;border-right:1px solid #ebeae6;display:flex;flex-direction:column;padding:12px 10px;gap:6px">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:2px 4px 8px 8px">
+      <div style="display:flex;align-items:center;gap:9px">
+        <div style="width:24px;height:24px;border-radius:999px;border:5px solid oklch(0.52 0.15 262)"></div>
+        <div style="font-size:18px;font-weight:600;letter-spacing:-.02em">Oriel</div>
+      </div>
+      <button onClick="{{ toggleSidebar }}" title="Close sidebar" style="width:34px;height:34px;border-radius:10px;border:0;background:transparent;color:#6b6b66;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#e9e9e6;color:#1d1d1b">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"></rect><path d="M9 3v18"></path></svg>
+      </button>
+    </div>
+    <button onClick="{{ newChat }}" style="display:flex;align-items:center;gap:10px;height:38px;border-radius:10px;border:0;background:transparent;padding:0 10px;font-family:inherit;font-size:14px;font-weight:500;color:#1d1d1b;cursor:pointer;text-align:left" style-hover="background:#e9e9e6">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.4 3.6a2 2 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
+      New chat
+    </button>
+    <div style="display:flex;align-items:center;gap:10px;height:38px;border-radius:10px;padding:0 10px">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6b6b66" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+      <input value="{{ search }}" onChange="{{ onSearch }}" placeholder="Search chats" style="border:0;outline:none;background:transparent;font-family:inherit;font-size:14px;color:#1d1d1b;flex:1;min-width:0;padding:0">
+    </div>
+    <div style="display:flex;flex-direction:column;gap:18px;flex:1;overflow:auto;padding-top:14px">
+      <sc-for list="{{ groups }}" as="g" hint-placeholder-count="2">
+        <div style="display:flex;flex-direction:column;gap:1px">
+          <div style="font-size:12px;font-weight:500;color:#8a8a84;padding:0 10px 6px">{{ g.label }}</div>
+          <sc-for list="{{ g.items }}" as="c">
+            <sc-if value="{{ c.active }}">
+              <button onClick="{{ c.open }}" style="text-align:left;border:0;background:#e6e6e2;border-radius:10px;padding:8px 10px;font-family:inherit;font-size:14px;color:#1d1d1b;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c.title }}</button>
+            </sc-if>
+            <sc-if value="{{ c.inactive }}">
+              <button onClick="{{ c.open }}" style="text-align:left;border:0;background:transparent;border-radius:10px;padding:8px 10px;font-family:inherit;font-size:14px;color:#2e2e2b;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" style-hover="background:#ebebe8">{{ c.title }}</button>
+            </sc-if>
+          </sc-for>
+        </div>
+      </sc-for>
+      <sc-if value="{{ noResults }}">
+        <div style="font-size:14px;color:#6b6b66;padding:0 10px">No chats match “{{ search }}”.</div>
+      </sc-if>
+    </div>
+    <button onClick="{{ openSettings }}" style="display:flex;align-items:center;gap:10px;padding:8px;border:0;border-radius:12px;background:transparent;cursor:pointer;text-align:left;font-family:inherit;color:#1d1d1b" style-hover="background:#e9e9e6">
+      <div style="width:32px;height:32px;border-radius:999px;background:oklch(0.9 0.04 262);color:oklch(0.35 0.12 262);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;flex-shrink:0">{{ initial }}</div>
+      <div style="display:flex;flex-direction:column;line-height:1.25;flex:1;min-width:0">
+        <span style="font-size:14px;font-weight:500">{{ userName }}</span>
+        <span style="font-size:12px;color:#7a7a74">Free plan</span>
+      </div>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6b6b66" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"></path></svg>
+    </button>
+  </aside>
+  </sc-if>
+
+  <main data-screen-label="Chat" style="flex:1;min-width:0;display:flex;flex-direction:column;position:relative">
+    <header style="display:flex;align-items:center;gap:4px;height:56px;padding:0 12px;flex-shrink:0;position:relative;z-index:20">
+      <sc-if value="{{ sidebarClosed }}">
+        <div style="display:flex;gap:2px">
+          <button onClick="{{ toggleSidebar }}" title="Open sidebar" style="width:36px;height:36px;border-radius:10px;border:0;background:transparent;color:#6b6b66;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#f0f0ed;color:#1d1d1b">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"></rect><path d="M9 3v18"></path></svg>
+          </button>
+          <button onClick="{{ newChat }}" title="New chat" style="width:36px;height:36px;border-radius:10px;border:0;background:transparent;color:#6b6b66;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#f0f0ed;color:#1d1d1b">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.4 3.6a2 2 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
+          </button>
+        </div>
+      </sc-if>
+      <div style="position:relative">
+        <button onClick="{{ toggleModelMenu }}" style="display:flex;align-items:center;gap:6px;height:38px;padding:0 10px 0 12px;border-radius:10px;border:0;background:transparent;font-family:inherit;font-size:16px;font-weight:500;color:#1d1d1b;cursor:pointer" style-hover="background:#f0f0ed">
+          {{ modelName }}
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6b6b66" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+        </button>
+        <sc-if value="{{ modelMenuOpen }}">
+          <div onClick="{{ closeMenus }}" style="position:fixed;inset:0;z-index:1"></div>
+          <div style="position:absolute;top:44px;left:0;width:300px;background:#fff;border:1px solid #e6e5e1;border-radius:18px;box-shadow:0 12px 40px rgba(20,20,18,.12);padding:6px;z-index:2;display:flex;flex-direction:column;gap:2px">
+            <sc-for list="{{ models }}" as="md">
+              <button onClick="{{ md.pick }}" style="display:flex;align-items:center;gap:12px;text-align:left;border:0;background:transparent;border-radius:12px;padding:10px 12px;font-family:inherit;color:#1d1d1b;cursor:pointer" style-hover="background:#f4f4f2">
+                <div style="display:flex;flex-direction:column;flex:1;line-height:1.35">
+                  <span style="font-size:14px;font-weight:500">{{ md.name }}</span>
+                  <span style="font-size:13px;color:#6b6b66">{{ md.desc }}</span>
+                </div>
+                <sc-if value="{{ md.active }}">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="oklch(0.5 0.15 262)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+                </sc-if>
+              </button>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+      <div style="flex:1"></div>
+      <sc-if value="{{ hasCanvasClosed }}">
+        <button onClick="{{ reopenCanvas }}" style="display:flex;align-items:center;gap:7px;height:36px;padding:0 12px;border-radius:999px;border:1px solid #e6e5e1;background:#fff;font-family:inherit;font-size:13px;font-weight:500;color:#1d1d1b;cursor:pointer" style-hover="background:#f4f4f2">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"></rect><path d="M15 3v18"></path></svg>
+          Canvas
+        </button>
+      </sc-if>
+    </header>
+
+    <div style="flex:1;min-height:0;display:flex">
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+
+        <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ true }}">
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;padding:0 24px 28px">
+            <h1 style="margin:0;font-size:30px;font-weight:500;letter-spacing:-.025em;text-align:center;text-wrap:balance">{{ greeting }}</h1>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ hasMessages }}">
+          <div ref="{{ scrollRef }}" style="flex:1;overflow:auto;min-height:0">
+            <div style="max-width:760px;margin:0 auto;padding:16px 28px 40px;display:flex;flex-direction:column;gap:30px">
+              <sc-for list="{{ messages }}" as="m">
+                <sc-if value="{{ m.isUser }}">
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+                    <sc-if value="{{ m.hasFiles }}">
+                      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+                        <sc-for list="{{ m.files }}" as="f">
+                          <sc-if value="{{ f.isImage }}">
+                            <div title="{{ f.name }}" style="width:120px;height:120px;border-radius:14px;border:1px solid #e6e5e1;background-size:cover;background-position:center;background-image:{{ f.bg }}"></div>
+                          </sc-if>
+                          <sc-if value="{{ f.isDoc }}">
+                            <div style="display:flex;align-items:center;gap:10px;padding:8px 14px 8px 8px;border:1px solid #e6e5e1;border-radius:14px;background:#fff">
+                              <div style="width:34px;height:34px;border-radius:9px;background:oklch(0.62 0.13 30);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Geist Mono',monospace;font-size:10px;font-weight:500">{{ f.ext }}</div>
+                              <div style="display:flex;flex-direction:column;line-height:1.3">
+                                <span style="font-size:13px;font-weight:500;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ f.name }}</span>
+                                <span style="font-size:12px;color:#7a7a74">{{ f.size }}</span>
+                              </div>
+                            </div>
+                          </sc-if>
+                        </sc-for>
+                      </div>
+                    </sc-if>
+                    <div style="max-width:80%;background:#f0f0ed;padding:10px 18px;border-radius:22px;font-size:15px;line-height:1.55;white-space:pre-wrap;text-wrap:pretty">{{ m.text }}</div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ m.isAssistant }}">
+                  <div style="display:flex;flex-direction:column;gap:12px">
+                    <sc-if value="{{ m.thinking }}">
+                      <div style="display:flex;align-items:center;gap:10px;color:#6b6b66;font-size:14px;height:28px">
+                        <div style="display:flex;gap:4px">
+                          <sc-for list="{{ dots }}" as="d">
+                            <div style="width:6px;height:6px;border-radius:999px;background:#6b6b66;animation:blink 1.2s infinite {{ d.delay }}"></div>
+                          </sc-for>
+                        </div>
+                        {{ m.status }}
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ m.hasMeta }}">
+                      <div style="font-size:13px;color:#8a8a84">{{ m.meta }}</div>
+                    </sc-if>
+                    <sc-for list="{{ m.paras }}" as="p">
+                      <p style="margin:0;font-size:15.5px;line-height:1.7;white-space:pre-wrap;text-wrap:pretty"><sc-for list="{{ p.segs }}" as="s"><sc-if value="{{ s.isText }}">{{ s.t }}</sc-if><sc-if value="{{ s.isCite }}"><span title="{{ s.title }}" style="display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;margin:0 2px;border-radius:999px;background:oklch(0.94 0.03 262);color:oklch(0.4 0.14 262);font-size:11px;font-weight:600;vertical-align:2px;line-height:1;cursor:default">{{ s.n }}</span></sc-if></sc-for></p>
+                    </sc-for>
+                    <sc-if value="{{ m.hasArtifact }}">
+                      <button onClick="{{ m.openArtifact }}" style="display:flex;align-items:center;gap:14px;text-align:left;width:100%;max-width:440px;padding:12px 16px 12px 12px;border:1px solid #e6e5e1;border-radius:16px;background:#fff;font-family:inherit;color:#1d1d1b;cursor:pointer" style-hover="border-color:#cfcec9;background:#fafaf9">
+                        <div style="width:42px;height:42px;border-radius:11px;background:oklch(0.94 0.03 262);color:oklch(0.45 0.14 262);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"></path><path d="M14 3v5h5M9 13h6M9 17h4"></path></svg>
+                        </div>
+                        <div style="display:flex;flex-direction:column;flex:1;min-width:0;line-height:1.35">
+                          <span style="font-size:14px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ m.artifactTitle }}</span>
+                          <span style="font-size:13px;color:#6b6b66">{{ m.artifactHint }}</span>
+                        </div>
+                      </button>
+                    </sc-if>
+                    <sc-if value="{{ m.hasSources }}">
+                      <div style="display:flex;flex-direction:column;gap:8px;padding-top:2px">
+                        <div style="font-size:12px;font-weight:500;color:#8a8a84">Sources</div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                          <sc-for list="{{ m.sources }}" as="src">
+                            <a href="{{ src.href }}" target="_blank" rel="noreferrer" title="{{ src.title }}" style="display:flex;align-items:center;gap:8px;max-width:240px;padding:7px 12px 7px 7px;border:1px solid #e6e5e1;border-radius:999px;background:#fff;text-decoration:none;color:#1d1d1b" style-hover="background:#f4f4f2;color:#1d1d1b">
+                              <span style="width:20px;height:20px;border-radius:999px;background:#f0f0ed;color:#4a4a46;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0">{{ src.n }}</span>
+                              <span style="display:flex;flex-direction:column;min-width:0;line-height:1.25">
+                                <span style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ src.title }}</span>
+                                <span style="font-size:11.5px;color:#7a7a74">{{ src.domain }}</span>
+                              </span>
+                            </a>
+                          </sc-for>
+                        </div>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ m.done }}">
+                      <div style="display:flex;gap:2px;margin-left:-6px">
+                        <button onClick="{{ m.copy }}" title="Copy" style="display:flex;align-items:center;gap:6px;height:30px;border:0;background:transparent;border-radius:8px;padding:0 8px;font-family:inherit;font-size:13px;color:#6b6b66;cursor:pointer" style-hover="background:#f0f0ed;color:#1d1d1b">
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>
+                          {{ m.copyLabel }}
+                        </button>
+                        <sc-if value="{{ m.isLast }}">
+                          <button onClick="{{ regenerate }}" title="Regenerate" style="display:flex;align-items:center;gap:6px;height:30px;border:0;background:transparent;border-radius:8px;padding:0 8px;font-family:inherit;font-size:13px;color:#6b6b66;cursor:pointer" style-hover="background:#f0f0ed;color:#1d1d1b">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"></path></svg>
+                            Retry
+                          </button>
+                        </sc-if>
+                      </div>
+                    </sc-if>
+                  </div>
+                </sc-if>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <div style="padding:0 24px 10px;flex-shrink:0">
+          <div style="max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:8px">
+            <input ref="{{ fileRef }}" type="file" multiple="{{ true }}" onChange="{{ onFiles }}" style="display:none">
+            <div style="background:#fff;border:1px solid #e3e2de;border-radius:26px;box-shadow:0 4px 18px rgba(20,20,18,.05);padding:10px 10px 10px 12px;display:flex;flex-direction:column;gap:6px">
+              <sc-if value="{{ hasPending }}">
+                <div style="display:flex;gap:8px;flex-wrap:wrap;padding:4px 2px 2px">
+                  <sc-for list="{{ pending }}" as="f">
+                    <div style="position:relative;display:flex;align-items:center;gap:10px;padding:6px 12px 6px 6px;border:1px solid #e6e5e1;border-radius:14px;background:#fafaf9">
+                      <sc-if value="{{ f.isImage }}">
+                        <div title="{{ f.name }}" style="width:36px;height:36px;border-radius:9px;background-size:cover;background-position:center;background-image:{{ f.bg }}"></div>
+                      </sc-if>
+                      <sc-if value="{{ f.isDoc }}">
+                        <div style="width:36px;height:36px;border-radius:9px;background:oklch(0.62 0.13 30);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Geist Mono',monospace;font-size:10px;font-weight:500">{{ f.ext }}</div>
+                      </sc-if>
+                      <div style="display:flex;flex-direction:column;line-height:1.3">
+                        <span style="font-size:13px;font-weight:500;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ f.name }}</span>
+                        <span style="font-size:12px;color:#7a7a74">{{ f.size }}</span>
+                      </div>
+                      <button onClick="{{ f.remove }}" title="Remove" style="position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:999px;border:0;background:#1d1d1b;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+                      </button>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <textarea ref="{{ inputRef }}" value="{{ input }}" onChange="{{ onInput }}" onKeyDown="{{ onKey }}" rows="1" placeholder="Message Oriel" style="border:0;outline:none;background:transparent;resize:none;font-family:inherit;font-size:16px;line-height:1.5;color:#1d1d1b;padding:6px 8px 2px;width:100%;min-height:34px;max-height:200px"></textarea>
+              <div style="display:flex;align-items:center;gap:6px">
+                <button onClick="{{ pickFiles }}" title="Add photos and files" style="width:36px;height:36px;border-radius:999px;border:1px solid #e6e5e1;background:transparent;color:#3a3a37;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#f4f4f2">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+                </button>
+                <sc-if value="{{ webOn }}">
+                  <button onClick="{{ toggleWeb }}" style="display:flex;align-items:center;gap:6px;height:36px;padding:0 12px;border-radius:999px;border:1px solid oklch(0.85 0.06 262);background:oklch(0.95 0.03 262);color:oklch(0.4 0.14 262);font-family:inherit;font-size:13px;font-weight:500;cursor:pointer">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"></path></svg>
+                    Search
+                  </button>
+                </sc-if>
+                <sc-if value="{{ webOff }}" hint-placeholder-val="{{ true }}">
+                  <button onClick="{{ toggleWeb }}" style="display:flex;align-items:center;gap:6px;height:36px;padding:0 12px;border-radius:999px;border:1px solid #e6e5e1;background:transparent;color:#3a3a37;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#f4f4f2">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"></path></svg>
+                    Search
+                  </button>
+                </sc-if>
+                <div style="flex:1"></div>
+                <sc-if value="{{ busy }}">
+                  <button onClick="{{ stop }}" title="Stop" style="width:36px;height:36px;border-radius:999px;border:0;background:#1d1d1b;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center">
+                    <div style="width:11px;height:11px;border-radius:2px;background:#fff"></div>
+                  </button>
+                </sc-if>
+                <sc-if value="{{ canSend }}">
+                  <button onClick="{{ send }}" title="Send" style="width:36px;height:36px;border-radius:999px;border:0;background:#1d1d1b;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#3a3a37">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"></path></svg>
+                  </button>
+                </sc-if>
+                <sc-if value="{{ idleEmpty }}" hint-placeholder-val="{{ true }}">
+                  <div style="width:36px;height:36px;border-radius:999px;background:#e8e8e5;color:#a3a39d;display:flex;align-items:center;justify-content:center">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"></path></svg>
+                  </div>
+                </sc-if>
+              </div>
+            </div>
+            <sc-if value="{{ hasMessages }}">
+              <div style="font-size:12px;color:#8a8a84;text-align:center">Oriel can make mistakes. Check important info.</div>
+            </sc-if>
+          </div>
+        </div>
+
+        <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ true }}">
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 24px 24px">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:760px">
+              <sc-for list="{{ suggestions }}" as="s" hint-placeholder-count="4">
+                <button onClick="{{ s.use }}" style="display:flex;align-items:center;gap:8px;height:38px;padding:0 14px;border:1px solid #e6e5e1;border-radius:999px;background:transparent;font-family:inherit;font-size:14px;color:#3a3a37;cursor:pointer" style-hover="background:#f4f4f2;color:#1d1d1b">
+                  <span style="width:7px;height:7px;border-radius:999px;background:{{ s.dot }}"></span>
+                  {{ s.label }}
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{ canvasOpen }}">
+        <section data-screen-label="Canvas" style="width:52%;max-width:760px;min-width:380px;flex-shrink:0;display:flex;flex-direction:column;background:#fff;border-left:1px solid #ebeae6;border-top:1px solid #ebeae6;border-top-left-radius:18px">
+          <div style="display:flex;align-items:center;gap:8px;height:54px;padding:0 10px 0 20px;border-bottom:1px solid #f0efeb;flex-shrink:0">
+            <div style="flex:1;min-width:0;font-size:15px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ canvasTitle }}</div>
+            <span style="font-size:12px;color:#8a8a84;padding-right:6px">{{ canvasWords }}</span>
+            <button onClick="{{ copyCanvas }}" style="display:flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:999px;border:1px solid #e6e5e1;background:transparent;font-family:inherit;font-size:13px;font-weight:500;color:#1d1d1b;cursor:pointer" style-hover="background:#f4f4f2">{{ canvasCopyLabel }}</button>
+            <button onClick="{{ closeCanvas }}" title="Close" style="width:34px;height:34px;border-radius:10px;border:0;background:transparent;color:#6b6b66;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#f0f0ed;color:#1d1d1b">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+            </button>
+          </div>
+          <textarea value="{{ canvasBody }}" onChange="{{ onCanvasEdit }}" spellCheck="{{ false }}" style="flex:1;border:0;outline:none;resize:none;padding:28px 36px 40px;font-family:inherit;font-size:15.5px;line-height:1.75;color:#1d1d1b;background:transparent;width:100%"></textarea>
+          <div style="display:flex;align-items:center;gap:8px;padding:10px 16px;border-top:1px solid #f0efeb;flex-shrink:0">
+            <span style="font-size:12px;color:#8a8a84;flex:1">Edits save automatically. Ask Oriel in chat to revise.</span>
+            <button onClick="{{ canvasShorter }}" style="height:32px;padding:0 12px;border-radius:999px;border:1px solid #e6e5e1;background:transparent;font-family:inherit;font-size:13px;color:#1d1d1b;cursor:pointer" style-hover="background:#f4f4f2">Make shorter</button>
+            <button onClick="{{ canvasPolish }}" style="height:32px;padding:0 12px;border-radius:999px;border:1px solid #e6e5e1;background:transparent;font-family:inherit;font-size:13px;color:#1d1d1b;cursor:pointer" style-hover="background:#f4f4f2">Polish</button>
+          </div>
+        </section>
+      </sc-if>
+    </div>
+  </main>
+
+  <sc-if value="{{ settingsOpen }}">
+    <div data-screen-label="Settings" style="position:fixed;inset:0;background:rgba(20,20,18,.32);display:flex;align-items:center;justify-content:center;z-index:50;padding:24px">
+      <div onClick="{{ closeSettings }}" style="position:absolute;inset:0"></div>
+      <div style="position:relative;width:100%;max-width:560px;max-height:100%;overflow:auto;background:#fff;border-radius:24px;box-shadow:0 24px 64px rgba(20,20,18,.2);display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;padding:18px 16px 12px 24px">
+          <div style="flex:1;font-size:18px;font-weight:600;letter-spacing:-.01em">Personalization</div>
+          <button onClick="{{ closeSettings }}" title="Close" style="width:34px;height:34px;border-radius:10px;border:0;background:transparent;color:#6b6b66;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#f0f0ed;color:#1d1d1b">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+          </button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:22px;padding:4px 24px 20px">
+          <label style="display:flex;flex-direction:column;gap:8px">
+            <span style="font-size:14px;font-weight:500">What should Oriel call you?</span>
+            <input value="{{ userName }}" onChange="{{ onName }}" style="height:42px;border:1px solid #e3e2de;border-radius:12px;padding:0 14px;font-family:inherit;font-size:15px;color:#1d1d1b;outline:none">
+          </label>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <span style="font-size:14px;font-weight:500">Response length</span>
+            <div style="display:flex;gap:2px;background:#f0f0ed;border-radius:12px;padding:3px">
+              <sc-for list="{{ styles }}" as="st">
+                <sc-if value="{{ st.active }}">
+                  <button onClick="{{ st.pick }}" style="flex:1;height:34px;border:0;border-radius:9px;background:#fff;box-shadow:0 1px 3px rgba(20,20,18,.1);font-family:inherit;font-size:14px;font-weight:500;color:#1d1d1b;cursor:pointer">{{ st.label }}</button>
+                </sc-if>
+                <sc-if value="{{ st.inactive }}">
+                  <button onClick="{{ st.pick }}" style="flex:1;height:34px;border:0;border-radius:9px;background:transparent;font-family:inherit;font-size:14px;color:#4a4a46;cursor:pointer" style-hover="color:#1d1d1b">{{ st.label }}</button>
+                </sc-if>
+              </sc-for>
+            </div>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:8px">
+            <span style="font-size:14px;font-weight:500">Custom instructions</span>
+            <textarea value="{{ instructions }}" onChange="{{ onInstructions }}" rows="4" placeholder="Anything Oriel should keep in mind — your role, interests, preferred format…" style="border:1px solid #e3e2de;border-radius:12px;padding:12px 14px;font-family:inherit;font-size:14px;line-height:1.5;color:#1d1d1b;outline:none;resize:vertical"></textarea>
+          </label>
+          <div style="display:flex;align-items:center;gap:16px">
+            <div style="flex:1;display:flex;flex-direction:column;gap:2px">
+              <span style="font-size:14px;font-weight:500">Memory</span>
+              <span style="font-size:13px;color:#6b6b66;text-wrap:pretty">Let Oriel use your name and past chats to tailor answers.</span>
+            </div>
+            <sc-if value="{{ memoryOn }}">
+              <button onClick="{{ toggleMemory }}" title="Turn off memory" style="width:44px;height:26px;border-radius:999px;border:0;background:oklch(0.52 0.15 262);padding:3px;cursor:pointer;display:flex;justify-content:flex-end">
+                <div style="width:20px;height:20px;border-radius:999px;background:#fff"></div>
+              </button>
+            </sc-if>
+            <sc-if value="{{ memoryOff }}">
+              <button onClick="{{ toggleMemory }}" title="Turn on memory" style="width:44px;height:26px;border-radius:999px;border:0;background:#d9d8d4;padding:3px;cursor:pointer;display:flex;justify-content:flex-start">
+                <div style="width:20px;height:20px;border-radius:999px;background:#fff"></div>
+              </button>
+            </sc-if>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;padding:14px 24px 20px;border-top:1px solid #f0efeb">
+          <button onClick="{{ closeSettings }}" style="height:40px;padding:0 20px;border-radius:999px;border:0;background:#1d1d1b;color:#fff;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer" style-hover="background:#3a3a37">Done</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;liveAI&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;}, &quot;webSearchDefault&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;}}">
+const MODELS = [
+  { id: 'o2', name: 'Oriel 2', desc: 'Balanced for everyday tasks' },
+  { id: 'swift', name: 'Oriel 2 Swift', desc: 'Fastest replies, lighter reasoning' },
+  { id: 'deep', name: 'Oriel 2 Deep', desc: 'Thinks longer on hard problems' },
+];
+const STYLES = ['Concise', 'Balanced', 'Detailed'];
+const SUGGESTIONS = [
+  { label: 'Write an email', text: 'Write a polite email asking my landlord to fix a leaking tap this week', dot: 'oklch(0.65 0.13 262)' },
+  { label: 'Plan a trip', text: 'Plan a relaxed 3-day trip to Penang focused on food', dot: 'oklch(0.65 0.13 150)' },
+  { label: 'Explain a topic', text: 'Explain how interest rates affect inflation', dot: 'oklch(0.65 0.13 60)', web: true },
+  { label: 'Summarize news', text: 'What are the latest developments in solid-state batteries?', dot: 'oklch(0.65 0.13 20)', web: true },
+];
+const SEED = [
+  { id: 'c1', title: 'How noise-cancelling works', group: 'Today', messages: [
+    { role: 'user', text: 'How do noise-cancelling headphones actually work?' },
+    { role: 'assistant', model: 'Oriel 2', text: 'Active noise cancellation works by listening to the sound around you and playing back its mirror image [1].\n\nSmall microphones on each earcup pick up incoming noise. A chip then generates a wave that is the exact inverse of it — where the noise pushes air, the anti-noise pulls — so the two largely cancel out before reaching your ear [2].\n\nIt works best on steady, low-frequency sounds like engine hum or air conditioning. Sudden or high-pitched sounds, like voices or clinking dishes, change too quickly to cancel fully, which is why the padding of the earcups still matters [1].',
+      sources: [{ n: 1, title: 'How active noise cancelling works', domain: 'soundguys.com' }, { n: 2, title: 'Destructive interference explained', domain: 'physicsclassroom.com' }] },
+  ]},
+  { id: 'c2', title: 'Weekly meal prep plan', group: 'Today', messages: [
+    { role: 'user', text: 'Make me a simple vegetarian meal prep plan for the work week' },
+    { role: 'assistant', model: 'Oriel 2', text: 'Here’s a five-day plan built around three batch-cooked bases, so you only cook twice.',
+      artifact: { title: 'Vegetarian meal prep — work week', body: 'Sunday prep (about 90 minutes)\n- Roast two trays of vegetables: sweet potato, peppers, red onion, chickpeas\n- Cook a large pot of brown rice\n- Make a jar of peanut-lime dressing\n\nMonday — Roasted veg rice bowl with dressing\nTuesday — Chickpea and spinach wrap\nWednesday — Rice, fried egg, and greens\n\nWednesday night top-up (30 minutes)\n- Cook a pot of red lentil dal\n- Steam a head of broccoli\n\nThursday — Dal with rice and broccoli\nFriday — Leftover dal with flatbread\n\nShopping list\nSweet potatoes (3), peppers (3), red onions (2), chickpeas (2 tins), spinach (1 bag), brown rice (1 kg), red lentils (500 g), broccoli (1), eggs (6), wraps (1 pack), flatbread (1 pack), peanut butter, limes (2), soy sauce' } },
+  ]},
+  { id: 'c3', title: 'Cover letter for design role', group: 'Previous 7 days', messages: [] },
+  { id: 'c4', title: 'Fixing a slow laptop', group: 'Previous 7 days', messages: [] },
+  { id: 'c5', title: 'Birthday gift ideas under $50', group: 'Previous 7 days', messages: [] },
+  { id: 'c6', title: 'Compound interest explained', group: 'Older', messages: [] },
+  { id: 'c7', title: 'Japanese phrases for travel', group: 'Older', messages: [] },
+];
+const CANVAS_RE = /write|draft|create|plan|email|essay|letter|outline|itinerary|code|script|list/i;
+const CANNED_SOURCES = [
+  { n: 1, title: 'An overview of the topic', domain: 'britannica.com' },
+  { n: 2, title: 'Recent analysis and explainer', domain: 'reuters.com' },
+  { n: 3, title: 'Frequently asked questions', domain: 'wikipedia.org' },
+];
+const fmtSize = b => b > 1e6 ? (b / 1e6).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1e3)) + ' KB';
+
+class Component extends DCLogic {
+  state = {
+    chats: SEED.map(c => ({ ...c, messages: c.messages.map(m => ({ ...m, shown: m.text })) })),
+    activeId: null, input: '', busy: false, copied: -1, search: '',
+    sidebarOpen: true, modelId: 'o2', modelMenu: false,
+    web: this.props.webSearchDefault ?? false, pending: [],
+    canvas: null, canvasCopied: false,
+    settingsOpen: false, name: 'Alex Tan', style: 'Balanced', instructions: '', memory: true,
+  };
+  scrollRef = React.createRef();
+  fileRef = React.createRef();
+  inputRef = React.createRef();
+
+  componentDidUpdate() {
+    const el = this.scrollRef.current;
+    if (el && this.state.busy) el.scrollTop = el.scrollHeight;
+    const ta = this.inputRef.current;
+    if (ta) { ta.style.height = 'auto'; ta.style.height = Math.min(200, ta.scrollHeight) + 'px'; }
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+
+  active() { return this.state.chats.find(c => c.id === this.state.activeId); }
+  patchLast(patch) {
+    this.setState(s => ({ chats: s.chats.map(c => {
+      if (c.id !== s.activeId) return c;
+      const ms = [...c.messages]; ms[ms.length - 1] = { ...ms[ms.length - 1], ...patch }; return { ...c, messages: ms };
+    }) }));
+  }
+
+  async send(textArg, opts = {}) {
+    const text = (textArg ?? this.state.input).trim();
+    if ((!text && !this.state.pending.length) || this.state.busy) return;
+    const web = opts.web ?? this.state.web;
+    const files = opts.keepFiles ? [] : this.state.pending;
+    const model = MODELS.find(m => m.id === this.state.modelId);
+    if (!this.state.activeId) {
+      const id = 'c' + Date.now();
+      const t = text || files[0]?.name || 'New chat';
+      await new Promise(r => this.setState(s => ({ chats: [{ id, title: t.length > 40 ? t.slice(0, 40) + '…' : t, group: 'Today', messages: [] }, ...s.chats], activeId: id }), r));
+    }
+    const status = web ? 'Searching the web' : model.id === 'deep' ? 'Thinking' : '';
+    await new Promise(r => this.setState(s => ({
+      chats: s.chats.map(c => c.id === s.activeId ? { ...c, messages: [...(opts.replaceLast ? c.messages.slice(0, -1) : c.messages), ...(opts.replaceLast ? [] : [{ role: 'user', text, files }]), { role: 'assistant', model: model.name, text: '', shown: '', thinking: true, status }] } : c),
+      input: '', pending: [], busy: true, web,
+    }), r));
+    this.started = Date.now();
+
+    const { name, style, instructions, memory } = this.state;
+    const history = this.active().messages.filter(m => m.text).slice(-10).map(m => `${m.role === 'user' ? 'User' : 'Oriel'}: ${m.text}${m.files?.length ? ` [attached: ${m.files.map(f => f.name).join(', ')}]` : ''}`).join('\n\n');
+    const prompt = `You are Oriel, a helpful AI assistant. Tone: neutral, clear, direct. Response length: ${style.toLowerCase()} (concise ≈ 60 words, balanced ≈ 130, detailed ≈ 250).${memory ? ` The user's name is ${name.split(' ')[0]}.` : ''}${instructions ? ` User's custom instructions: ${instructions}` : ''}
+Formatting: plain text only — no markdown symbols like ** or #. Separate paragraphs with a blank line. Use "- " at the start of a line for list items.
+${web ? 'Web search is ON: cite 2–3 real, well-known sources inline as [1], [2]. After the answer, add a line "SOURCES:" followed by one line per source in the form "n | Page title | domain.com".' : 'Do not cite sources.'}
+If the user asks you to write, draft, plan or create a longer piece (email, letter, plan, essay, itinerary, code, list), reply with ONE short sentence, then a line "<<<CANVAS: Title>>>", then the full piece, then a line "<<<END>>>".
+
+${history}
+
+Oriel:`;
+
+    let reply;
+    try {
+      if (this.props.liveAI === false || !window.claude) throw 0;
+      reply = String(await window.claude.complete(prompt));
+    } catch (e) {
+      await new Promise(r => setTimeout(r, 1100));
+      reply = CANVAS_RE.test(text)
+        ? `Here’s a first draft — edit it directly in the canvas.\n<<<CANVAS: ${text.slice(0, 48)}>>>\nThis is a placeholder draft for “${text}”.\n\nConnect live AI to generate the full piece here.\n<<<END>>>`
+        : web ? 'Here’s a quick summary of what current sources say [1].\n\nThe short answer depends on context, but most explanations agree on the core mechanism [2]. Recent coverage adds a few caveats worth keeping in mind [3].\n\nWant me to go deeper on any part?\nSOURCES:\n1 | An overview of the topic | britannica.com\n2 | Recent analysis and explainer | reuters.com\n3 | Frequently asked questions | wikipedia.org'
+        : 'Good question. Here’s the short version.\n\nStart with the core idea, then build up the details one step at a time. If you tell me a bit more about what you need, I can tailor this further.';
+    }
+    if (!this.state.busy) return;
+
+    let artifact = null, sources = [];
+    const cm = reply.match(/<<<CANVAS:?\s*(.*?)>>>\s*([\s\S]*?)(?:<<<END>>>|$)/);
+    if (cm) { artifact = { title: cm[1].trim() || 'Draft', body: cm[2].trim() }; reply = reply.replace(cm[0], ''); }
+    const sm = reply.match(/SOURCES:\s*([\s\S]*)$/i);
+    if (sm) {
+      sources = sm[1].split('\n').map(l => l.split('|').map(x => x.trim())).filter(p => p.length >= 3).map(p => ({ n: +p[0].replace(/\D/g, '') || 0, title: p[1], domain: p[2].replace(/^https?:\/\//, '').replace(/\/.*$/, '') }));
+      reply = reply.replace(sm[0], '');
+    }
+    reply = reply.trim();
+    const secs = Math.max(1, Math.round((Date.now() - this.started) / 1000));
+    this.patchLast({ text: reply, thinking: false, sources: web ? sources : [], thoughtFor: model.id === 'deep' ? `Thought for ${secs}s` : '' });
+
+    const words = reply.split(/(\s+)/);
+    let i = 0;
+    clearInterval(this.timer);
+    this.timer = setInterval(() => {
+      i = Math.min(words.length, i + 3);
+      this.patchLast({ shown: words.slice(0, i).join('') });
+      if (i >= words.length) this.finish(artifact);
+    }, 28);
+  }
+
+  finish(artifact) {
+    clearInterval(this.timer);
+    const chat = this.active();
+    const idx = chat.messages.length - 1;
+    if (artifact) this.patchLast({ artifact });
+    this.setState({ busy: false, ...(artifact ? { canvas: { chatId: chat.id, idx } } : {}) });
+  }
+
+  stop() {
+    clearInterval(this.timer);
+    const last = this.active()?.messages.slice(-1)[0];
+    if (last) this.patchLast({ thinking: false, text: last.shown || '', shown: last.shown || '', stopped: true });
+    this.setState({ busy: false });
+  }
+
+  canvasMsg() {
+    const cv = this.state.canvas; if (!cv) return null;
+    const chat = this.state.chats.find(c => c.id === cv.chatId);
+    return chat?.messages[cv.idx]?.artifact ? chat.messages[cv.idx] : null;
+  }
+
+  editCanvas(body) {
+    const cv = this.state.canvas;
+    this.setState(s => ({ chats: s.chats.map(c => c.id !== cv.chatId ? c : { ...c, messages: c.messages.map((m, i) => i === cv.idx ? { ...m, artifact: { ...m.artifact, body } } : m) }) }));
+  }
+
+  renderVals() {
+    const s = this.state;
+    const chat = this.active();
+    const msgs = chat ? chat.messages : [];
+    const lastIdx = msgs.length - 1;
+    const q = s.search.trim().toLowerCase();
+    const filtered = s.chats.filter(c => !q || c.title.toLowerCase().includes(q));
+    const groups = ['Today', 'Previous 7 days', 'Older'].map(label => ({
+      label,
+      items: filtered.filter(c => c.group === label).map(c => ({ title: c.title, active: c.id === s.activeId, inactive: c.id !== s.activeId, open: () => !s.busy && this.setState({ activeId: c.id, canvas: null }) })),
+    })).filter(g => g.items.length);
+    const model = MODELS.find(m => m.id === s.modelId);
+    const cmsg = this.canvasMsg();
+    const canvasOpen = !!cmsg && s.canvas.chatId === s.activeId && !s.canvas.hidden;
+    const lastArtifactIdx = msgs.map((m, i) => m.artifact ? i : -1).filter(i => i >= 0).pop();
+    const hour = new Date().getHours();
+    const first = s.name.trim().split(' ')[0];
+    const files = s.pending.map((f, i) => ({ ...f, remove: () => this.setState(st => ({ pending: st.pending.filter((_, j) => j !== i) })) }));
+    const canSend = !s.busy && (!!s.input.trim() || s.pending.length > 0);
+
+    return {
+      sidebarOpen: s.sidebarOpen, sidebarClosed: !s.sidebarOpen,
+      toggleSidebar: () => this.setState({ sidebarOpen: !s.sidebarOpen }),
+      newChat: () => !s.busy && this.setState({ activeId: null, input: '', canvas: null }),
+      search: s.search, onSearch: e => this.setState({ search: e.target.value }),
+      groups, noResults: !!q && groups.length === 0,
+      userName: s.name, initial: (s.name.trim()[0] || '?').toUpperCase(),
+      openSettings: () => this.setState({ settingsOpen: true }),
+      modelName: model.name, modelMenuOpen: s.modelMenu,
+      toggleModelMenu: () => this.setState({ modelMenu: !s.modelMenu }),
+      closeMenus: () => this.setState({ modelMenu: false }),
+      models: MODELS.map(m => ({ ...m, active: m.id === s.modelId, pick: () => this.setState({ modelId: m.id, modelMenu: false }) })),
+      greeting: `${hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'}${s.memory && first ? ', ' + first : ''}. Where should we start?`,
+      isEmpty: msgs.length === 0, hasMessages: msgs.length > 0,
+      suggestions: SUGGESTIONS.map(x => ({ ...x, use: () => this.send(x.text, { web: !!x.web || s.web }) })),
+      messages: msgs.map((m, idx) => {
+        const shown = m.shown ?? m.text;
+        const srcMap = Object.fromEntries((m.sources || []).map(x => [x.n, x.title]));
+        const paras = m.role === 'assistant' && !m.thinking ? shown.split(/\n\s*\n/).filter(x => x.trim()).map(p => ({
+          segs: p.split(/(\[\d+\])/).filter(Boolean).map(t => { const c = t.match(/^\[(\d+)\]$/); return c ? { isCite: true, isText: false, n: c[1], title: srcMap[c[1]] || '' } : { isCite: false, isText: true, t }; }),
+        })) : [];
+        const streaming = s.busy && idx === lastIdx;
+        const done = m.role === 'assistant' && !m.thinking && !streaming;
+        return {
+          isUser: m.role === 'user', isAssistant: m.role === 'assistant', text: m.text,
+          files: (m.files || []), hasFiles: !!(m.files && m.files.length),
+          thinking: !!m.thinking, status: m.status, paras, done, isLast: idx === lastIdx,
+          meta: m.thoughtFor || (m.stopped ? 'Stopped' : ''), hasMeta: done && !!(m.thoughtFor || m.stopped),
+          hasArtifact: !!m.artifact && done,
+          artifactTitle: m.artifact?.title,
+          artifactHint: canvasOpen && s.canvas.idx === idx ? 'Open in canvas' : 'Click to open in canvas',
+          openArtifact: () => this.setState({ canvas: { chatId: s.activeId, idx } }),
+          hasSources: done && !!(m.sources && m.sources.length),
+          sources: (m.sources || []).map(x => ({ ...x, href: 'https://' + x.domain })),
+          copyLabel: s.copied === idx ? 'Copied' : 'Copy',
+          copy: () => { navigator.clipboard?.writeText(m.text); this.setState({ copied: idx }); setTimeout(() => this.setState({ copied: -1 }), 1400); },
+        };
+      }),
+      regenerate: () => { const u = msgs.filter(m => m.role === 'user').pop(); if (u) this.send(u.text, { replaceLast: true, keepFiles: true, web: !!msgs[lastIdx]?.sources?.length || s.web }); },
+      dots: [{ delay: '0s' }, { delay: '.2s' }, { delay: '.4s' }],
+      scrollRef: this.scrollRef, fileRef: this.fileRef, inputRef: this.inputRef,
+      input: s.input,
+      onInput: e => this.setState({ input: e.target.value }),
+      onKey: e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.send(); } },
+      pickFiles: () => this.fileRef.current?.click(),
+      onFiles: e => {
+        const list = [...(e.target.files || [])].map(f => {
+          const isImage = f.type.startsWith('image/');
+          return { name: f.name, size: fmtSize(f.size), isImage, isDoc: !isImage, ext: (f.name.split('.').pop() || 'file').slice(0, 4).toUpperCase(), url: isImage ? URL.createObjectURL(f) : '' , get bg() { return this.url ? `url("${this.url}")` : 'none'; } };
+        });
+        this.setState(st => ({ pending: [...st.pending, ...list] }));
+        e.target.value = '';
+      },
+      pending: files, hasPending: files.length > 0,
+      webOn: s.web, webOff: !s.web, toggleWeb: () => this.setState({ web: !s.web }),
+      busy: s.busy, canSend, idleEmpty: !s.busy && !canSend,
+      send: () => this.send(), stop: () => this.stop(),
+      canvasOpen,
+      hasCanvasClosed: !canvasOpen && lastArtifactIdx !== undefined,
+      reopenCanvas: () => this.setState({ canvas: { chatId: s.activeId, idx: lastArtifactIdx } }),
+      canvasTitle: cmsg?.artifact.title, canvasBody: cmsg?.artifact.body || '',
+      canvasWords: cmsg ? cmsg.artifact.body.split(/\s+/).filter(Boolean).length + ' words' : '',
+      onCanvasEdit: e => this.editCanvas(e.target.value),
+      closeCanvas: () => this.setState({ canvas: null }),
+      canvasCopyLabel: s.canvasCopied ? 'Copied' : 'Copy',
+      copyCanvas: () => { navigator.clipboard?.writeText(cmsg?.artifact.body || ''); this.setState({ canvasCopied: true }); setTimeout(() => this.setState({ canvasCopied: false }), 1400); },
+      canvasShorter: () => this.send(`Make “${cmsg?.artifact.title}” shorter and tighter. Here is the current version:\n\n${cmsg?.artifact.body}`),
+      canvasPolish: () => this.send(`Polish the wording of “${cmsg?.artifact.title}” without changing its meaning. Here is the current version:\n\n${cmsg?.artifact.body}`),
+      settingsOpen: s.settingsOpen, closeSettings: () => this.setState({ settingsOpen: false }),
+      onName: e => this.setState({ name: e.target.value }),
+      styles: STYLES.map(x => ({ label: x, active: x === s.style, inactive: x !== s.style, pick: () => this.setState({ style: x }) })),
+      instructions: s.instructions, onInstructions: e => this.setState({ instructions: e.target.value }),
+      memoryOn: s.memory, memoryOff: !s.memory, toggleMemory: () => this.setState({ memory: !s.memory }),
+    };
+  }
+}
+</script>
+</body>
+</html>
