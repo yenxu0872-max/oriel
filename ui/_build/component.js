@@ -612,7 +612,7 @@ class Component extends DCLogic {
   async mountWeb() {
     let saved = null;
     try { saved = JSON.parse(localStorage.getItem(LS_WEB) || 'null'); } catch (e) {}
-    const catalog = await fetch(WEB.models || 'models.json').then(r => r.json()).catch(() => ({ models: [] }));
+    const catalog = await fetch(WEB.models || 'models.json', { cache: 'no-cache' }).then(r => r.json()).catch(() => ({ models: [] }));
     const models = catalog.models.filter(m => m.browser).map(m => ({
       id: m.id, name: m.name, maker: m.maker, model: m.browser.id, download_gb: m.browser.download_gb, f16: m.browser.f16,
       desc: m.maker, detail: 'brief', small: m.browser.download_gb < 1.2,
@@ -620,16 +620,19 @@ class Component extends DCLogic {
       thinkToggle: /^qwen3/.test(m.id),            // thinking can be switched on and off
       vision: m.good.includes('vision'),
     }));
-    const wanted = new URLSearchParams(location.search).get('model');
+    const params = new URLSearchParams(location.search);
+    const wanted = params.get('model');
+    const prompt = (params.get('prompt') || '').slice(0, 2000);   // "Try asking" on the Browse page
     const s = saved?.settings || {};
     const modelId = [wanted, s.modelId, 'qwen3-4b'].find(id => models.some(m => m.id === id)) || models[0]?.id;
     this.rev = 0;
     this.deleted = {};
     this.setState({ chats: (saved?.chats || []).map(hydrate), loaded: true, ...this.settingsFrom(s), models, modelId, have: {},
-                    sidebarOpen: window.innerWidth >= 760 }, async () => {
+                    sidebarOpen: window.innerWidth >= 760, ...(prompt ? { input: prompt, activeId: null } : {}) }, async () => {
       applyTheme(this.state.theme);
       this.lastSaved = JSON.stringify(this.snapshot());
-      if (wanted) history.replaceState(null, '', location.pathname);
+      if (wanted || prompt) history.replaceState(null, '', location.pathname);
+      if (prompt) this.inputRef.current?.focus();
       await this.scanDownloads();
       // Download straight away only when asked to ("Run in Oriel" shows the
       // size first) or when the model is already here; never as a surprise.

@@ -2,6 +2,62 @@
  "engine": {
   "webllm": "0.2.85"
  },
+ "makers": {
+  "Qwen": {
+   "name": "Alibaba",
+   "family": "Qwen",
+   "about": "The widest range here — tiny to huge, with step-by-step thinking and strong coding.",
+   "logo": "logos/Qwen.webp"
+  },
+  "meta-llama": {
+   "name": "Meta",
+   "family": "Llama",
+   "about": "The open models much of the field is built on: reliable all-rounders.",
+   "logo": "logos/meta-llama.webp"
+  },
+  "google": {
+   "name": "Google",
+   "family": "Gemma",
+   "about": "Google's open models: natural writing, many languages, and with Gemma 4, images too.",
+   "logo": "logos/google.webp"
+  },
+  "microsoft": {
+   "name": "Microsoft",
+   "family": "Phi",
+   "about": "Small models trained to reason well for their size.",
+   "logo": "logos/microsoft.webp"
+  },
+  "mistralai": {
+   "name": "Mistral AI",
+   "family": "Mistral",
+   "about": "Dependable models from France, including one built for coding.",
+   "logo": "logos/mistralai.webp"
+  },
+  "deepseek-ai": {
+   "name": "DeepSeek",
+   "family": "R1",
+   "about": "Models that think out loud before answering — strong at maths and logic.",
+   "logo": "logos/deepseek-ai.webp"
+  },
+  "openai": {
+   "name": "OpenAI",
+   "family": "gpt-oss",
+   "about": "OpenAI's open-weight models, built for careful reasoning.",
+   "logo": "logos/openai.webp"
+  },
+  "HuggingFaceTB": {
+   "name": "Hugging Face",
+   "family": "SmolLM",
+   "about": "Tiny, fully open models that run almost anywhere.",
+   "logo": "logos/HuggingFaceTB.webp"
+  },
+  "NousResearch": {
+   "name": "Nous Research",
+   "family": "Hermes",
+   "about": "Tuned to follow instructions closely and stay in character.",
+   "logo": "logos/NousResearch.webp"
+  }
+ },
  "models": [
   {
    "id": "smollm2-360m",
@@ -33,6 +89,13 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
+   },
+   "org": "HuggingFaceTB",
+   "params": "360M",
+   "released": "2024-10",
+   "tested": {
+    "on": "MacBook Air M4, 16 GB",
+    "tokens_per_s": 65
    }
   },
   {
@@ -66,6 +129,13 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
+   },
+   "org": "Qwen",
+   "params": "0.6B",
+   "released": "2025-04",
+   "tested": {
+    "on": "MacBook Air M4, 16 GB",
+    "tokens_per_s": null
    }
   },
   {
@@ -99,6 +169,13 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
+   },
+   "org": "Qwen",
+   "params": "0.8B",
+   "released": "2026-02",
+   "tested": {
+    "on": "MacBook Air M4, 16 GB",
+    "tokens_per_s": 34
    }
   },
   {
@@ -127,7 +204,10 @@
     "label": "Gemma Terms of Use",
     "meaning": "Free, including business, within Google's use policy.",
     "business": true
-   }
+   },
+   "org": "google",
+   "params": "1B",
+   "released": "2025-03"
   },
   {
    "id": "llama3.2-1b",
@@ -159,6 +239,13 @@
     "label": "Llama 3.2 Community Licence",
     "meaning": "Free for personal and most business use; read Meta's terms.",
     "business": true
+   },
+   "org": "meta-llama",
+   "params": "1B",
+   "released": "2024-09",
+   "tested": {
+    "on": "MacBook Air M4, 16 GB",
+    "tokens_per_s": 60
    }
   },
   {
@@ -185,7 +272,10 @@
     "label": "MIT",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "deepseek-ai",
+   "params": "1.5B",
+   "released": "2025-01"
   },
   {
    "id": "qwen3-1.7b",
@@ -217,7 +307,10 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "Qwen",
+   "params": "1.7B",
+   "released": "2025-04"
   },
   {
    "id": "smollm2-1.7b",
@@ -248,7 +341,10 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "HuggingFaceTB",
+   "params": "1.7B",
+   "released": "2024-10"
   },
   {
    "id": "qwen2.5-coder-1.5b",
@@ -279,6 +375,13 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
+   },
+   "org": "Qwen",
+   "params": "1.5B",
+   "released": "2024-09",
+   "tested": {
+    "on": "MacBook Air M4, 16 GB",
+    "tokens_per_s": 13
    }
   },
   {
@@ -305,7 +408,10 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "Qwen",
+   "params": "1.5B",
+   "released": "2024-09"
   },
   {
    "id": "qwen3.5-2b",
@@ -337,7 +443,10 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "Qwen",
+   "params": "2B",
+   "released": "2026-02"
   },
   {
    "id": "gemma2-2b",
@@ -369,6 +478,13 @@
     "label": "Gemma Terms of Use",
     "meaning": "Free, including business, within Google's use policy.",
     "business": true
+   },
+   "org": "google",
+   "params": "2B",
+   "released": "2024-07",
+   "tested": {
+    "on": "MacBook Air M4, 16 GB",
+    "tokens_per_s": 16
    }
   },
   {
@@ -401,7 +517,10 @@
     "label": "Llama 3.2 Community Licence",
     "meaning": "Free for personal and most business use; read Meta's terms.",
     "business": true
-   }
+   },
+   "org": "meta-llama",
+   "params": "3B",
+   "released": "2024-09"
   },
   {
    "id": "hermes3-3b",
@@ -433,7 +552,10 @@
     "label": "Llama 3 Community Licence",
     "meaning": "Free for personal and most business use; read Meta's terms.",
     "business": true
-   }
+   },
+   "org": "NousResearch",
+   "params": "3B",
+   "released": "2024-12"
   },
   {
    "id": "qwen2.5-coder-3b",
@@ -464,7 +586,10 @@
     "label": "Qwen Research Licence",
     "meaning": "Personal and research use only — not for business.",
     "business": false
-   }
+   },
+   "org": "Qwen",
+   "params": "3B",
+   "released": "2024-11"
   },
   {
    "id": "phi3.5-mini",
@@ -496,6 +621,13 @@
     "label": "MIT",
     "meaning": "Free for any use, including business.",
     "business": true
+   },
+   "org": "microsoft",
+   "params": "3.8B",
+   "released": "2024-08",
+   "tested": {
+    "on": "MacBook Air M4, 16 GB",
+    "tokens_per_s": 20
    }
   },
   {
@@ -528,7 +660,10 @@
     "label": "MIT",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "microsoft",
+   "params": "3.8B",
+   "released": "2025-02"
   },
   {
    "id": "qwen3-4b",
@@ -562,7 +697,10 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "Qwen",
+   "params": "4B",
+   "released": "2025-04"
   },
   {
    "id": "qwen3.5-4b",
@@ -595,7 +733,10 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "Qwen",
+   "params": "4B",
+   "released": "2026-02"
   },
   {
    "id": "phi3.5-vision",
@@ -621,6 +762,13 @@
     "label": "MIT",
     "meaning": "Free for any use, including business.",
     "business": true
+   },
+   "org": "microsoft",
+   "params": "4.2B",
+   "released": "2024-08",
+   "tested": {
+    "on": "MacBook Air M4, 16 GB",
+    "tokens_per_s": 21
    }
   },
   {
@@ -653,6 +801,13 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
+   },
+   "org": "mistralai",
+   "params": "7B",
+   "released": "2024-05",
+   "tested": {
+    "on": "MacBook Air M4, 16 GB",
+    "tokens_per_s": 11
    }
   },
   {
@@ -685,7 +840,10 @@
     "label": "MIT",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "deepseek-ai",
+   "params": "7B",
+   "released": "2025-01"
   },
   {
    "id": "qwen2.5-coder-7b",
@@ -716,7 +874,10 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "Qwen",
+   "params": "7B",
+   "released": "2024-09"
   },
   {
    "id": "llama3.1-8b",
@@ -749,7 +910,10 @@
     "label": "Llama 3.1 Community Licence",
     "meaning": "Free for personal and most business use; read Meta's terms.",
     "business": true
-   }
+   },
+   "org": "meta-llama",
+   "params": "8B",
+   "released": "2024-07"
   },
   {
    "id": "qwen3-8b",
@@ -782,7 +946,10 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "Qwen",
+   "params": "8B",
+   "released": "2025-04"
   },
   {
    "id": "qwen3.5-9b",
@@ -815,7 +982,10 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "Qwen",
+   "params": "9B",
+   "released": "2026-02"
   },
   {
    "id": "gemma2-9b",
@@ -847,7 +1017,10 @@
     "label": "Gemma Terms of Use",
     "meaning": "Free, including business, within Google's use policy.",
     "business": true
-   }
+   },
+   "org": "google",
+   "params": "9B",
+   "released": "2024-06"
   },
   {
    "id": "gemma4-e2b",
@@ -874,7 +1047,10 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "google",
+   "params": "2B effective",
+   "released": "2026-03"
   },
   {
    "id": "gemma4-e4b",
@@ -901,7 +1077,10 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "google",
+   "params": "4B effective",
+   "released": "2026-03"
   },
   {
    "id": "gemma4-12b",
@@ -928,7 +1107,10 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "google",
+   "params": "12B",
+   "released": "2026-05"
   },
   {
    "id": "gemma3-4b",
@@ -954,7 +1136,10 @@
     "label": "Gemma Terms of Use",
     "meaning": "Free, including business, within Google's use policy.",
     "business": true
-   }
+   },
+   "org": "google",
+   "params": "4B",
+   "released": "2025-02"
   },
   {
    "id": "qwen2.5vl-7b",
@@ -979,7 +1164,10 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "Qwen",
+   "params": "7B",
+   "released": "2025-01"
   },
   {
    "id": "llama3.2-vision-11b",
@@ -1004,7 +1192,10 @@
     "label": "Llama 3.2 Community Licence",
     "meaning": "Free for personal and most business use; read Meta's terms.",
     "business": true
-   }
+   },
+   "org": "meta-llama",
+   "params": "11B",
+   "released": "2024-09"
   },
   {
    "id": "deepseek-r1-8b",
@@ -1030,7 +1221,10 @@
     "label": "MIT",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "deepseek-ai",
+   "params": "8B",
+   "released": "2025-05"
   },
   {
    "id": "qwen3-14b",
@@ -1057,7 +1251,10 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "Qwen",
+   "params": "14B",
+   "released": "2025-04"
   },
   {
    "id": "phi4-14b",
@@ -1083,7 +1280,10 @@
     "label": "MIT",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "microsoft",
+   "params": "14B",
+   "released": "2024-12"
   },
   {
    "id": "deepseek-r1-14b",
@@ -1109,7 +1309,10 @@
     "label": "MIT",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "deepseek-ai",
+   "params": "14B",
+   "released": "2025-01"
   },
   {
    "id": "qwen2.5-coder-14b",
@@ -1134,7 +1337,10 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "Qwen",
+   "params": "14B",
+   "released": "2024-11"
   },
   {
    "id": "gpt-oss-20b",
@@ -1160,7 +1366,10 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "openai",
+   "params": "21B · 3.6B active",
+   "released": "2025-08"
   },
   {
    "id": "mistral-small-24b",
@@ -1187,7 +1396,10 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "mistralai",
+   "params": "24B",
+   "released": "2025-06"
   },
   {
    "id": "devstral-24b",
@@ -1212,7 +1424,10 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "mistralai",
+   "params": "24B",
+   "released": "2025-07"
   },
   {
    "id": "qwen3.5-27b",
@@ -1239,7 +1454,10 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "Qwen",
+   "params": "27B",
+   "released": "2026-02"
   },
   {
    "id": "gemma4-26b",
@@ -1266,7 +1484,10 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "google",
+   "params": "26B · 4B active",
+   "released": "2026-03"
   },
   {
    "id": "qwen3-30b",
@@ -1293,7 +1514,10 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "Qwen",
+   "params": "30B · 3B active",
+   "released": "2025-04"
   },
   {
    "id": "qwen3-coder-30b",
@@ -1318,7 +1542,10 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "Qwen",
+   "params": "30B · 3B active",
+   "released": "2025-07"
   },
   {
    "id": "gemma4-31b",
@@ -1345,7 +1572,10 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "google",
+   "params": "31B",
+   "released": "2026-03"
   },
   {
    "id": "llama3.3-70b",
@@ -1372,7 +1602,10 @@
     "label": "Llama 3.3 Community Licence",
     "meaning": "Free for personal and most business use; read Meta's terms.",
     "business": true
-   }
+   },
+   "org": "meta-llama",
+   "params": "70B",
+   "released": "2024-11"
   },
   {
    "id": "gpt-oss-120b",
@@ -1398,7 +1631,10 @@
     "label": "Apache 2.0",
     "meaning": "Free for any use, including business.",
     "business": true
-   }
+   },
+   "org": "openai",
+   "params": "117B · 5.1B active",
+   "released": "2025-08"
   }
  ]
 }

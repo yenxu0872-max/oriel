@@ -177,6 +177,42 @@ M = [
      ["chat", "reasoning"], None, "gpt-oss:120b", "openai/gpt-oss-120b", None),
 ]
 
+# Size in parameters, as the makers publish it ("active" = what a mixture-of-
+# experts model actually runs for each word; "effective" = Gemma 4's own term).
+PARAMS = {
+    "smollm2-360m": "360M", "qwen3-0.6b": "0.6B", "qwen3.5-0.8b": "0.8B", "gemma3-1b": "1B", "llama3.2-1b": "1B",
+    "deepseek-r1-1.5b": "1.5B", "qwen3-1.7b": "1.7B", "smollm2-1.7b": "1.7B", "qwen2.5-coder-1.5b": "1.5B",
+    "qwen2.5-math-1.5b": "1.5B", "qwen3.5-2b": "2B", "gemma2-2b": "2B", "llama3.2-3b": "3B", "hermes3-3b": "3B",
+    "qwen2.5-coder-3b": "3B", "phi3.5-mini": "3.8B", "phi4-mini": "3.8B", "qwen3-4b": "4B", "qwen3.5-4b": "4B",
+    "phi3.5-vision": "4.2B", "mistral-7b": "7B", "deepseek-r1-7b": "7B", "qwen2.5-coder-7b": "7B", "llama3.1-8b": "8B",
+    "qwen3-8b": "8B", "qwen3.5-9b": "9B", "gemma2-9b": "9B", "gemma4-e2b": "2B effective", "gemma4-e4b": "4B effective",
+    "gemma4-12b": "12B", "gemma3-4b": "4B", "qwen2.5vl-7b": "7B", "llama3.2-vision-11b": "11B", "deepseek-r1-8b": "8B",
+    "qwen3-14b": "14B", "phi4-14b": "14B", "deepseek-r1-14b": "14B", "qwen2.5-coder-14b": "14B",
+    "gpt-oss-20b": "21B · 3.6B active", "mistral-small-24b": "24B", "devstral-24b": "24B", "qwen3.5-27b": "27B",
+    "gemma4-26b": "26B · 4B active", "qwen3-30b": "30B · 3B active", "qwen3-coder-30b": "30B · 3B active",
+    "gemma4-31b": "31B", "llama3.3-70b": "70B", "gpt-oss-120b": "117B · 5.1B active",
+}
+
+# Who makes them, keyed by their Hugging Face organisation (logos in web/logos/
+# are each organisation's own avatar there). Listed in the order shown.
+MAKERS = {
+    "Qwen": ("Alibaba", "Qwen", "The widest range here — tiny to huge, with step-by-step thinking and strong coding."),
+    "meta-llama": ("Meta", "Llama", "The open models much of the field is built on: reliable all-rounders."),
+    "google": ("Google", "Gemma", "Google's open models: natural writing, many languages, and with Gemma 4, images too."),
+    "microsoft": ("Microsoft", "Phi", "Small models trained to reason well for their size."),
+    "mistralai": ("Mistral AI", "Mistral", "Dependable models from France, including one built for coding."),
+    "deepseek-ai": ("DeepSeek", "R1", "Models that think out loud before answering — strong at maths and logic."),
+    "openai": ("OpenAI", "gpt-oss", "OpenAI's open-weight models, built for careful reasoning."),
+    "HuggingFaceTB": ("Hugging Face", "SmolLM", "Tiny, fully open models that run almost anywhere."),
+    "NousResearch": ("Nous Research", "Hermes", "Tuned to follow instructions closely and stay in character."),
+}
+
+# Loaded and answered correctly in Oriel's browser build, on a MacBook Air M4
+# (16 GB), with Oriel's own instructions; writing speed in tokens a second.
+TESTED = {"llama3.2-1b": 60, "smollm2-360m": 65, "qwen3.5-0.8b": 34, "qwen3-0.6b": None, "qwen2.5-coder-1.5b": 13,
+          "gemma2-2b": 16, "phi3.5-mini": 20, "phi3.5-vision": 21, "mistral-7b": 11}
+TESTED_ON = "MacBook Air M4, 16 GB"
+
 # What each licence means, in a sentence, and whether a business may use it.
 LICENCES = {
     "apache-2.0": ("Apache 2.0", "Free for any use, including business.", True),
@@ -248,7 +284,7 @@ def verify():
         lic = card.get("license")
         if lic in (None, "other"):
             lic = card.get("license_name") or next((t.split(":", 1)[1] for t in d.get("tags", []) if t.startswith("license:")), "?")
-        return r, {"license": lic, "gated": bool(d.get("gated")), "id": d.get("id")}
+        return r, {"license": lic, "gated": bool(d.get("gated")), "id": d.get("id"), "created": (d.get("createdAt") or "")[:10]}
 
     with concurrent.futures.ThreadPoolExecutor(10) as pool:
         for mid, size in pool.map(browse, [m[5] for m in M if m[5]]):
@@ -287,10 +323,25 @@ def build():
         label, meaning, business = LICENCES.get(r["license"], (r["license"], "Read the licence before using it.", None))
         entry["hf"] = {"repo": r["id"] or h, "gated": r["gated"]}
         entry["licence"] = {"id": r["license"], "label": label, "meaning": meaning, "business": business}
+        org = entry["hf"]["repo"].split("/")[0]
+        if org not in MAKERS:
+            problems.append(f"{mid}: no maker entry for {org}")
+            continue
+        entry["org"] = org
+        entry["params"] = PARAMS.get(mid)
+        entry["released"] = r.get("created", "")[:7] or None
+        if mid in TESTED:
+            entry["tested"] = {"on": TESTED_ON, "tokens_per_s": TESTED[mid]}
+        if not entry["params"]:
+            problems.append(f"{mid}: no parameter count")
         models.append(entry)
     if problems:
         sys.exit("✗ " + "\n✗ ".join(problems))
-    OUT.write_text(json.dumps({"engine": {"webllm": WEBLLM}, "models": models}, indent=1, ensure_ascii=False) + "\n")
+    makers = {org: {"name": n, "family": f, "about": a, "logo": f"logos/{org}.webp"} for org, (n, f, a) in MAKERS.items()}
+    for org in makers:
+        if not (HERE.parent / makers[org]["logo"]).exists():
+            sys.exit(f"✗ missing logo {makers[org]['logo']}")
+    OUT.write_text(json.dumps({"engine": {"webllm": WEBLLM}, "makers": makers, "models": models}, indent=1, ensure_ascii=False) + "\n")
     inb = sum(1 for m in models if "browser" in m)
     print(f"  wrote {OUT.relative_to(HERE.parent.parent)} — {len(models)} models, {inb} run in the browser")
 
