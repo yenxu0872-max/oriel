@@ -1,0 +1,177 @@
+{
+ "SmolLM2-360M-Instruct-q4f16_1-MLC": {
+  "hf": "https://huggingface.co/mlc-ai/SmolLM2-360M-Instruct-q4f16_1-MLC",
+  "vram_mb": 376.06,
+  "f16": true,
+  "ctx": 4096,
+  "download_bytes": 203614080
+ },
+ "Qwen3-0.6B-q4f16_1-MLC": {
+  "hf": "https://huggingface.co/mlc-ai/Qwen3-0.6B-q4f16_1-MLC",
+  "vram_mb": 1403.34,
+  "f16": false,
+  "ctx": 4096,
+  "download_bytes": 335372288
+ },
+ "Qwen3.5-0.8B-q4f16_1-MLC": {
+  "hf": "https://huggingface.co/mlc-ai/Qwen3.5-0.8B-q4f16_1-MLC",
+  "vram_mb": 1629.49,
+  "f16": false,
+  "ctx": 4096,
+  "download_bytes": 423937664
+ },
+ "Llama-3.2-1B-Instruct-q4f16_1-MLC": {
+  "hf": "https://huggingface.co/mlc-ai/Llama-3.2-1B-Instruct-q4f16_1-MLC",
+  "vram_mb": 879.04,
+  "f16": false,
+  "ctx": 4096,
+  "download_bytes": 695242752
+ },
+ "Qwen3-1.7B-q4f16_1-MLC": {
+  "hf": "https://huggingface.co/mlc-ai/Qwen3-1.7B-q4f16_1-MLC",
+  "vram_mb": 2036.66,
+  "f16": false,
+  "ctx": 4096,
+  "download_bytes": 968001536
+ },
+ "SmolLM2-1.7B-Instruct-q4f16_1-MLC": {
+  "hf": "https://huggingface.co/mlc-ai/SmolLM2-1.7B-Instruct-q4f16_1-MLC",
+  "vram_mb": 1774.19,
+  "f16": true,
+  "ctx": 4096,
+  "download_bytes": 962793472
+ },
+ "Qwen2.5-Coder-1.5B-Instruct-q4f16_1-MLC": {
+  "hf": "https://huggingface.co/mlc-ai/Qwen2.5-Coder-1.5B-Instruct-q4f16_1-MLC",
+  "vram_mb": 1629.75,
+  "f16": false,
+  "ctx": 4096,
+  "download_bytes": 868547584
+ },
+ "Qwen2.5-Math-1.5B-Instruct-q4f16_1-MLC": {
+  "hf": "https://huggingface.co/mlc-ai/Qwen2.5-Math-1.5B-Instruct-q4f16_1-MLC",
+  "vram_mb": 1629.75,
+  "f16": false,
+  "ctx": 4096,
+  "download_bytes": 868547584
+ },
+ "Qwen3.5-2B-q4f16_1-MLC": {
+  "hf": "https://huggingface.co/mlc-ai/Qwen3.5-2B-q4f16_1-MLC",
+  "vram_mb": 2245.44,
+  "f16": false,
+  "ctx": 4096,
+  "download_bytes": 1059315328
+ },
+ "gemma-2-2b-it-q4f16_1-MLC": {
+  "hf": "https://huggingface.co/mlc-ai/gemma-2-2b-it-q4f16_1-MLC",
+  "vram_mb": 1895.3,
+  "f16": true,
+  "ctx": 4096,
+  "download_bytes": 1470915072
+ },
+ "Llama-3.2-3B-Instruct-q4f16_1-MLC": {
+  "hf": "https://huggingface.co/mlc-ai/Llama-3.2-3B-Instruct-q4f16_1-MLC",
+  "vram_mb": 2263.69,
+  "f16": false,
+  "ctx": 4096,
+  "download_bytes": 1807423488
+ },
+ "Hermes-3-Llama-3.2-3B-q4f16_1-MLC": {
+  "hf": "https://huggingface.co/mlc-ai/Hermes-3-Llama-3.2-3B-q4f16_1-MLC",
+  "vram_mb": 2263.69,
+  "f16": false,
+  "ctx": 4096,
+  "download_bytes": 1807423488
+ },
+ "Qwen2.5-Coder-3B-Instruct-q4f16_1-MLC": {
+  "hf": "https://huggingface.co/mlc-ai/Qwen2.5-Coder-3B-Instruct-q4f16_1-MLC",
+  "vram_mb": 2504.76,
+  "f16": false,
+  "ctx": 4096,
+  "download_bytes": 1736187904
+ },
+ "Phi-3.5-mini-instruct-q4f16_1-MLC": {
+  "hf": "https://huggingface.co/mlc-ai/Phi-3.5-mini-instruct-q4f16_1-MLC",
+  "vram_mb": 3672.07,
+  "f16": false,
+  "ctx": 4096,
+  "download_bytes": 2149644288
+ },
+ "Phi-4-mini-instruct-q4f16_1-MLC": {
+  "hf": "https://huggingface.co/mlc-ai/Phi-4-mini-instruct-q4f16_1-MLC",
+  "vram_mb": 3437.58,
+  "f16": false,
+  "ctx": 4096,
+  "download_bytes": 2158049280
+ },
+ "Qwen3-4B-q4f16_1-MLC": {
+  "hf": "https://huggingface.co/mlc-ai/Qwen3-4B-q4f16_1-MLC",
+  "vram_mb": 3431.59,
+  "f16": false,
+  "ctx": 4096,
+  "download_bytes": 2262920192
+ },
+ "Qwen3.5-4B-q4f16_1-MLC": {
+  "hf": "https://huggingface.co/mlc-ai/Qwen3.5-4B-q4f16_1-MLC",
+  "vram_mb": 3867.82,
+  "f16": false,
+  "ctx": 4096,
+  "download_bytes": 2367117312
+ },
+ "Phi-3.5-vision-instruct-q4f16_1-MLC": {
+  "hf": "https://huggingface.co/mlc-ai/Phi-3.5-vision-instruct-q4f16_1-MLC",
+  "vram_mb": 3952.18,
+  "f16": false,
+  "ctx": 4096,
+  "download_bytes": 2769074176
+ },
+ "Mistral-7B-Instruct-v0.3-q4f16_1-MLC": {
+  "hf": "https://huggingface.co/mlc-ai/Mistral-7B-Instruct-v0.3-q4f16_1-MLC",
+  "vram_mb": 4573.39,
+  "f16": true,
+  "ctx": 4096,
+  "download_bytes": 4077395968
+ },
+ "DeepSeek-R1-Distill-Qwen-7B-q4f16_1-MLC": {
+  "hf": "https://huggingface.co/mlc-ai/DeepSeek-R1-Distill-Qwen-7B-q4f16_1-MLC",
+  "vram_mb": 5106.67,
+  "f16": false,
+  "ctx": 4096,
+  "download_bytes": 4284263424
+ },
+ "Qwen2.5-Coder-7B-Instruct-q4f16_1-MLC": {
+  "hf": "https://huggingface.co/mlc-ai/Qwen2.5-Coder-7B-Instruct-q4f16_1-MLC",
+  "vram_mb": 5106.67,
+  "f16": false,
+  "ctx": 4096,
+  "download_bytes": 4284263424
+ },
+ "Llama-3.1-8B-Instruct-q4f16_1-MLC": {
+  "hf": "https://huggingface.co/mlc-ai/Llama-3.1-8B-Instruct-q4f16_1-MLC",
+  "vram_mb": 5001,
+  "f16": false,
+  "ctx": 4096,
+  "download_bytes": 4517404672
+ },
+ "Qwen3-8B-q4f16_1-MLC": {
+  "hf": "https://huggingface.co/mlc-ai/Qwen3-8B-q4f16_1-MLC",
+  "vram_mb": 5695.78,
+  "f16": false,
+  "ctx": 4096,
+  "download_bytes": 4607731712
+ },
+ "Qwen3.5-9B-q4f16_1-MLC": {
+  "hf": "https://huggingface.co/mlc-ai/Qwen3.5-9B-q4f16_1-MLC",
+  "vram_mb": 6433.01,
+  "f16": false,
+  "ctx": 4096,
+  "download_bytes": 5038040064
+ },
+ "gemma-2-9b-it-q4f16_1-MLC": {
+  "hf": "https://huggingface.co/mlc-ai/gemma-2-9b-it-q4f16_1-MLC",
+  "vram_mb": 6422.01,
+  "f16": true,
+  "ctx": 4096,
+  "download_bytes": 5199330304
+ }
+}

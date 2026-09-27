@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Assemble ui/index.html from the Oriel v3 design.
 
-    python3 ui/_build/build.py
+    python3 ui/_build/build.py          the Mac app's page (ui/index.html)
+    python3 ui/_build/build.py --web    the website's chat page (web/chat.html),
+                                        where models run in the browser itself
 
 Steps, in order:
   1. take the design's markup
@@ -14,15 +16,25 @@ Steps, in order:
   6. refuse to write the page if anything would load from the network
 """
 import html
+import json
 import math
 import re
+import shutil
 import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 UI = HERE.parent
 SRC = UI / "_design" / "Oriel v3.dc.html"
-OUT = UI / "index.html"
+WEB = "--web" in sys.argv
+SITE = UI.parent / "web"
+OUT = SITE / "chat.html" if WEB else UI / "index.html"
+
+# The web page's model download, shown in the empty chat and above the messages.
+LOAD_NOTE = """<sc-if value="{{ hasLoad }}"><div style="width:100%;max-width:640px;margin:18px auto 0;padding:12px 16px;border:1px solid #eeeef1;border-radius:14px;background:#f6f6f8;font-size:13.5px;color:#4a4a46;text-align:left">
+<div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline"><span>{{ loadText }}</span><span style="color:#8a8a84;font-variant-numeric:tabular-nums">{{ loadPct }}</span></div>
+<sc-if value="{{ loadBar }}"><div style="height:4px;border-radius:999px;background:#e4e4e9;margin-top:9px;overflow:hidden"><div style="height:100%;width:{{ loadWidth }};background:linear-gradient(90deg,oklch(0.68 0.19 300),oklch(0.7 0.15 230));border-radius:999px;transition:width .3s"></div></div></sc-if>
+</div></sc-if>"""
 
 
 # ------------------------------------------------------------------ helpers
@@ -289,12 +301,13 @@ tpl = remove_blocks(tpl, "button", '<button onClick="{{ pickImage }}"', "Create 
 tpl = insert_after_block(tpl, '<sc-if value="{{ webOff }}"', "sc-if", MIC, "microphone button")
 
 tpl = must_replace(tpl, ">Free plan<", ">{{ planLabel }}<", "'Free plan' → status")
-tpl = must_replace(tpl, "Images, PDFs, docs, spreadsheets", "Images, PDFs, Word, Excel, text",
+tpl = must_replace(tpl, "Images, PDFs, docs, spreadsheets",
+                   "PDFs, text and code, and images for Phi-3.5 Vision" if WEB else "Images, PDFs, Word, Excel, text",
                    "attachment description")
 tpl = must_replace(
     tpl, 'type="file" multiple="{{ true }}"',
-    'type="file" multiple="{{ true }}" accept="image/*,text/*,.pdf,.doc,.docx,.rtf,.odt,.xlsx,.pptx,.md,.csv,.json,'
-    '.js,.ts,.py,.swift,.html,.css,.xml,.yaml,.yml,.log,.sql,.sh"',
+    'type="file" multiple="{{ true }}" accept="image/*,text/*,.pdf,' + ('' if WEB else '.doc,.docx,.rtf,.odt,.xlsx,.pptx,') +
+    '.md,.csv,.json,.js,.ts,.py,.swift,.html,.css,.xml,.yaml,.yml,.log,.sql,.sh"',
     "file picker types")
 
 # code blocks: each paragraph is now either prose (the design's own markup) or code
@@ -331,7 +344,14 @@ tpl = tpl[:end] + appearance + tpl[end:]
 print("  inserted Appearance setting")
 
 tpl = must_replace(tpl, '<sc-for list="{{ messages }}" as="m">',
-                   MEMORY_NOTE + '<sc-for list="{{ messages }}" as="m">', "memory notice", count=1)
+                   (LOAD_NOTE if WEB else "") + MEMORY_NOTE + '<sc-for list="{{ messages }}" as="m">', "memory notice", count=1)
+if WEB:
+    i = tpl.find("{{ greeting }}</h1>")
+    if i < 0:
+        sys.exit("  ✗ greeting not found")
+    i += len("{{ greeting }}</h1>")
+    tpl = tpl[:i] + LOAD_NOTE + tpl[i:]
+    print("  inserted model download progress")
 
 print("head:")
 tpl = re.sub(r'\s*<link rel="preconnect" href="https://fonts\.googleapis\.com">', "", tpl)
@@ -345,6 +365,9 @@ tpl = must_replace(
     "Google Fonts → vendored Geist", count=1)
 
 tpl, theme_css, _ = colour_pass(tpl)
+if WEB:
+    WEB_CONFIG = json.dumps({"webllm": json.loads((SITE / "models.json").read_text())["engine"]["webllm"],
+                             "models": "models.json", "worker": "engine-worker.js", "browse": "models.html"})
 
 icon = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E"
         "%3Ccircle cx='16' cy='16' r='14' fill='%2317171a'/%3E"
@@ -364,9 +387,10 @@ app_css = ("<style>html[data-app=mac]{--titlebar:28px}"
 tpl = must_replace(
     tpl, '<meta name="viewport" content="width=device-width, initial-scale=1">',
     '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
-    '<title>oriel.ai</title>\n'
+    f'<title>{"Oriel — private AI in your browser" if WEB else "oriel.ai"}</title>\n'
     f'<link rel="icon" href="{icon}">\n'
-    f'{early_theme}\n{theme_css}\n{app_css}\n'
+    f'{early_theme}\n{theme_css}\n{"" if WEB else app_css}\n'
+    + (f'<script>window.ORIEL_WEB = {WEB_CONFIG};</script>\n' if WEB else '') +
     '<script src="./vendor/highlight.min.js"></script>',
     "title, favicon, theme, highlight.js", count=1)
 
@@ -385,5 +409,11 @@ for gone in ("pickResearch", "pickImage", "Free plan"):
 left = COLOR_RE.findall(re.sub(r"<script.*?</script>", "", re.sub(r"<style>.*?</style>", "", out.split("data-dc-script")[0], flags=re.S), flags=re.S))
 left = [c for c in left if not re.search(r'(stroke|fill)="' + re.escape(c), out)]
 OUT.write_text(out)
+if WEB:
+    # the runtime files the page loads, next to it
+    (SITE / "vendor").mkdir(exist_ok=True)
+    shutil.copy2(UI / "support.js", SITE / "support.js")
+    for f in (UI / "vendor").iterdir():
+        shutil.copy2(f, SITE / "vendor" / f.name)
 print(f"\n  wrote {OUT.relative_to(UI.parent)} — {len(out):,} bytes, no remote resources"
       + (f" · {len(left)} colours outside style attributes" if left else ""))

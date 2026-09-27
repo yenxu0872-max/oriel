@@ -1,0 +1,1404 @@
+{
+ "engine": {
+  "webllm": "0.2.85"
+ },
+ "models": [
+  {
+   "id": "smollm2-360m",
+   "name": "SmolLM2 360M",
+   "maker": "Hugging Face",
+   "blurb": "The smallest model here. It starts in seconds and runs almost anywhere, but it only handles simple questions.",
+   "good": [
+    "chat",
+    "tiny"
+   ],
+   "pick": null,
+   "browser": {
+    "id": "SmolLM2-360M-Instruct-q4f16_1-MLC",
+    "download_gb": 0.2,
+    "needs_gb": 1.9,
+    "f16": true
+   },
+   "ollama": {
+    "tag": "smollm2:360m",
+    "download_gb": 0.7,
+    "needs_gb": 2.2
+   },
+   "hf": {
+    "repo": "HuggingFaceTB/SmolLM2-360M-Instruct",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "qwen3-0.6b",
+   "name": "Qwen3 0.6B",
+   "maker": "Alibaba",
+   "blurb": "Tiny, yet it can think step by step before it answers. Good for trying things out on an older computer.",
+   "good": [
+    "chat",
+    "reasoning",
+    "tiny"
+   ],
+   "pick": null,
+   "browser": {
+    "id": "Qwen3-0.6B-q4f16_1-MLC",
+    "download_gb": 0.34,
+    "needs_gb": 2.9,
+    "f16": false
+   },
+   "ollama": {
+    "tag": "qwen3:0.6b",
+    "download_gb": 0.5,
+    "needs_gb": 2.0
+   },
+   "hf": {
+    "repo": "Qwen/Qwen3-0.6B",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "qwen3.5-0.8b",
+   "name": "Qwen3.5 0.8B",
+   "maker": "Alibaba",
+   "blurb": "The newest tiny Qwen: quick answers in many languages, on almost any device.",
+   "good": [
+    "chat",
+    "languages",
+    "tiny"
+   ],
+   "pick": null,
+   "browser": {
+    "id": "Qwen3.5-0.8B-q4f16_1-MLC",
+    "download_gb": 0.42,
+    "needs_gb": 3.1,
+    "f16": false
+   },
+   "ollama": {
+    "tag": "qwen3.5:0.8b",
+    "download_gb": 1.0,
+    "needs_gb": 2.5
+   },
+   "hf": {
+    "repo": "Qwen/Qwen3.5-0.8B",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "gemma3-1b",
+   "name": "Gemma 3 1B",
+   "maker": "Google",
+   "blurb": "Google's smallest model: friendly writing and good with many languages, in well under 1 GB.",
+   "good": [
+    "chat",
+    "writing",
+    "languages",
+    "tiny"
+   ],
+   "pick": null,
+   "ollama": {
+    "tag": "gemma3:1b",
+    "download_gb": 0.8,
+    "needs_gb": 2.3
+   },
+   "hf": {
+    "repo": "google/gemma-3-1b-it",
+    "gated": true
+   },
+   "licence": {
+    "id": "gemma",
+    "label": "Gemma Terms of Use",
+    "meaning": "Free, including business, within Google's use policy.",
+    "business": true
+   }
+  },
+  {
+   "id": "llama3.2-1b",
+   "name": "Llama 3.2 1B",
+   "maker": "Meta",
+   "blurb": "A fast, light everyday assistant that works on most laptops. The best place to start on an older computer.",
+   "good": [
+    "chat",
+    "tiny"
+   ],
+   "pick": "Best for older computers",
+   "browser": {
+    "id": "Llama-3.2-1B-Instruct-q4f16_1-MLC",
+    "download_gb": 0.7,
+    "needs_gb": 2.4,
+    "f16": false
+   },
+   "ollama": {
+    "tag": "llama3.2:1b",
+    "download_gb": 1.3,
+    "needs_gb": 2.8
+   },
+   "hf": {
+    "repo": "meta-llama/Llama-3.2-1B-Instruct",
+    "gated": true
+   },
+   "licence": {
+    "id": "llama3.2",
+    "label": "Llama 3.2 Community Licence",
+    "meaning": "Free for personal and most business use; read Meta's terms.",
+    "business": true
+   }
+  },
+  {
+   "id": "deepseek-r1-1.5b",
+   "name": "DeepSeek R1 1.5B",
+   "maker": "DeepSeek",
+   "blurb": "Shows its working before it answers. Good at maths puzzles, but slower, because it always thinks first.",
+   "good": [
+    "reasoning",
+    "maths"
+   ],
+   "pick": null,
+   "ollama": {
+    "tag": "deepseek-r1:1.5b",
+    "download_gb": 1.1,
+    "needs_gb": 2.6
+   },
+   "hf": {
+    "repo": "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B",
+    "gated": false
+   },
+   "licence": {
+    "id": "mit",
+    "label": "MIT",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "qwen3-1.7b",
+   "name": "Qwen3 1.7B",
+   "maker": "Alibaba",
+   "blurb": "A capable small all-rounder that can switch on step-by-step thinking for tricky questions.",
+   "good": [
+    "chat",
+    "reasoning"
+   ],
+   "pick": null,
+   "browser": {
+    "id": "Qwen3-1.7B-q4f16_1-MLC",
+    "download_gb": 0.97,
+    "needs_gb": 3.5,
+    "f16": false
+   },
+   "ollama": {
+    "tag": "qwen3:1.7b",
+    "download_gb": 1.4,
+    "needs_gb": 2.9
+   },
+   "hf": {
+    "repo": "Qwen/Qwen3-1.7B",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "smollm2-1.7b",
+   "name": "SmolLM2 1.7B",
+   "maker": "Hugging Face",
+   "blurb": "A fully open model trained on carefully chosen data. Good for everyday questions.",
+   "good": [
+    "chat"
+   ],
+   "pick": null,
+   "browser": {
+    "id": "SmolLM2-1.7B-Instruct-q4f16_1-MLC",
+    "download_gb": 0.96,
+    "needs_gb": 3.2,
+    "f16": true
+   },
+   "ollama": {
+    "tag": "smollm2:1.7b",
+    "download_gb": 1.8,
+    "needs_gb": 3.3
+   },
+   "hf": {
+    "repo": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "qwen2.5-coder-1.5b",
+   "name": "Qwen2.5 Coder 1.5B",
+   "maker": "Alibaba",
+   "blurb": "A small coding helper: explains code, writes short functions and spots bugs.",
+   "good": [
+    "coding"
+   ],
+   "pick": null,
+   "browser": {
+    "id": "Qwen2.5-Coder-1.5B-Instruct-q4f16_1-MLC",
+    "download_gb": 0.87,
+    "needs_gb": 3.1,
+    "f16": false
+   },
+   "ollama": {
+    "tag": "qwen2.5-coder:1.5b",
+    "download_gb": 1.0,
+    "needs_gb": 2.5
+   },
+   "hf": {
+    "repo": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "qwen2.5-math-1.5b",
+   "name": "Qwen2.5 Math 1.5B",
+   "maker": "Alibaba",
+   "blurb": "Built for maths problems, worked step by step. Not meant for general chat.",
+   "good": [
+    "maths"
+   ],
+   "pick": null,
+   "browser": {
+    "id": "Qwen2.5-Math-1.5B-Instruct-q4f16_1-MLC",
+    "download_gb": 0.87,
+    "needs_gb": 3.1,
+    "f16": false
+   },
+   "hf": {
+    "repo": "Qwen/Qwen2.5-Math-1.5B-Instruct",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "qwen3.5-2b",
+   "name": "Qwen3.5 2B",
+   "maker": "Alibaba",
+   "blurb": "The newest small Qwen, with a good balance of speed and smarts for everyday use.",
+   "good": [
+    "chat",
+    "languages"
+   ],
+   "pick": null,
+   "browser": {
+    "id": "Qwen3.5-2B-q4f16_1-MLC",
+    "download_gb": 1.06,
+    "needs_gb": 3.7,
+    "f16": false
+   },
+   "ollama": {
+    "tag": "qwen3.5:2b",
+    "download_gb": 2.7,
+    "needs_gb": 4.2
+   },
+   "hf": {
+    "repo": "Qwen/Qwen3.5-2B",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "gemma2-2b",
+   "name": "Gemma 2 2B",
+   "maker": "Google",
+   "blurb": "Google's popular small model, known for natural, pleasant writing.",
+   "good": [
+    "chat",
+    "writing"
+   ],
+   "pick": null,
+   "browser": {
+    "id": "gemma-2-2b-it-q4f16_1-MLC",
+    "download_gb": 1.47,
+    "needs_gb": 3.4,
+    "f16": true
+   },
+   "ollama": {
+    "tag": "gemma2:2b",
+    "download_gb": 1.6,
+    "needs_gb": 3.1
+   },
+   "hf": {
+    "repo": "google/gemma-2-2b-it",
+    "gated": true
+   },
+   "licence": {
+    "id": "gemma",
+    "label": "Gemma Terms of Use",
+    "meaning": "Free, including business, within Google's use policy.",
+    "business": true
+   }
+  },
+  {
+   "id": "llama3.2-3b",
+   "name": "Llama 3.2 3B",
+   "maker": "Meta",
+   "blurb": "A solid everyday assistant: clearly smarter than the 1B, and still quick.",
+   "good": [
+    "chat",
+    "writing"
+   ],
+   "pick": null,
+   "browser": {
+    "id": "Llama-3.2-3B-Instruct-q4f16_1-MLC",
+    "download_gb": 1.81,
+    "needs_gb": 3.7,
+    "f16": false
+   },
+   "ollama": {
+    "tag": "llama3.2:3b",
+    "download_gb": 2.0,
+    "needs_gb": 3.5
+   },
+   "hf": {
+    "repo": "meta-llama/Llama-3.2-3B-Instruct",
+    "gated": true
+   },
+   "licence": {
+    "id": "llama3.2",
+    "label": "Llama 3.2 Community Licence",
+    "meaning": "Free for personal and most business use; read Meta's terms.",
+    "business": true
+   }
+  },
+  {
+   "id": "hermes3-3b",
+   "name": "Hermes 3 3B",
+   "maker": "Nous Research",
+   "blurb": "A Llama-based model tuned to follow instructions closely and stay in character.",
+   "good": [
+    "chat",
+    "writing"
+   ],
+   "pick": null,
+   "browser": {
+    "id": "Hermes-3-Llama-3.2-3B-q4f16_1-MLC",
+    "download_gb": 1.81,
+    "needs_gb": 3.7,
+    "f16": false
+   },
+   "ollama": {
+    "tag": "hermes3:3b",
+    "download_gb": 2.0,
+    "needs_gb": 3.5
+   },
+   "hf": {
+    "repo": "NousResearch/Hermes-3-Llama-3.2-3B",
+    "gated": false
+   },
+   "licence": {
+    "id": "llama3",
+    "label": "Llama 3 Community Licence",
+    "meaning": "Free for personal and most business use; read Meta's terms.",
+    "business": true
+   }
+  },
+  {
+   "id": "qwen2.5-coder-3b",
+   "name": "Qwen2.5 Coder 3B",
+   "maker": "Alibaba",
+   "blurb": "A stronger small coding helper. Its licence allows personal and research use only.",
+   "good": [
+    "coding"
+   ],
+   "pick": null,
+   "browser": {
+    "id": "Qwen2.5-Coder-3B-Instruct-q4f16_1-MLC",
+    "download_gb": 1.74,
+    "needs_gb": 3.9,
+    "f16": false
+   },
+   "ollama": {
+    "tag": "qwen2.5-coder:3b",
+    "download_gb": 1.9,
+    "needs_gb": 3.4
+   },
+   "hf": {
+    "repo": "Qwen/Qwen2.5-Coder-3B-Instruct",
+    "gated": false
+   },
+   "licence": {
+    "id": "qwen-research",
+    "label": "Qwen Research Licence",
+    "meaning": "Personal and research use only — not for business.",
+    "business": false
+   }
+  },
+  {
+   "id": "phi3.5-mini",
+   "name": "Phi-3.5 mini",
+   "maker": "Microsoft",
+   "blurb": "Microsoft's compact model, good at reasoning and explaining things for its size.",
+   "good": [
+    "chat",
+    "reasoning"
+   ],
+   "pick": null,
+   "browser": {
+    "id": "Phi-3.5-mini-instruct-q4f16_1-MLC",
+    "download_gb": 2.15,
+    "needs_gb": 5.1,
+    "f16": false
+   },
+   "ollama": {
+    "tag": "phi3.5:3.8b",
+    "download_gb": 2.2,
+    "needs_gb": 3.7
+   },
+   "hf": {
+    "repo": "microsoft/Phi-3.5-mini-instruct",
+    "gated": false
+   },
+   "licence": {
+    "id": "mit",
+    "label": "MIT",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "phi4-mini",
+   "name": "Phi-4 mini",
+   "maker": "Microsoft",
+   "blurb": "Strong at maths and logic for its size.",
+   "good": [
+    "reasoning",
+    "maths"
+   ],
+   "pick": null,
+   "browser": {
+    "id": "Phi-4-mini-instruct-q4f16_1-MLC",
+    "download_gb": 2.16,
+    "needs_gb": 4.9,
+    "f16": false
+   },
+   "ollama": {
+    "tag": "phi4-mini:3.8b",
+    "download_gb": 2.5,
+    "needs_gb": 4.0
+   },
+   "hf": {
+    "repo": "microsoft/Phi-4-mini-instruct",
+    "gated": false
+   },
+   "licence": {
+    "id": "mit",
+    "label": "MIT",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "qwen3-4b",
+   "name": "Qwen3 4B",
+   "maker": "Alibaba",
+   "blurb": "The best all-rounder that runs in a browser: it writes, explains, codes, and can think step by step on hard questions.",
+   "good": [
+    "chat",
+    "reasoning",
+    "coding",
+    "languages"
+   ],
+   "pick": "Best in the browser",
+   "browser": {
+    "id": "Qwen3-4B-q4f16_1-MLC",
+    "download_gb": 2.26,
+    "needs_gb": 4.9,
+    "f16": false
+   },
+   "ollama": {
+    "tag": "qwen3:4b",
+    "download_gb": 2.5,
+    "needs_gb": 4.0
+   },
+   "hf": {
+    "repo": "Qwen/Qwen3-4B",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "qwen3.5-4b",
+   "name": "Qwen3.5 4B",
+   "maker": "Alibaba",
+   "blurb": "The newest mid-size Qwen, with sharper answers than Qwen3 4B at a similar size.",
+   "good": [
+    "chat",
+    "reasoning",
+    "languages"
+   ],
+   "pick": null,
+   "browser": {
+    "id": "Qwen3.5-4B-q4f16_1-MLC",
+    "download_gb": 2.37,
+    "needs_gb": 5.3,
+    "f16": false
+   },
+   "ollama": {
+    "tag": "qwen3.5:4b",
+    "download_gb": 3.4,
+    "needs_gb": 4.9
+   },
+   "hf": {
+    "repo": "Qwen/Qwen3.5-4B",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "phi3.5-vision",
+   "name": "Phi-3.5 Vision",
+   "maker": "Microsoft",
+   "blurb": "Reads images: it can describe photos and read screenshots and charts.",
+   "good": [
+    "vision"
+   ],
+   "pick": null,
+   "browser": {
+    "id": "Phi-3.5-vision-instruct-q4f16_1-MLC",
+    "download_gb": 2.77,
+    "needs_gb": 5.4,
+    "f16": false
+   },
+   "hf": {
+    "repo": "microsoft/Phi-3.5-vision-instruct",
+    "gated": false
+   },
+   "licence": {
+    "id": "mit",
+    "label": "MIT",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "mistral-7b",
+   "name": "Mistral 7B",
+   "maker": "Mistral AI",
+   "blurb": "A classic, dependable model from France. Good general writing and chat.",
+   "good": [
+    "chat",
+    "writing"
+   ],
+   "pick": null,
+   "browser": {
+    "id": "Mistral-7B-Instruct-v0.3-q4f16_1-MLC",
+    "download_gb": 4.08,
+    "needs_gb": 6.0,
+    "f16": true
+   },
+   "ollama": {
+    "tag": "mistral:7b",
+    "download_gb": 4.4,
+    "needs_gb": 5.9
+   },
+   "hf": {
+    "repo": "mistralai/Mistral-7B-Instruct-v0.3",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "deepseek-r1-7b",
+   "name": "DeepSeek R1 7B",
+   "maker": "DeepSeek",
+   "blurb": "Thinks problems through step by step before answering. Strong at maths and logic.",
+   "good": [
+    "reasoning",
+    "maths"
+   ],
+   "pick": null,
+   "browser": {
+    "id": "DeepSeek-R1-Distill-Qwen-7B-q4f16_1-MLC",
+    "download_gb": 4.28,
+    "needs_gb": 6.5,
+    "f16": false
+   },
+   "ollama": {
+    "tag": "deepseek-r1:7b",
+    "download_gb": 4.7,
+    "needs_gb": 6.2
+   },
+   "hf": {
+    "repo": "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
+    "gated": false
+   },
+   "licence": {
+    "id": "mit",
+    "label": "MIT",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "qwen2.5-coder-7b",
+   "name": "Qwen2.5 Coder 7B",
+   "maker": "Alibaba",
+   "blurb": "A serious coding assistant: it writes, explains and reviews real code.",
+   "good": [
+    "coding"
+   ],
+   "pick": "Best for coding",
+   "browser": {
+    "id": "Qwen2.5-Coder-7B-Instruct-q4f16_1-MLC",
+    "download_gb": 4.28,
+    "needs_gb": 6.5,
+    "f16": false
+   },
+   "ollama": {
+    "tag": "qwen2.5-coder:7b",
+    "download_gb": 4.7,
+    "needs_gb": 6.2
+   },
+   "hf": {
+    "repo": "Qwen/Qwen2.5-Coder-7B-Instruct",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "llama3.1-8b",
+   "name": "Llama 3.1 8B",
+   "maker": "Meta",
+   "blurb": "Meta's well-known 8B model: reliable chat and writing in many languages.",
+   "good": [
+    "chat",
+    "writing",
+    "languages"
+   ],
+   "pick": null,
+   "browser": {
+    "id": "Llama-3.1-8B-Instruct-q4f16_1-MLC",
+    "download_gb": 4.52,
+    "needs_gb": 6.4,
+    "f16": false
+   },
+   "ollama": {
+    "tag": "llama3.1:8b",
+    "download_gb": 4.9,
+    "needs_gb": 6.4
+   },
+   "hf": {
+    "repo": "meta-llama/Llama-3.1-8B-Instruct",
+    "gated": true
+   },
+   "licence": {
+    "id": "llama3.1",
+    "label": "Llama 3.1 Community Licence",
+    "meaning": "Free for personal and most business use; read Meta's terms.",
+    "business": true
+   }
+  },
+  {
+   "id": "qwen3-8b",
+   "name": "Qwen3 8B",
+   "maker": "Alibaba",
+   "blurb": "Smart and versatile, with optional step-by-step thinking. Needs a strong computer to run in the browser.",
+   "good": [
+    "chat",
+    "reasoning",
+    "coding"
+   ],
+   "pick": null,
+   "browser": {
+    "id": "Qwen3-8B-q4f16_1-MLC",
+    "download_gb": 4.61,
+    "needs_gb": 7.1,
+    "f16": false
+   },
+   "ollama": {
+    "tag": "qwen3:8b",
+    "download_gb": 5.2,
+    "needs_gb": 6.7
+   },
+   "hf": {
+    "repo": "Qwen/Qwen3-8B",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "qwen3.5-9b",
+   "name": "Qwen3.5 9B",
+   "maker": "Alibaba",
+   "blurb": "The largest model that runs in a browser here, and the smartest — if your computer can handle it.",
+   "good": [
+    "chat",
+    "reasoning",
+    "languages"
+   ],
+   "pick": null,
+   "browser": {
+    "id": "Qwen3.5-9B-q4f16_1-MLC",
+    "download_gb": 5.04,
+    "needs_gb": 7.8,
+    "f16": false
+   },
+   "ollama": {
+    "tag": "qwen3.5:9b",
+    "download_gb": 6.6,
+    "needs_gb": 8.1
+   },
+   "hf": {
+    "repo": "Qwen/Qwen3.5-9B",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "gemma2-9b",
+   "name": "Gemma 2 9B",
+   "maker": "Google",
+   "blurb": "Google's larger Gemma 2, with thoughtful, well-written answers.",
+   "good": [
+    "chat",
+    "writing"
+   ],
+   "pick": null,
+   "browser": {
+    "id": "gemma-2-9b-it-q4f16_1-MLC",
+    "download_gb": 5.2,
+    "needs_gb": 7.8,
+    "f16": true
+   },
+   "ollama": {
+    "tag": "gemma2:9b",
+    "download_gb": 5.4,
+    "needs_gb": 6.9
+   },
+   "hf": {
+    "repo": "google/gemma-2-9b-it",
+    "gated": true
+   },
+   "licence": {
+    "id": "gemma",
+    "label": "Gemma Terms of Use",
+    "meaning": "Free, including business, within Google's use policy.",
+    "business": true
+   }
+  },
+  {
+   "id": "gemma4-e2b",
+   "name": "Gemma 4 E2B",
+   "maker": "Google",
+   "blurb": "Google's newest small model. It understands images and audio as well as text.",
+   "good": [
+    "chat",
+    "vision",
+    "languages"
+   ],
+   "pick": null,
+   "ollama": {
+    "tag": "gemma4:e2b",
+    "download_gb": 7.2,
+    "needs_gb": 8.7
+   },
+   "hf": {
+    "repo": "google/gemma-4-E2B-it",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "gemma4-e4b",
+   "name": "Gemma 4 E4B",
+   "maker": "Google",
+   "blurb": "What Oriel for Mac runs: quick and clever, and it can read photos and documents.",
+   "good": [
+    "chat",
+    "vision",
+    "languages"
+   ],
+   "pick": "Best to download",
+   "ollama": {
+    "tag": "gemma4:e4b-it-qat",
+    "download_gb": 6.1,
+    "needs_gb": 7.6
+   },
+   "hf": {
+    "repo": "google/gemma-4-E4B-it",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "gemma4-12b",
+   "name": "Gemma 4 12B",
+   "maker": "Google",
+   "blurb": "More knowledge and sharper reasoning than E4B, and it sees images too.",
+   "good": [
+    "chat",
+    "reasoning",
+    "vision"
+   ],
+   "pick": null,
+   "ollama": {
+    "tag": "gemma4:12b",
+    "download_gb": 7.6,
+    "needs_gb": 9.1
+   },
+   "hf": {
+    "repo": "google/gemma-4-12B-it",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "gemma3-4b",
+   "name": "Gemma 3 4B",
+   "maker": "Google",
+   "blurb": "Small, but it can read images. A great first model for photos and screenshots.",
+   "good": [
+    "chat",
+    "vision"
+   ],
+   "pick": null,
+   "ollama": {
+    "tag": "gemma3:4b",
+    "download_gb": 3.3,
+    "needs_gb": 4.8
+   },
+   "hf": {
+    "repo": "google/gemma-3-4b-it",
+    "gated": true
+   },
+   "licence": {
+    "id": "gemma",
+    "label": "Gemma Terms of Use",
+    "meaning": "Free, including business, within Google's use policy.",
+    "business": true
+   }
+  },
+  {
+   "id": "qwen2.5vl-7b",
+   "name": "Qwen2.5 VL 7B",
+   "maker": "Alibaba",
+   "blurb": "Reads documents, charts and photos in fine detail.",
+   "good": [
+    "vision"
+   ],
+   "pick": null,
+   "ollama": {
+    "tag": "qwen2.5vl:7b",
+    "download_gb": 6.0,
+    "needs_gb": 7.5
+   },
+   "hf": {
+    "repo": "Qwen/Qwen2.5-VL-7B-Instruct",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "llama3.2-vision-11b",
+   "name": "Llama 3.2 Vision 11B",
+   "maker": "Meta",
+   "blurb": "Meta's model that understands images: describe, compare and read what's in a picture.",
+   "good": [
+    "vision"
+   ],
+   "pick": null,
+   "ollama": {
+    "tag": "llama3.2-vision:11b",
+    "download_gb": 7.8,
+    "needs_gb": 9.3
+   },
+   "hf": {
+    "repo": "meta-llama/Llama-3.2-11B-Vision-Instruct",
+    "gated": true
+   },
+   "licence": {
+    "id": "llama3.2",
+    "label": "Llama 3.2 Community Licence",
+    "meaning": "Free for personal and most business use; read Meta's terms.",
+    "business": true
+   }
+  },
+  {
+   "id": "deepseek-r1-8b",
+   "name": "DeepSeek R1 8B",
+   "maker": "DeepSeek",
+   "blurb": "DeepSeek's newer small thinker, built on Qwen3 8B. Strong reasoning for its size.",
+   "good": [
+    "reasoning",
+    "maths"
+   ],
+   "pick": null,
+   "ollama": {
+    "tag": "deepseek-r1:8b",
+    "download_gb": 5.2,
+    "needs_gb": 6.7
+   },
+   "hf": {
+    "repo": "deepseek-ai/DeepSeek-R1-0528-Qwen3-8B",
+    "gated": false
+   },
+   "licence": {
+    "id": "mit",
+    "label": "MIT",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "qwen3-14b",
+   "name": "Qwen3 14B",
+   "maker": "Alibaba",
+   "blurb": "A big step up in knowledge and reasoning, with step-by-step thinking.",
+   "good": [
+    "chat",
+    "reasoning",
+    "coding"
+   ],
+   "pick": null,
+   "ollama": {
+    "tag": "qwen3:14b",
+    "download_gb": 9.3,
+    "needs_gb": 10.8
+   },
+   "hf": {
+    "repo": "Qwen/Qwen3-14B",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "phi4-14b",
+   "name": "Phi-4 14B",
+   "maker": "Microsoft",
+   "blurb": "Microsoft's larger Phi: excellent at maths, science and careful reasoning.",
+   "good": [
+    "reasoning",
+    "maths"
+   ],
+   "pick": null,
+   "ollama": {
+    "tag": "phi4:14b",
+    "download_gb": 9.1,
+    "needs_gb": 10.6
+   },
+   "hf": {
+    "repo": "microsoft/phi-4",
+    "gated": false
+   },
+   "licence": {
+    "id": "mit",
+    "label": "MIT",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "deepseek-r1-14b",
+   "name": "DeepSeek R1 14B",
+   "maker": "DeepSeek",
+   "blurb": "Thinks long and hard before answering: very good at maths and logic.",
+   "good": [
+    "reasoning",
+    "maths"
+   ],
+   "pick": null,
+   "ollama": {
+    "tag": "deepseek-r1:14b",
+    "download_gb": 9.0,
+    "needs_gb": 10.5
+   },
+   "hf": {
+    "repo": "deepseek-ai/DeepSeek-R1-Distill-Qwen-14B",
+    "gated": false
+   },
+   "licence": {
+    "id": "mit",
+    "label": "MIT",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "qwen2.5-coder-14b",
+   "name": "Qwen2.5 Coder 14B",
+   "maker": "Alibaba",
+   "blurb": "A strong coding model for real projects, if you have the memory.",
+   "good": [
+    "coding"
+   ],
+   "pick": null,
+   "ollama": {
+    "tag": "qwen2.5-coder:14b",
+    "download_gb": 9.0,
+    "needs_gb": 10.5
+   },
+   "hf": {
+    "repo": "Qwen/Qwen2.5-Coder-14B-Instruct",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "gpt-oss-20b",
+   "name": "gpt-oss 20B",
+   "maker": "OpenAI",
+   "blurb": "OpenAI's open model: strong reasoning. It only just fits a 16 GB computer.",
+   "good": [
+    "chat",
+    "reasoning"
+   ],
+   "pick": null,
+   "ollama": {
+    "tag": "gpt-oss:20b",
+    "download_gb": 13.8,
+    "needs_gb": 15.3
+   },
+   "hf": {
+    "repo": "openai/gpt-oss-20b",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "mistral-small-24b",
+   "name": "Mistral Small 3.2",
+   "maker": "Mistral AI",
+   "blurb": "Mistral's capable mid-size model. Good writing, follows instructions well, and reads images.",
+   "good": [
+    "chat",
+    "writing",
+    "vision"
+   ],
+   "pick": null,
+   "ollama": {
+    "tag": "mistral-small3.2:24b",
+    "download_gb": 15.2,
+    "needs_gb": 16.7
+   },
+   "hf": {
+    "repo": "mistralai/Mistral-Small-3.2-24B-Instruct-2506",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "devstral-24b",
+   "name": "Devstral Small",
+   "maker": "Mistral AI",
+   "blurb": "Made to work as a coding agent on real software projects.",
+   "good": [
+    "coding"
+   ],
+   "pick": null,
+   "ollama": {
+    "tag": "devstral:24b",
+    "download_gb": 14.3,
+    "needs_gb": 15.8
+   },
+   "hf": {
+    "repo": "mistralai/Devstral-Small-2507",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "qwen3.5-27b",
+   "name": "Qwen3.5 27B",
+   "maker": "Alibaba",
+   "blurb": "Large and very capable, with deep knowledge and careful reasoning.",
+   "good": [
+    "chat",
+    "reasoning",
+    "languages"
+   ],
+   "pick": null,
+   "ollama": {
+    "tag": "qwen3.5:27b",
+    "download_gb": 17.4,
+    "needs_gb": 18.9
+   },
+   "hf": {
+    "repo": "Qwen/Qwen3.5-27B",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "gemma4-26b",
+   "name": "Gemma 4 26B",
+   "maker": "Google",
+   "blurb": "A 'mixture of experts': big-model smarts that runs faster than its size suggests. Sees images.",
+   "good": [
+    "chat",
+    "reasoning",
+    "vision"
+   ],
+   "pick": null,
+   "ollama": {
+    "tag": "gemma4:26b",
+    "download_gb": 18.6,
+    "needs_gb": 20.1
+   },
+   "hf": {
+    "repo": "google/gemma-4-26B-A4B-it",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "qwen3-30b",
+   "name": "Qwen3 30B",
+   "maker": "Alibaba",
+   "blurb": "Also a mixture of experts: big-model answers at small-model speed, if you have 32 GB of memory.",
+   "good": [
+    "chat",
+    "reasoning",
+    "coding"
+   ],
+   "pick": null,
+   "ollama": {
+    "tag": "qwen3:30b",
+    "download_gb": 18.6,
+    "needs_gb": 20.1
+   },
+   "hf": {
+    "repo": "Qwen/Qwen3-30B-A3B",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "qwen3-coder-30b",
+   "name": "Qwen3 Coder 30B",
+   "maker": "Alibaba",
+   "blurb": "One of the best open coding models, and fast for its size.",
+   "good": [
+    "coding"
+   ],
+   "pick": null,
+   "ollama": {
+    "tag": "qwen3-coder:30b",
+    "download_gb": 18.6,
+    "needs_gb": 20.1
+   },
+   "hf": {
+    "repo": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "gemma4-31b",
+   "name": "Gemma 4 31B",
+   "maker": "Google",
+   "blurb": "Google's most capable open model. Needs a powerful computer.",
+   "good": [
+    "chat",
+    "reasoning",
+    "vision"
+   ],
+   "pick": null,
+   "ollama": {
+    "tag": "gemma4:31b",
+    "download_gb": 19.9,
+    "needs_gb": 21.4
+   },
+   "hf": {
+    "repo": "google/gemma-4-31B-it",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  },
+  {
+   "id": "llama3.3-70b",
+   "name": "Llama 3.3 70B",
+   "maker": "Meta",
+   "blurb": "Meta's large model, close to the best there is. Needs 64 GB of memory.",
+   "good": [
+    "chat",
+    "writing",
+    "languages"
+   ],
+   "pick": null,
+   "ollama": {
+    "tag": "llama3.3:70b",
+    "download_gb": 42.5,
+    "needs_gb": 44.0
+   },
+   "hf": {
+    "repo": "meta-llama/Llama-3.3-70B-Instruct",
+    "gated": true
+   },
+   "licence": {
+    "id": "llama3.3",
+    "label": "Llama 3.3 Community Licence",
+    "meaning": "Free for personal and most business use; read Meta's terms.",
+    "business": true
+   }
+  },
+  {
+   "id": "gpt-oss-120b",
+   "name": "gpt-oss 120B",
+   "maker": "OpenAI",
+   "blurb": "OpenAI's biggest open model. Needs a workstation with 80 GB of memory or more.",
+   "good": [
+    "chat",
+    "reasoning"
+   ],
+   "pick": null,
+   "ollama": {
+    "tag": "gpt-oss:120b",
+    "download_gb": 65.4,
+    "needs_gb": 66.9
+   },
+   "hf": {
+    "repo": "openai/gpt-oss-120b",
+    "gated": false
+   },
+   "licence": {
+    "id": "apache-2.0",
+    "label": "Apache 2.0",
+    "meaning": "Free for any use, including business.",
+    "business": true
+   }
+  }
+ ]
+}

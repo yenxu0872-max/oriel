@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>oriel.ai — AI models you can run yourself</title>
+<meta name="description" content="Pick an AI model, then chat with it right in your browser with Oriel — or download it to run anywhere. No account, and nothing you type leaves your device.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%2317171a'/%3E%3Ccircle cx='15' cy='17' r='8' fill='%237b8cf5'/%3E%3Ccircle cx='22.5' cy='9.5' r='3.6' fill='%23fff' stroke='%2317171a' stroke-width='1.6'/%3E%3C/svg%3E">
+<script>try{var t=localStorage.getItem('oriel-theme');if(t==='Dark')document.documentElement.dataset.theme='dark';else if(t==='Light')document.documentElement.dataset.theme='light';}catch(e){}</script>
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<header class="top" id="top">
+  <div class="wrap bar">
+    <a class="brand" href="./"><span class="orb" aria-hidden="true"></span><b>Oriel</b></a>
+    <nav class="nav">
+      <a class="opt" href="models.html">Models</a>
+      <a class="opt" href="#how">How it works</a>
+      <a class="btn small primary" id="openChat" href="chat.html">Open Oriel</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="glow" aria-hidden="true"></div>
+    <div class="wrap hero-grid">
+      <div>
+        <h1>AI models you can <br>run yourself.</h1>
+        <p class="lede">Pick a model, then chat with it right here in your browser with Oriel — or download it to run anywhere. <b>Private by design: nothing you type ever leaves your device.</b></p>
+        <div class="hero-actions">
+          <a class="btn primary" href="models.html">Browse models</a>
+          <a class="btn" href="#how">How it works</a>
+        </div>
+        <div class="promise">
+          <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Free</span>
+          <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>No account</span>
+          <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Runs on your own device</span>
+        </div>
+      </div>
+      <aside class="device" aria-label="Your device">
+        <h2>Your device</h2>
+        <div class="status" id="gpuStatus"><span class="dot"></span><div><b>Checking this browser…</b><small>&nbsp;</small></div></div>
+        <p class="label"><span>How much memory (RAM) your computer has</span></p>
+        <div class="seg" id="ramSeg" role="group" aria-label="Memory">
+          <button data-ram="4">Phone</button><button data-ram="8">8 GB</button><button data-ram="16">16 GB</button><button data-ram="32">32 GB</button><button data-ram="64">64 GB+</button>
+        </div>
+        <p class="hint">Not sure? On a Mac: Apple menu › About This Mac. On Windows: Settings › System › About.</p>
+        <div class="stored" id="stored" hidden><span id="storedText"></span><button class="btn small" id="manageBtn">Manage</button></div>
+      </aside>
+    </div>
+  </div>
+
+  <section class="wrap" id="how" aria-labelledby="howTitle">
+    <div class="sec-head"><div><h2 id="howTitle">How it works</h2><p>Two ways to run every model — pick whichever suits you.</p></div></div>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h3>Pick a model</h3><p>Smaller models are quicker and fit any computer. Bigger ones know more but need more memory. The coloured dot tells you what fits yours.</p></div>
+      <div class="step"><div class="n">2</div><h3>Run it in Oriel</h3><p>Press <b>Run in Oriel</b> and the model downloads into this browser once, then answers straight from your graphics chip. Close the tab and it's still there next time.</p></div>
+      <div class="step"><div class="n">3</div><h3>Or run it anywhere</h3><p>Every model page shows the one command to download it with Ollama, or where to find it in LM Studio — free apps that run models on your computer.</p></div>
+    </div>
+    <div class="faq">
+      <details><summary>Is it really private?</summary><p>Yes. When you run a model in Oriel, it runs inside your browser on your own device. Your messages are never sent to a server — not ours, not anyone's. Your chats are saved only in this browser.</p></details>
+      <details><summary>Why is the first time slow?</summary><p>The model has to download once — from about 0.2 GB for the smallest up to 5 GB. After that it's stored in your browser and starts in seconds.</p></details>
+      <details><summary>Which browsers work?</summary><p>Running models in the browser needs WebGPU: recent Chrome or Edge on Windows, Mac, Linux or Chromebook, and Safari 26 or newer on a Mac. Phones can run the tiny models. Downloading to run anywhere works from any browser.</p></details>
+      <details><summary>Which model should I pick?</summary><p>Start with <b>Qwen3 4B</b> if your computer has 8 GB of memory or more, or <b>Llama 3.2 1B</b> on an older one. For programming, try <b>Qwen2.5 Coder 7B</b>. To run on your computer with Ollama, <b>Gemma 4 E4B</b> is a great all-rounder that also reads photos.</p></details>
+      <details><summary>Can I use these models for my business?</summary><p>Most, yes — each model shows its licence in plain words. A few are for personal and research use only, and they're marked.</p></details>
+      <details><summary>How do I free up space?</summary><p>Use <b>Manage</b> in the “Your device” box to delete models downloaded in this browser. Clearing your browser's site data for this page also removes them.</p></details>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Model names belong to their makers. Oriel isn't affiliated with Alibaba, DeepSeek, Google, Hugging Face, Meta, Microsoft, Mistral AI, Nous Research or OpenAI.</p>
+    <p>Models download from Hugging Face or Ollama, where their makers publish them. Sizes and licences last checked <span id="checked">September 2026</span>.</p>
+  </div>
+</footer>
+
+<dialog id="sheet" aria-labelledby="sheetTitle"><div class="sheet" id="sheetInner"></div></dialog>
+<dialog id="manage" aria-labelledby="manageTitle"><div class="sheet" id="manageInner"></div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="site.js"></script>
+</body>
+</html>

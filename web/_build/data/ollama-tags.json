@@ -1,0 +1,140 @@
+{
+ "smollm2:360m": {
+  "bytes": 725565951
+ },
+ "qwen3:0.6b": {
+  "bytes": 522653277
+ },
+ "qwen3.5:0.8b": {
+  "bytes": 1036046107
+ },
+ "gemma3:1b": {
+  "bytes": 815319299
+ },
+ "llama3.2:1b": {
+  "bytes": 1321097844
+ },
+ "deepseek-r1:1.5b": {
+  "bytes": 1117322281
+ },
+ "qwen3:1.7b": {
+  "bytes": 1359292957
+ },
+ "smollm2:1.7b": {
+  "bytes": 1820427974
+ },
+ "qwen2.5-coder:1.5b": {
+  "bytes": 986061602
+ },
+ "qwen3.5:2b": {
+  "bytes": 2741192347
+ },
+ "gemma2:2b": {
+  "bytes": 1629518008
+ },
+ "llama3.2:3b": {
+  "bytes": 2019392628
+ },
+ "hermes3:3b": {
+  "bytes": 2019383881
+ },
+ "qwen2.5-coder:3b": {
+  "bytes": 1929912139
+ },
+ "phi3.5:3.8b": {
+  "bytes": 2176178434
+ },
+ "phi4-mini:3.8b": {
+  "bytes": 2491876363
+ },
+ "qwen3:4b": {
+  "bytes": 2497293444
+ },
+ "qwen3.5:4b": {
+  "bytes": 3389983260
+ },
+ "mistral:7b": {
+  "bytes": 4372823897
+ },
+ "deepseek-r1:7b": {
+  "bytes": 4683074953
+ },
+ "qwen2.5-coder:7b": {
+  "bytes": 4683087074
+ },
+ "llama3.1:8b": {
+  "bytes": 4920752841
+ },
+ "qwen3:8b": {
+  "bytes": 5225387677
+ },
+ "qwen3.5:9b": {
+  "bytes": 6594474236
+ },
+ "gemma2:9b": {
+  "bytes": 5443151930
+ },
+ "gemma4:e2b": {
+  "bytes": 7162405413
+ },
+ "gemma4:e4b-it-qat": {
+  "bytes": 6146501256
+ },
+ "gemma4:12b": {
+  "bytes": 7556507848
+ },
+ "gemma3:4b": {
+  "bytes": 3338801315
+ },
+ "qwen2.5vl:7b": {
+  "bytes": 5969245289
+ },
+ "llama3.2-vision:11b": {
+  "bytes": 7816588622
+ },
+ "deepseek-r1:8b": {
+  "bytes": 5225375560
+ },
+ "qwen3:14b": {
+  "bytes": 9276198077
+ },
+ "phi4:14b": {
+  "bytes": 9053115905
+ },
+ "deepseek-r1:14b": {
+  "bytes": 8988111721
+ },
+ "qwen2.5-coder:14b": {
+  "bytes": 8988123810
+ },
+ "gpt-oss:20b": {
+  "bytes": 13793440755
+ },
+ "mistral-small3.2:24b": {
+  "bytes": 15177384294
+ },
+ "devstral:24b": {
+  "bytes": 14333927558
+ },
+ "qwen3.5:27b": {
+  "bytes": 17420432252
+ },
+ "gemma4:26b": {
+  "bytes": 18604148235
+ },
+ "qwen3:30b": {
+  "bytes": 18556698820
+ },
+ "qwen3-coder:30b": {
+  "bytes": 18556700222
+ },
+ "gemma4:31b": {
+  "bytes": 19868981317
+ },
+ "llama3.3:70b": {
+  "bytes": 42520413354
+ },
+ "gpt-oss:120b": {
+  "bytes": 65369818451
+ }
+}
