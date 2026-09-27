@@ -176,6 +176,12 @@ def search(query, results=5, read=3):
     query = query.strip()[:300]
     if not query:
         raise SearchError("empty query")
+    # A weather question also gets real numbers (see weather.py), looked up
+    # while the search runs, and listed first.
+    from . import weather
+    pool = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+    wx = pool.submit(weather.lookup, query)
+    pool.shutdown(wait=False)
     hits, last = [], None
     for tmpl in SEARCH_URLS:
         try:
@@ -185,7 +191,10 @@ def search(query, results=5, read=3):
                 break
         except Exception as e:
             last = e
+    wx = wx.result()
     if not hits:
+        if wx:
+            return [{**wx, "n": 1}]
         raise SearchError("search unavailable" + (f": {last}" if last else " — no results"))
     seen, uniq = set(), []
     for h in hits:
@@ -196,7 +205,9 @@ def search(query, results=5, read=3):
     with concurrent.futures.ThreadPoolExecutor(max_workers=read) as pool:
         texts = list(pool.map(_page_text, [h["url"] for h in uniq[:read]]))
     for i, h in enumerate(uniq, 1):
-        h["n"] = i
         h["domain"] = urllib.parse.urlparse(h["url"]).hostname.removeprefix("www.")
         h["text"] = texts[i - 1] if i <= len(texts) else ""
-    return uniq
+    out = ([wx] if wx else []) + uniq[:results - 1 if wx else results]
+    for i, h in enumerate(out, 1):
+        h["n"] = i
+    return out

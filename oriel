@@ -24,6 +24,7 @@ import http.client
 import http.server
 import json
 import os
+import re
 import signal
 import socket
 import socketserver
@@ -39,7 +40,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 UI_DIR = HERE / "ui"
 sys.path.insert(0, str(HERE))
-from services import documents, exporter, store, web  # noqa: E402
+from services import documents, exporter, macapp, store, tokens, web  # noqa: E402
 
 CONTEXT_TOKENS = 32768   # measured: 4K → 32K costs gemma4 about 0.1 GB of RAM
 KEEP_WARM = "20m"        # the page refreshes this while open; closed, RAM frees itself
@@ -58,6 +59,10 @@ BOLD = "\033[1m"
 AMBER = "\033[38;5;179m"
 RED = "\033[38;5;167m"
 OFF = "\033[0m"
+TTY = sys.stdout.isatty()
+if not TTY:  # the login item writes to a log file: no colour codes, no spinners
+    DIM = BOLD = AMBER = RED = OFF = ""
+LOGS = macapp.LOGS
 
 
 def say(msg, style=""):
@@ -136,21 +141,57 @@ def ollama_keep(model, keep):
         return False
 
 
+def _engine_log():
+    """The engine's own output, kept for `oriel logs`; rotated past 5 MB."""
+    LOGS.mkdir(parents=True, exist_ok=True)
+    path = LOGS / "engine.log"
+    try:
+        if path.stat().st_size > 5 * 1024 * 1024:
+            path.replace(LOGS / "engine.log.1")
+    except FileNotFoundError:
+        pass
+    return open(path, "ab")
+
+
 def start_ollama():
     """Bring ollama up if it isn't. Returns the process if we started it, else
     None — so shutdown only stops a server we own, never the user's own."""
     if ollama_up():
         return None
     binary = OLLAMA_BIN if Path(OLLAMA_BIN).is_file() else "ollama"
+    log = None if os.environ.get("ORIEL_VERBOSE") == "1" else _engine_log()
     proc = subprocess.Popen(
         [binary, "serve"],
-        stdout=subprocess.DEVNULL if os.environ.get("ORIEL_VERBOSE") != "1" else None,
-        stderr=subprocess.DEVNULL if os.environ.get("ORIEL_VERBOSE") != "1" else None,
+        stdout=log, stderr=log,
         env={**os.environ, "OLLAMA_FLASH_ATTENTION": "1", "OLLAMA_KV_CACHE_TYPE": "q8_0",
              "OLLAMA_CONTEXT_LENGTH": str(CONTEXT_TOKENS)},
         start_new_session=True,
     )
+    if log:
+        log.close()  # the engine has its own copy
     return proc
+
+
+ENGINE = {"proc": None}           # the ollama this process started, if any
+_revive = threading.Lock()
+
+
+def revive_engine():
+    """If the engine has died or been stopped, start it again. True once it
+    answers. Without this, one engine crash would break every window until
+    the whole server was restarted by hand."""
+    with _revive:
+        if ollama_up():
+            return True
+        proc = start_ollama()
+        if proc is not None:
+            ENGINE["proc"] = proc
+        deadline = time.time() + 30
+        while time.time() < deadline:
+            if ollama_up():
+                return True
+            time.sleep(0.3)
+        return False
 
 
 def engine_ready(port, timeout=1.5):
@@ -257,14 +298,19 @@ class Handler(http.server.BaseHTTPRequestHandler):
     def _proxy(self, method):
         length = int(self.headers.get("Content-Length") or 0)
         body = self.rfile.read(length) if length else None
-        conn = http.client.HTTPConnection("127.0.0.1", self.engine_port, timeout=900)
         headers = {"Content-Type": self.headers.get("Content-Type", "application/json")}
-        try:
-            conn.request(method, self.path, body=body, headers=headers)
-            upstream = conn.getresponse()
-        except Exception as exc:
-            self.send_error(502, f"engine unreachable: {exc}")
-            return
+        for attempt in (1, 2):
+            conn = http.client.HTTPConnection("127.0.0.1", self.engine_port, timeout=900)
+            try:
+                conn.request(method, self.path, body=body, headers=headers)
+                upstream = conn.getresponse()
+                break
+            except Exception as exc:
+                conn.close()
+                if attempt == 1 and self.backend == "ollama" and revive_engine():
+                    continue
+                self.send_error(502, f"engine unreachable: {exc}")
+                return
 
         self.send_response(upstream.status)
         ctype = upstream.getheader("Content-Type", "application/json")
@@ -312,6 +358,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
             return self._serve_file("index.html")
         if path == "/oriel/info":
             return self._info()
+        if path == "/oriel/state/rev":
+            return self._json({"rev": store.state_rev()})
         if path == "/oriel/state":
             body = store.load_state()
             self.send_response(200)
@@ -348,8 +396,15 @@ class Handler(http.server.BaseHTTPRequestHandler):
             return
         if self.path == "/oriel/state":
             try:
-                store.save_state(self._body(store.MAX_STATE))
-                return self._json({"ok": True})
+                return self._json({"ok": True, "rev": store.save_state(self._body(store.MAX_STATE))})
+            except store.Conflict as e:
+                self.send_response(409)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(e.current)))
+                self.send_header("Cache-Control", "no-store")
+                self.end_headers()
+                self.wfile.write(e.current)
+                return
             except (ValueError, json.JSONDecodeError) as e:
                 return self._json({"error": str(e)}, 400)
         self.send_error(404, "Not found")
@@ -373,6 +428,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
             if path == "/oriel/reveal":
                 exporter.reveal(json.loads(self._body(4096)).get("path", ""))
                 return self._json({"ok": True})
+            if path == "/oriel/tokens":
+                req = json.loads(self._body(32 * 1024 * 1024))
+                return self._json({"counts": tokens.count(req.get("model"), req.get("texts"))})
         except documents.Unsupported as e:
             return self._json({"error": f"can't read {e} files"}, 415)
         except (ValueError, json.JSONDecodeError) as e:
@@ -428,6 +486,9 @@ def serve_app(argv):
 
     # Don't start a second stack on a fallback port — point at the live one.
     if already_serving(a.port):
+        if a.service:  # e.g. an `oriel` running in a terminal: let it be
+            say("another oriel server is already answering on this port — nothing to do")
+            return 0
         url = f"http://127.0.0.1:{a.port}"
         say(f"already running at {BOLD}{url}{OFF}")
         say(f"{DIM}`oriel stop` to shut it down, `oriel ps` to see it{OFF}")
@@ -445,6 +506,15 @@ def serve_app(argv):
             return 1
 
         say(f"model    {model_id}")
+        if a.service:
+            # If the previous server was force-killed, its engine lives on as an
+            # orphan; replace it, so this server owns (and logs) its engine.
+            for pid in orphaned_engines():
+                os.kill(pid, signal.SIGTERM)
+                say(f"replacing an engine left over by an earlier oriel (pid {pid})")
+            deadline = time.time() + 10
+            while time.time() < deadline and orphaned_engines():
+                time.sleep(0.3)
         owned = start_ollama()
         t0 = time.time()
         spinner = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"
@@ -455,13 +525,16 @@ def serve_app(argv):
                 say("ollama exited while starting", RED)
                 say(f"{DIM}try: {OLLAMA_BIN} serve{OFF}")
                 return 1
-            sys.stdout.write(f"\r  {AMBER}{spinner[i % len(spinner)]}{OFF} "
-                             f"{DIM}starting ollama… {time.time()-t0:0.0f}s{OFF}   ")
-            sys.stdout.flush(); i += 1
+            if TTY:
+                sys.stdout.write(f"\r  {AMBER}{spinner[i % len(spinner)]}{OFF} "
+                                 f"{DIM}starting ollama… {time.time()-t0:0.0f}s{OFF}   ")
+                sys.stdout.flush()
+            i += 1
             time.sleep(0.1)
             if time.time() - t0 > 60:
                 print(); say("ollama did not come up", RED); return 1
-        sys.stdout.write("\r" + " " * 48 + "\r")
+        if TTY:
+            sys.stdout.write("\r" + " " * 48 + "\r")
 
         if not ollama_has(model_id):
             say(f"model not pulled: {model_id}", RED)
@@ -484,6 +557,7 @@ def serve_app(argv):
             else:
                 say(f"{DIM}warm     skipped — first message will load the model{OFF}")
 
+        ENGINE["proc"] = owned
         Handler.engine_port = OLLAMA_PORT
         Handler.backend = "ollama"
         Handler.model_id = model_id
@@ -562,7 +636,8 @@ def _serve_ui(ui_port, no_browser, proc, on_stop=None):
     url = f"http://127.0.0.1:{ui_port}"
     say(f"open     {BOLD}{url}{OFF}")
     print()
-    say(f"{DIM}offline · nothing leaves this machine · ctrl-c to stop{OFF}")
+    say(f"{DIM}offline · nothing leaves this machine · "
+        f"{'running in the background · `oriel stop` stops it' if not TTY else 'ctrl-c to stop'}{OFF}")
     print()
 
     if not no_browser:
@@ -576,17 +651,21 @@ def _serve_ui(ui_port, no_browser, proc, on_stop=None):
                 on_stop()
             except Exception:
                 pass
-        if proc is None:
+        engine = ENGINE["proc"] or proc   # may have been restarted since
+        if engine is None:
             say(f"{DIM}stopped · model unloaded · RAM released (ollama left running){OFF}")
             print()
             os._exit(0)
-        _kill_tree(proc)
+        _kill_tree(engine)
         say(f"{DIM}stopped · RAM released{OFF}")
         print()
         os._exit(0)
 
     signal.signal(signal.SIGINT, shutdown)
     signal.signal(signal.SIGTERM, shutdown)
+    # Closing the terminal window sends SIGHUP; without this the launcher
+    # dies on the spot and leaves the engine running, orphaned, holding RAM.
+    signal.signal(signal.SIGHUP, shutdown)
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
@@ -627,31 +706,29 @@ PASSTHROUGH = {
 HELP = f"""
   {BOLD}oriel.ai{OFF}{DIM} · a local mind{OFF}
 
-  {BOLD}oriel{OFF}                     start the interface, open the browser
+  {BOLD}oriel{OFF}                     open oriel.ai {DIM}(starts its server if needed){OFF}
+  {BOLD}oriel web{OFF}                 open it in your browser instead
   {BOLD}oriel chat{OFF}                talk to the model in this terminal
   {BOLD}oriel run{OFF} "your prompt"   one-shot prompt, no session
-  {BOLD}oriel dashboard{OFF}           colibri's own dashboard (Brain, Profiling)
 
-  {BOLD}oriel stop{OFF}                stop everything, including orphans
+  {BOLD}oriel install{OFF}             install the Mac app, and start the server at login
+  {BOLD}oriel uninstall{OFF}           remove both {DIM}(your chats stay){OFF}
+  {BOLD}oriel start{OFF} · {BOLD}restart{OFF}     start or restart the background server
+  {BOLD}oriel stop{OFF}                stop everything, including leftovers
   {BOLD}oriel ps{OFF}                  show what is running
-  {BOLD}oriel doctor{OFF}              health check {DIM}(its memory.ram failure is a false alarm){OFF}
-  {BOLD}oriel plan{OFF}                planned RAM / disk placement
-  {BOLD}oriel tune{OFF}                measure this machine's fastest safe profile
-  {BOLD}oriel info{OFF}                engine version
+  {BOLD}oriel logs{OFF}                recent server and engine logs
+  {BOLD}oriel app{OFF}                 rebuild the Mac app
 
-  {DIM}start options{OFF}
-    --port 8500           serve the interface somewhere else
-    --ram 8               engine RAM budget in GB
-    --model <dir>         use different weights
-    --no-browser          do not open a browser
-    ORIEL_VERBOSE=1       show the engine's own log
+  {DIM}run it in this terminal instead of in the background{OFF}
+    oriel --no-browser      serve without opening a browser
+    oriel --model <name>    start with a different model
+    oriel --port 8500       serve the interface somewhere else
+    ORIEL_VERBOSE=1         show the engine's own log here
 
-  {DIM}flags on chat / run / dashboard{OFF}
-    --temp 0.3            lower is focused, higher is creative
-    --ngen 500            max tokens to generate
-    --ram 8               expert-cache budget
+  {DIM}colibri engine, only with a colibri model installed:{OFF}
+    oriel doctor · plan · tune · info · dashboard
 
-  {DIM}in chat: /reset clears context · /brio a | b | c · ctrl-d exits{OFF}
+  {DIM}in `oriel chat`: /? lists commands · ctrl-d exits{OFF}
 """
 
 
@@ -696,7 +773,7 @@ def running():
         )
         if is_launcher:
             found.append((pid, "interface", cmd))
-        elif "ollama" in low and "serve" in low:
+        elif re.search(r"(?:^|/)ollama serve\b", cmd):   # not its llama-server runners
             found.append((pid, "ollama", cmd))
         elif "coli serve" in cmd or "openai_server" in cmd:
             found.append((pid, "gateway", cmd))
@@ -712,19 +789,49 @@ def short(kind, cmd):
     if kind == "gateway":
         return "colibri gateway"
     if kind == "ollama":
-        return "ollama (shared service — left running by `oriel stop`)"
+        return "ollama engine"
     return cmd.rsplit("/", 1)[-1].split()[0]
 
 
 def cmd_ps():
     procs = running()
     print()
+    st = macapp.agent_state()
+    if st is None:
+        say(f"{AMBER}{'login item':<11}{OFF}{DIM}not installed · `oriel install` adds it{OFF}")
+    else:
+        state, pid = st
+        say(f"{AMBER}{'login item':<11}{OFF}{DIM}{state}{f' · pid {pid}' if pid else ''} · starts the server at login{OFF}")
+    if macapp.APP.exists():
+        say(f"{AMBER}{'app':<11}{OFF}{DIM}{macapp.APP}{OFF}")
     if not procs:
         say(f"{DIM}nothing running{OFF}")
         print()
         return 0
+    interfaces = {pid for pid, kind, _ in procs if kind == "interface"}
+    leftover = set(orphaned_engines())
     for pid, kind, cmd in procs:
-        say(f"{AMBER}{kind:<11}{OFF}{DIM}pid {pid:<8}{OFF}{short(kind, cmd)}")
+        note = ""
+        if kind == "ollama":
+            ppid = int(subprocess.run(["ps", "-o", "ppid=", "-p", str(pid)], capture_output=True, text=True).stdout.strip() or 0)
+            note = (" · run by oriel" if ppid in interfaces else
+                    " · left over by an earlier oriel — `oriel stop` stops it" if pid in leftover else
+                    " · yours: oriel uses it but never stops it")
+        say(f"{AMBER}{kind:<11}{OFF}{DIM}pid {pid:<8}{OFF}{short(kind, cmd)}{DIM}{note}{OFF}")
+    try:
+        with urllib.request.urlopen(f"http://127.0.0.1:{OLLAMA_PORT}/api/ps", timeout=2) as r:
+            loaded = json.load(r).get("models", [])
+        # Ollama's size_vram counts only the GPU part; the runner process's own
+        # footprint is what the Mac actually gives up (6.2 GB, not 3.2, for gemma4).
+        runners = subprocess.run(["ps", "-axo", "rss=,command="], capture_output=True, text=True).stdout.splitlines()
+        for m in loaded:
+            blob = tokens._weights(m["name"]) or "?"
+            rss = sum(int(line.split()[0]) for line in runners if "llama-server" in line and blob in line)
+            size = rss * 1024 / 1e9 if rss else m.get("size_vram", 0) / 1e9
+            say(f"{AMBER}{'model':<11}{OFF}{m['name']}{DIM} · {size:.1f} GB of memory"
+                f" · {m.get('context_length', 0) // 1024}K window{OFF}")
+    except Exception:
+        pass
     print()
     return 0
 
@@ -764,6 +871,12 @@ def cmd_stop():
             say(f"{DIM}stopping {kind} (pid {pid}){OFF}")
         except (ProcessLookupError, PermissionError):
             pass
+    for pid in orphaned_engines():
+        try:
+            os.kill(pid, signal.SIGTERM)
+            say(f"{DIM}stopping an engine an earlier oriel left running (pid {pid}){OFF}")
+        except (ProcessLookupError, PermissionError):
+            pass
 
     if procs:
         deadline = time.time() + 8
@@ -791,6 +904,164 @@ def cmd_stop():
         say(f"{DIM}nothing of ours running · RAM released{OFF}")
     else:
         say(f"{AMBER}stopped{OFF}{DIM} · RAM released · ports free{OFF}")
+    if macapp.agent_state() is not None:
+        say(f"{DIM}the server starts again at login, when you open the app, or with `oriel start`{OFF}")
+    print()
+    return 0
+
+
+def orphaned_engines():
+    """ollama servers an oriel launcher started and then lost (say its terminal
+    was closed): their parent is launchd and their environment carries
+    oriel's own settings. An ollama you run yourself is never one of these."""
+    found = []
+    for pid, kind, _ in running():
+        if kind != "ollama":
+            continue
+        ppid = subprocess.run(["ps", "-o", "ppid=", "-p", str(pid)], capture_output=True, text=True).stdout.strip()
+        env = subprocess.run(["ps", "eww", "-o", "command=", "-p", str(pid)], capture_output=True, text=True).stdout.split()
+        if ppid == "1" and f"OLLAMA_CONTEXT_LENGTH={CONTEXT_TOKENS}" in env and "OLLAMA_KV_CACHE_TYPE=q8_0" in env:
+            found.append(pid)
+    return found
+
+
+def wait_serving(port=7171, seconds=60):
+    deadline = time.time() + seconds
+    while time.time() < deadline:
+        if already_serving(port):
+            return True
+        time.sleep(0.4)
+    return False
+
+
+def cmd_open(browser=False):
+    """`oriel` once installed: make sure the background server is up, then
+    open the app (or, with `oriel web`, the browser)."""
+    print()
+    if not already_serving(7171):
+        if macapp.agent_state() is None:
+            return serve_app([])          # not installed: run it here, as before
+        say(f"{DIM}starting the oriel server…{OFF}")
+        macapp.kickstart()
+        if not wait_serving():
+            say("the server didn't start — `oriel logs` shows why", RED)
+            print()
+            return 1
+    if not browser and macapp.APP.exists():
+        subprocess.run(["open", str(macapp.APP)])
+        say(f"{AMBER}oriel.ai{OFF}{DIM} is open · its server runs in the background (`oriel stop` stops it){OFF}")
+    else:
+        webbrowser.open("http://127.0.0.1:7171")
+        say(f"open     {BOLD}http://127.0.0.1:7171{OFF}")
+    print()
+    return 0
+
+
+def cmd_install():
+    print()
+    say(f"{BOLD}installing oriel.ai{OFF}")
+    # The login item must own the engine (to log it and restart it), and must
+    # have port 7171 — so clear out anything an earlier oriel left running.
+    for pid, kind, cmd in running():
+        if kind == "interface":
+            os.kill(pid, signal.SIGTERM)
+            say(f"{DIM}stopped an oriel running in a terminal (pid {pid}){OFF}")
+    for pid in orphaned_engines():
+        os.kill(pid, signal.SIGTERM)
+        say(f"{DIM}stopped an engine an earlier oriel left running (pid {pid}){OFF}")
+    deadline = time.time() + 10
+    while time.time() < deadline and (already_serving(7171) or orphaned_engines()):
+        time.sleep(0.3)
+
+    say(f"{DIM}building the Mac app (about 30 s)…{OFF}")
+    try:
+        app = macapp.build_app()
+    except Exception as e:
+        say(f"couldn't build the app: {e}", RED)
+        print()
+        return 1
+    say(f"app      {AMBER}{app}{OFF}")
+    try:
+        macapp.install_agent()
+    except Exception as e:
+        say(f"couldn't install the login item: {e}", RED)
+        print()
+        return 1
+    if not wait_serving():
+        say("installed, but the server didn't start — `oriel logs` shows why", RED)
+        print()
+        return 1
+    say(f"login    {AMBER}the server starts when you log in{OFF}{DIM} · logs in {LOGS}{OFF}")
+    subprocess.run(["open", str(app)])
+    say(f"{DIM}opened oriel.ai — it's in your Applications folder and in Spotlight from now on{OFF}")
+    print()
+    return 0
+
+
+def cmd_uninstall():
+    print()
+    subprocess.run(["osascript", "-e", f'quit app id "{macapp.APP_ID}"'], capture_output=True)
+    macapp.uninstall_agent()                        # stops the server too
+    for name in unpin_orphans():
+        say(f"{DIM}unloaded {name} from GPU memory{OFF}")
+    macapp.remove_app()
+    say(f"{AMBER}removed{OFF}{DIM} the app and the login item{OFF}")
+    say(f"{DIM}your chats are still in {store.DATA} — `oriel` still runs it in a terminal{OFF}")
+    print()
+    return 0
+
+
+def cmd_start(restart=False):
+    print()
+    if macapp.agent_state() is None:
+        say("the background server isn't installed", RED)
+        say(f"{DIM}`oriel install` sets it up · plain `oriel` runs it in this terminal{OFF}")
+        print()
+        return 1
+    if restart:
+        # A clean stop first (SIGTERM): the server unloads its model and stops
+        # its engine. `launchctl kickstart -k` would kill it outright.
+        for pid, kind, _ in running():
+            if kind == "interface":
+                os.kill(pid, signal.SIGTERM)
+        deadline = time.time() + 10
+        while time.time() < deadline and already_serving(7171):
+            time.sleep(0.3)
+    macapp.kickstart()
+    if not wait_serving():
+        say("the server didn't start — `oriel logs` shows why", RED)
+        print()
+        return 1
+    say(f"{AMBER}{'restarted' if restart else 'running'}{OFF}{DIM} · http://127.0.0.1:7171{OFF}")
+    print()
+    return 0
+
+
+def cmd_logs(lines=25):
+    print()
+    for name in ("server.log", "engine.log"):
+        path = LOGS / name
+        say(f"{BOLD}{name}{OFF}{DIM}  {path}{OFF}")
+        try:
+            tail = path.read_text(errors="replace").splitlines()[-lines:]
+        except FileNotFoundError:
+            tail = ["(nothing yet)"]
+        for line in tail:
+            print(f"    {DIM}{line[:200]}{OFF}")
+        print()
+    return 0
+
+
+def cmd_app():
+    print()
+    say(f"{DIM}building the Mac app…{OFF}")
+    try:
+        app = macapp.build_app()
+    except Exception as e:
+        say(f"couldn't build the app: {e}", RED)
+        print()
+        return 1
+    say(f"app      {AMBER}{app}{OFF}{DIM} · quit and reopen it to use the new build{OFF}")
     print()
     return 0
 
@@ -857,6 +1128,11 @@ def main():
         return 0
     if argv and argv[0] == "stop":
         return cmd_stop()
+    commands = {"install": cmd_install, "uninstall": cmd_uninstall, "logs": cmd_logs, "app": cmd_app,
+                "start": cmd_start, "restart": lambda: cmd_start(restart=True),
+                "web": lambda: cmd_open(browser=True), "open": cmd_open}
+    if argv and argv[0] in commands:
+        return commands[argv[0]]()
     if argv and argv[0] in ("ps", "status"):
         return cmd_ps()
     if argv and argv[0] in PASSTHROUGH:
@@ -879,7 +1155,10 @@ def main():
         say(f"{DIM}try: oriel help{OFF}")
         return 1
 
-    # No subcommand — start the interface.
+    # No subcommand. Installed: open the app, with the server in the
+    # background. Not installed (or options given): run it in this terminal.
+    if not argv and macapp.agent_state() is not None:
+        return cmd_open()
     return serve_app(argv)
 
 

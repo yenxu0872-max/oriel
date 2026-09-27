@@ -12,6 +12,11 @@ never contains anyone's conversations.
 
 Writes are atomic (temp file + rename), so a crash mid-save can never leave a
 half-written state.json behind.
+
+Several windows can be open at once (the app, a browser tab). Each save names
+the revision it was based on; if another window saved in between, the save is
+refused with the current document (Conflict) and the window merges and retries
+— so a stale window can never overwrite newer chats.
 """
 
 import hashlib
@@ -23,7 +28,8 @@ import threading
 import time
 from pathlib import Path
 
-DATA = Path.home() / "Library" / "Application Support" / "oriel.ai"
+# ORIEL_DATA points a test server at a scratch folder instead of your chats.
+DATA = Path(os.environ.get("ORIEL_DATA") or Path.home() / "Library" / "Application Support" / "oriel.ai")
 STATE = DATA / "state.json"
 PREVIOUS = DATA / "state.previous.json"
 BACKUPS = DATA / "backups"
@@ -35,6 +41,15 @@ KEEP_DAILY = 14
 
 _lock = threading.Lock()
 _ID = re.compile(r"^[0-9a-f]{24}$")
+_rev = None  # current revision, read from disk once
+
+
+class Conflict(Exception):
+    """Another window saved first. Carries the current document to merge."""
+
+    def __init__(self, current):
+        super().__init__("changed in another window")
+        self.current = current
 
 
 def _ensure():
@@ -60,10 +75,27 @@ def load_state():
         return b"{}"
 
 
+def _current_rev():
+    global _rev
+    if _rev is None:
+        try:
+            _rev = int(json.loads(STATE.read_bytes()).get("rev") or 0)
+        except (OSError, ValueError, AttributeError):
+            _rev = 0
+    return _rev
+
+
+def state_rev():
+    with _lock:
+        return _current_rev()
+
+
 def save_state(raw):
-    """Validate and persist. Raises ValueError on anything that isn't a
-    reasonable state document, so a buggy client can't overwrite good data
-    with garbage."""
+    """Validate and persist; returns the new revision. Raises ValueError on
+    anything that isn't a reasonable state document, so a buggy client can't
+    overwrite good data with garbage, and Conflict if the document it was
+    based on is no longer the latest."""
+    global _rev
     if len(raw) > MAX_STATE:
         raise ValueError("state too large")
     doc = json.loads(raw)
@@ -71,6 +103,13 @@ def save_state(raw):
         raise ValueError("state must be an object with a chats list")
     _ensure()
     with _lock:
+        cur, base = _current_rev(), doc.get("rev")
+        # A page from before revisions existed sends none: fine until the
+        # first versioned save, refused after it.
+        if (base is None and cur > 0) or (base is not None and base != cur):
+            raise Conflict(STATE.read_bytes())
+        doc["rev"] = cur + 1
+        raw = json.dumps(doc, ensure_ascii=False, separators=(",", ":")).encode()
         if STATE.exists():
             shutil.copyfile(STATE, PREVIOUS)
             daily = BACKUPS / f"state-{time.strftime('%Y-%m-%d')}.json"
@@ -79,6 +118,8 @@ def save_state(raw):
                 for old in sorted(BACKUPS.glob("state-*.json"))[:-KEEP_DAILY]:
                     old.unlink(missing_ok=True)
         _atomic_write(STATE, raw)
+        _rev = cur + 1
+        return _rev
 
 
 def save_file(data, name, ctype):
