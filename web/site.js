@@ -58,32 +58,112 @@ const NEUTRAL = ['#7c5cff', '#0ea5e9'];
 const brand = org => BRAND[org] || NEUTRAL;
 
 /* ---------------------------------------------------------------- floating logos */
-/* The AI makers' logos drifting behind the page title, like the book covers on
-   Deepstash: bigger and sharp at the edges, smaller and softer further back,
-   never over the text. ChatGPT and Claude are here for recognition only —
-   they run in the cloud and aren't in the catalog (the footer says so).
-   [logo, left %, top %, size px, tilt °, depth, hide on phones] */
+/* The AI makers' logos floating around the whole page, like the book covers on
+   Deepstash: big and sharp up front, smaller and softer further back, always
+   behind the text. The ones beside the title rise away a little faster than the
+   page as you scroll; the ones peeking in from the sides go all the way down and
+   drift slower than the page, so they seem to float behind it. Each one also
+   bobs on its own (site.css). ChatGPT and Claude are here for recognition only —
+   they run in the cloud and aren't in the catalog (the footer says so). */
 const EXTRA = { chatgpt: { logo: 'logos/openai.webp', dark: true }, claude: { logo: 'logos/claude.svg' } };
-const CLOUD_HOME = [
-  ['meta-llama', 5, 9, 92, -10, 'near', true], ['google', 13, 36, 58, 9, 'far', true], ['Qwen', 3, 60, 76, 7, 'mid'],
-  ['microsoft', 13, 83, 60, -8, 'near', true], ['mistralai', 85, 8, 84, 10, 'near', true], ['openai', 92, 33, 56, -7, 'far', true],
-  ['deepseek-ai', 84, 58, 80, -9, 'mid'], ['HuggingFaceTB', 91, 82, 62, 8, 'near', true], ['chatgpt', 29, 3, 58, -6, 'mid'],
-  ['claude', 66, 4, 62, 7, 'mid'], ['NousResearch', 26, 90, 50, 9, 'far', true], ['meta-llama', 70, 91, 56, -5, 'mid'],
+/* beside the title: [logo, side, gap from the text in px, how far down the hero (0–1), size, tilt, depth,
+   on a phone: [how far across (0–1), px down the hero, size] — or nothing to leave it out] */
+const HERO_HOME = [
+  ['chatgpt', -1, 34, .2, 104, -8, 'near', [.13, 30, 54]],
+  ['google', -1, 150, .5, 70, 10, 'far', [.33, 82, 38]],
+  ['microsoft', -1, 44, .8, 112, 7, 'mid'],
+  ['claude', 1, 34, .17, 108, 9, 'near', [.87, 26, 56]],
+  ['NousResearch', 1, 150, .47, 70, -9, 'mid', [.67, 86, 36]],
+  ['HuggingFaceTB', 1, 48, .79, 110, -6, 'mid', [.5, 18, 46]],
 ];
-const CLOUD_BROWSE = [
-  ['meta-llama', 6, 12, 68, -10, 'near'], ['chatgpt', 18, 58, 54, 8, 'mid'], ['google', 3, 64, 58, 6, 'mid', true],
-  ['microsoft', 19, 14, 42, -7, 'far', true], ['Qwen', 11, 38, 44, 12, 'far', true],
-  ['claude', 84, 10, 66, 9, 'near'], ['deepseek-ai', 79, 56, 54, -8, 'mid'], ['mistralai', 92, 60, 58, -6, 'mid', true],
-  ['openai', 91, 30, 42, 10, 'far', true], ['HuggingFaceTB', 76, 18, 40, 7, 'far', true],
+const HERO_BROWSE = [
+  ['chatgpt', -1, 50, .28, 92, -8, 'near', [.14, 22, 48]],
+  ['google', -1, 170, .64, 60, 9, 'far', [.36, 66, 34]],
+  ['claude', 1, 50, .24, 96, 9, 'near', [.86, 18, 50]],
+  ['microsoft', 1, 172, .62, 58, -8, 'far', [.64, 70, 32]],
 ];
-function renderCloud(el, layout) {
-  if (!el) return;
-  el.innerHTML = layout.map(([key, x, y, px, r, depth, hideSm], i) => {
-    const extra = EXTRA[key], mk = S.makers[key];
-    const logo = extra ? extra.logo : mk?.logo;
-    if (!logo) return '';
-    return `<span class="fl ${depth}${hideSm ? ' hide-sm' : ''}${extra?.dark ? ' dark' : ''}" style="left:${x}%;top:${y}%;--s:${px}px;--r:${r}deg;--d:${8 + (i % 5) * 1.3}s;--delay:-${i * 0.9}s"><img src="${logo}" alt=""></span>`;
-  }).join('');
+/* down the sides, taking turns left and right, in this order */
+const EDGE_LOGOS = ['meta-llama', 'mistralai', 'Qwen', 'deepseek-ai', 'openai', 'google', 'claude', 'HuggingFaceTB', 'NousResearch', 'microsoft', 'chatgpt'];
+const EDGE_DEPTHS = [['near', 'near'], ['far', 'mid'], ['mid', 'far']];   // [left, right] for each pair
+const EDGE_SIZE = { near: 172, mid: 126, far: 92 };
+const BEHIND = { near: .12, mid: .26, far: .42 };   // how much slower than the page the side logos drift
+const LIFT = { near: .24, mid: .12, far: -.1 };     // how much faster than the page the title's logos rise
+const FL = { hero: [], els: new Map(), tiles: [], y: 0, vh: 0, raf: 0, t: 0,
+             still: matchMedia('(prefers-reduced-motion: reduce)').matches };
+
+function floaters(hero) {
+  if (!$('#floaters')) return;
+  FL.hero = hero;
+  FL.y = scrollY;
+  relayout();
+  addEventListener('scroll', () => { if (!FL.raf) FL.raf = requestAnimationFrame(glide); }, { passive: true });
+  addEventListener('resize', relayout);
+  new ResizeObserver(relayout).observe(document.body);   // the Browse page grows and shrinks as you filter
+}
+function relayout() { requestAnimationFrame(() => { layoutFloaters(); paintFloaters(); }); }
+function glide(now) {   // ease towards the scroll position, so the logos float rather than jump
+  const to = scrollY, dt = FL.t ? Math.min(64, now - FL.t) : 16.7;
+  FL.t = now;
+  FL.y = FL.still || Math.abs(to - FL.y) < .5 ? to : FL.y + (to - FL.y) * (1 - Math.pow(.86, dt / 16.7));
+  paintFloaters();
+  if (FL.y === to) { FL.raf = 0; FL.t = 0; } else FL.raf = requestAnimationFrame(glide);
+}
+function layoutFloaters() {
+  const layer = $('#floaters'), hero = $('.hero'), inner = $('.hero-inner');
+  const vw = document.documentElement.clientWidth, vh = innerHeight, phone = vw <= 860;
+  const hr = hero.getBoundingClientRect(), ir = inner.getBoundingClientRect(), top = hr.top + scrollY;
+  const wrap = $('main > .wrap, main > :not(.hero) .wrap');
+  const gutter = wrap ? wrap.getBoundingClientRect().left + parseFloat(getComputedStyle(wrap).paddingLeft) : 16;
+  const k = phone ? .5 : Math.min(1, Math.max(.72, vw / 1440));
+  const tiles = [];
+  FL.hero.forEach(([logo, side, gap, down, size, tilt, depth, ph], i) => {
+    if (phone && !ph) return;
+    const s = phone ? ph[2] : size * k;
+    tiles.push({ id: 'h' + i, logo, depth, size: s, tilt, hero: true, lift: FL.still ? 0 : LIFT[depth],
+      x: phone ? ph[0] * vw - s / 2 : side < 0 ? ir.left - gap * k - s : ir.right + gap * k,
+      D: top + (phone ? ph[1] + s / 2 : down * hr.height) });
+  });
+  const docH = document.documentElement.scrollHeight;
+  for (let j = 0; 140 + j * 560 < docH - 60; j++) for (const side of [-1, 1]) {
+    const i = j * 2 + (side > 0), depth = EDGE_DEPTHS[j % 3][side > 0 ? 1 : 0];
+    const s = EDGE_SIZE[depth] * k * (1 + ((i * 7) % 5 - 2) * .05);
+    // how much of it peeks in: never far over the content
+    const show = Math.min(s * (depth === 'far' ? .7 : .6), Math.max(gutter + (phone ? 8 : 24), s * .3));
+    tiles.push({ id: 'e' + i, logo: EDGE_LOGOS[i % EDGE_LOGOS.length], depth, size: s,
+      tilt: side * (j % 2 ? -1 : 1) * (6 + (i * 5) % 7), p: FL.still ? 0 : BEHIND[depth],
+      x: side < 0 ? show - s : vw - show, D: 140 + j * 560 + (side > 0 ? 120 : 0) });
+  }
+  const keep = new Set();
+  tiles.forEach((t, n) => {
+    const src = EXTRA[t.logo]?.logo || S.makers[t.logo]?.logo;
+    if (!src) return;
+    let el = FL.els.get(t.id);
+    if (!el) {
+      el = document.createElement('span');
+      el.innerHTML = '<span><img alt=""></span>';
+      el.style.setProperty('--d', (9 + (n * 1.7) % 5).toFixed(1) + 's');
+      el.style.setProperty('--delay', -(n * 1.3).toFixed(1) + 's');
+      layer.append(el); FL.els.set(t.id, el);
+    }
+    el.className = `fl ${t.depth}${EXTRA[t.logo]?.dark ? ' dark' : ''}`;
+    el.style.setProperty('--s', t.size.toFixed(1) + 'px');
+    const img = el.firstChild.firstChild;
+    if (img.getAttribute('src') !== src) img.src = src;
+    Object.assign(t, { el, on: null });
+    keep.add(t.id);
+  });
+  for (const [id, el] of FL.els) if (!keep.has(id)) { el.remove(); FL.els.delete(id); }
+  FL.tiles = tiles.filter(t => t.el);
+  FL.vh = vh;
+}
+function paintFloaters() {
+  const s = FL.y, vh = FL.vh;
+  for (const t of FL.tiles) {
+    const mid = t.hero ? t.D - s * (1 + t.lift) : t.D - s + t.p * (s + vh / 2 - t.D);
+    const y = mid - t.size / 2, on = y < vh + 40 && y > -t.size - 60;
+    if (on !== t.on) { t.el.style.visibility = on ? 'visible' : 'hidden'; t.on = on; }
+    if (on) t.el.style.transform = `translate3d(${t.x.toFixed(1)}px,${y.toFixed(1)}px,0) rotate(${t.tilt}deg)`;
+  }
 }
 
 /* ---------------------------------------------------------------- device */
@@ -369,7 +449,6 @@ async function deleteModel(id) {
 
 /* ---------------------------------------------------------------- home page */
 function renderHome() {
-  renderCloud($('#logoCloud'), CLOUD_HOME);
   const makers = $('#makers');
   if (makers) makers.innerHTML = Object.entries(S.makers).map(([org, mk]) =>
     `<a class="maker-chip" href="models.html?maker=${encodeURIComponent(org)}"><img src="${mk.logo}" alt="" width="30" height="30">${esc(mk.name)}</a>`).join('');
@@ -435,8 +514,8 @@ if (BROWSE) {
   const [data, gpu] = await Promise.all([fetch('models.json', { cache: 'no-cache' }).then(r => r.json()), checkGpu()]);
   Object.assign(S, { models: data.models, makers: data.makers, engine: data.engine, gpu });
   if (S.maker && !S.makers[S.maker]) S.maker = null;
-  if (!BROWSE) { renderHome(); return; }
-  renderCloud($('#logoCloud'), CLOUD_BROWSE);
+  if (!BROWSE) { renderHome(); floaters(HERO_HOME); return; }
+  floaters(HERO_BROWSE);
   renderDevice();
   renderModels();
   await refreshStored();

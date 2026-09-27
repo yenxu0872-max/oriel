@@ -96,15 +96,29 @@ img{display:block}
 .promise span{display:inline-flex;align-items:center;gap:6px}
 .promise svg{color:var(--good)}
 
-/* the makers' logos floating behind the hero, like app icons */
-.logo-cloud{position:absolute;inset:0;z-index:1;pointer-events:none}
-.fl{position:absolute;width:var(--s);height:var(--s);border-radius:calc(var(--s) * .24);background:var(--tile);box-shadow:var(--shadow),0 0 0 1px var(--line);padding:calc(var(--s) * .15);
-  transform:rotate(var(--r,0deg));animation:drift var(--d,9s) ease-in-out infinite;animation-delay:var(--delay,0s)}
-.fl img{width:100%;height:100%;object-fit:contain;border-radius:calc(var(--s) * .12)}
-.fl.far{filter:blur(2px);opacity:.55}
-.fl.mid{opacity:.85}
-@keyframes drift{0%,100%{transform:translateY(0) rotate(var(--r,0deg))}50%{transform:translateY(-12px) rotate(calc(var(--r,0deg) + 2deg))}}
-@media (prefers-reduced-motion:reduce){.fl{animation:none}}
+/* ------------------------------------------------------------ floating logos */
+/* The AI makers' logos floating around the whole page, like the book covers on
+   Deepstash: big and sharp up front, smaller and softer further back, always
+   behind the text. site.js places them and moves them as you scroll; each one
+   also bobs gently on its own. */
+.floaters{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+main > :not(.hero),footer{position:relative;z-index:2}
+.fl{position:absolute;left:0;top:0;width:var(--s);height:var(--s);visibility:hidden;will-change:transform}
+.fl > span{display:block;width:100%;height:100%;border-radius:24%;background:var(--tile);padding:15%;
+  box-shadow:0 0 0 1px var(--line),0 24px 48px -18px rgba(24,24,44,.28),0 4px 12px rgba(24,24,44,.06);
+  animation:bob var(--d,11s) ease-in-out var(--delay,0s) infinite}
+.fl img{width:100%;height:100%;object-fit:contain;border-radius:12%}
+.fl.near{z-index:3}.fl.mid{z-index:2}.fl.far{z-index:1}
+.fl.mid > span{filter:blur(1.2px);opacity:.9;box-shadow:0 0 0 1px var(--line),0 16px 32px -14px rgba(24,24,44,.22)}
+.fl.far > span{filter:blur(3.5px);opacity:.62;box-shadow:0 0 0 1px var(--line),0 10px 24px -10px rgba(24,24,44,.2)}
+.fl.dark > span{background:#0b0b0c}
+.fl.dark img{filter:invert(1)}
+@keyframes bob{
+  0%,100%{transform:translate(0,0) rotate(0deg)}
+  25%{transform:translate(7px,-11px) rotate(1.6deg)}
+  50%{transform:translate(0,-20px) rotate(0deg)}
+  75%{transform:translate(-7px,-9px) rotate(-1.6deg)}}
+@media (prefers-reduced-motion:reduce){.fl > span{animation:none}}
 @media (max-width:860px){.hero{padding:40px 0 64px;min-height:0}}
 
 /* ------------------------------------------------------------ sections */
@@ -161,8 +175,6 @@ footer p{margin:0 0 6px;max-width:720px}
 .searchbar input{flex:1;min-width:0;border:0;background:transparent;font-size:15px;height:40px;outline:none}
 .searchbar input::placeholder{color:var(--faint)}
 .searchbar .x{border:0;background:var(--chip);width:28px;height:28px;border-radius:999px;cursor:pointer;color:var(--muted);flex-shrink:0;font-size:12px}
-.fl.dark{background:#0b0b0c}
-.fl.dark img{filter:invert(1)}
 
 /* your device — one slim strip */
 .device-strip{display:flex;align-items:center;gap:14px 28px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 18px;box-shadow:var(--shadow-sm)}
@@ -260,13 +272,8 @@ footer p{margin:0 0 6px;max-width:720px}
 .tags{display:flex;gap:6px;flex-wrap:wrap}
 .empty{padding:40px;text-align:center;color:var(--muted);border:1px dashed var(--line2);border-radius:18px}
 
-/* the floating logos on a phone: a tidy row above the headline */
-@media (max-width:860px){
-  .hero{flex-direction:column;justify-content:center}
-  .logo-cloud{position:relative;inset:auto;display:flex;justify-content:center;gap:10px;margin:0 auto 22px;z-index:2}
-  .fl{position:relative!important;left:auto!important;top:auto!important;--s:42px!important;opacity:1!important;filter:none!important;animation:none}
-  .fl.hide-sm{display:none}
-}
+/* on a phone the title's logos float in a band above it */
+@media (max-width:860px){.hero,.hero.hero-sm{padding-top:136px}}
 
 /* ------------------------------------------------------------ sheet */
 dialog{border:0;padding:0;background:transparent;max-width:720px;width:calc(100% - 32px);max-height:calc(100% - 48px);color:var(--text)}
