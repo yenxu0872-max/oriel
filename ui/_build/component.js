@@ -111,7 +111,8 @@ function fastAppConfig(lib) {
 /* What went wrong loading or running a model in the browser, in words. */
 function engineError(e) {
   const t = String(e && e.message || e || '');
-  if (/shader-f16|f16/i.test(t)) return "it needs a graphics feature this browser doesn't have. Try Chrome or Edge, or another model.";
+  // careful: model names contain "q4f16", so match the feature's own name only
+  if (/shader-f16/i.test(t)) return "it needs a graphics feature this browser doesn't have. Try Chrome or Edge, or another model.";
   if (/out of memory|OutOfMemory|device.*lost|DeviceLost|allocat/i.test(t)) return 'the graphics chip ran out of memory. Close other tabs, or pick a smaller model.';
   if (/quota|QuotaExceeded|storage/i.test(t)) return "there isn't enough storage space in this browser. Delete a model you don't use on the Browse page.";
   if (/network|fetch|Failed to fetch|NetworkError|Load failed/i.test(t)) return "it couldn't download. Check your internet connection and try again.";
@@ -707,7 +708,9 @@ class Component extends DCLogic {
   onLoadProgress(m, p) {
     if (this.engineLoadingModel !== m.model) return;
     const t = p.text || '';
-    const text = /^Fetching/i.test(t) ? `Downloading ${m.name} · ${gbText(p.progress * m.download_gb)} of ${gbText(m.download_gb)} · first time only`
+    const here = !!this.state.have[m.model];   // WebLLM says "fetch" even when every piece is stored
+    const text = here && /^(Start to fetch|Fetching)/i.test(t) ? `Loading ${m.name} from this browser…`
+               : /^Fetching/i.test(t) ? `Downloading ${m.name} · ${gbText(p.progress * m.download_gb)} of ${gbText(m.download_gb)} · first time only`
                : /^Start to fetch/i.test(t) ? `Downloading ${m.name} · starting · first time only`
                : /cache/i.test(t) ? `Loading ${m.name} from this browser…`
                : `Getting ${m.name} ready on your graphics chip…`;
@@ -945,7 +948,8 @@ class Component extends DCLogic {
     let userSeen = 0;
     for (let i = turns.length - 1; i >= 0; i--) {
       const m = turns[i];
-      const withImages = m.role === 'user' && userSeen < 2;
+      // only a model that can see gets the pictures; others get a note that one was attached
+      const withImages = m.role === 'user' && userSeen < 2 && (!WEB || !!this.model().vision);
       if (m.role === 'user') userSeen++;
       built.push({ m, withImages, ...(m.role === 'user' ? await this.toContent(m, withImages)
         : { content: (m.text || '') + (m.artifact ? `\n\n<<<CANVAS: ${m.artifact.title}>>>\n${m.artifact.body}\n<<<END>>>` : ''), cut: [] }) });
@@ -1131,6 +1135,7 @@ class Component extends DCLogic {
     } catch (e) {
       if (e && e.name === 'AbortError') return;
       if (this.token !== started) return;
+      console.warn('oriel: reply failed', e);
       clearTimeout(this.liveT); this.liveT = 0;
       const msg = WEB ? `${model.name} couldn't answer: ${engineError(e)}`
         : `I couldn't reach the local model (${e && e.message ? e.message : 'no response'}). Check that oriel is still running, then try again.`;

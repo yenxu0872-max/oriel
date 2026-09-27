@@ -39,6 +39,7 @@ async function scanDownloads() {
       const res = await cache.match(`https://huggingface.co/mlc-ai/${repo}/resolve/main/${index}`);
       const need = new Set((await res.json()).records.map(r => r.dataPath));
       const got = files.filter(f => need.has(f)).length;
+      if (!got) continue;                  // only the file list is left: nothing downloaded
       have[repo] = got >= need.size ? 'complete' : 'partial';
     }
   } catch (e) {}
@@ -202,6 +203,13 @@ async function deleteModel(id) {
     const cfg = lib.prebuiltAppConfig;
     await lib.deleteModelAllInfoInCache(m.browser.id, { ...cfg, model_list: cfg.model_list.map(x => ({ ...x, model_lib: x.model_lib.replace(
       'https://raw.githubusercontent.com/mlc-ai/binary-mlc-llm-libs/main/', 'https://cdn.jsdelivr.net/gh/mlc-ai/binary-mlc-llm-libs@main/') })) });
+    // WebLLM's delete leaves the model's file list behind; remove every trace
+    for (const name of ['webllm/model', 'webllm/config', 'webllm/wasm']) {
+      const ch = await caches.open(name);
+      for (const k of await ch.keys()) {
+        if (k.url.includes('/' + m.browser.id + '/') || (name === 'webllm/wasm' && k.url.includes(m.browser.id.replace(/-MLC$/, '')))) await ch.delete(k);
+      }
+    }
   } catch (e) { toast("Couldn't delete it — try clearing this site's data in your browser settings"); return; }
   await refreshStored(); render();
   $('#manageInner').innerHTML = manageView();
