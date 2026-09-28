@@ -718,6 +718,8 @@ HELP = f"""
   {BOLD}oriel ps{OFF}                  show what is running
   {BOLD}oriel logs{OFF}                recent server and engine logs
   {BOLD}oriel app{OFF}                 rebuild the Mac app
+  {BOLD}oriel publish{OFF}             put the two websites online {DIM}(Cloudflare Pages, free){OFF}
+    {DIM}--domain oriel.chat      on your own domain · --dry-run  build only{OFF}
 
   {DIM}run it in this terminal instead of in the background{OFF}
     oriel --no-browser      serve without opening a browser
@@ -1128,6 +1130,12 @@ def main():
         return 0
     if argv and argv[0] == "stop":
         return cmd_stop()
+    if argv and argv[0] == "publish":
+        from services import publish            # the two websites, onto Cloudflare Pages
+        print()
+        r = publish.publish(argv[1:], say=lambda m: print("\n".join("  " + line for line in str(m).splitlines())))
+        print()
+        return r
     commands = {"install": cmd_install, "uninstall": cmd_uninstall, "logs": cmd_logs, "app": cmd_app,
                 "start": cmd_start, "restart": lambda: cmd_start(restart=True),
                 "web": lambda: cmd_open(browser=True), "open": cmd_open}
