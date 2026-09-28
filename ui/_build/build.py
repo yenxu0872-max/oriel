@@ -36,6 +36,32 @@ LOAD_NOTE = """<sc-if value="{{ hasLoad }}"><div style="width:100%;max-width:640
 <sc-if value="{{ loadBar }}"><div style="height:4px;border-radius:999px;background:#e4e4e9;margin-top:9px;overflow:hidden"><div style="height:100%;width:{{ loadWidth }};background:linear-gradient(90deg,oklch(0.68 0.19 300),oklch(0.7 0.15 230));border-radius:999px;transition:width .3s"></div></div></sc-if>
 </div></sc-if>"""
 
+BTN = ("border:0;border-radius:10px;padding:8px 14px;font-family:inherit;font-size:13.5px;font-weight:500;cursor:pointer;"
+       "display:inline-flex;align-items:center;gap:7px")
+PICTURE = f"""<sc-if value="{{{{ m.hasPicture }}}}"><div style="width:100%;max-width:440px;display:flex;flex-direction:column;gap:10px">
+<sc-if value="{{{{ m.picOffer }}}}"><div style="border:1px solid #e8e8ec;border-radius:16px;padding:14px 16px;background:#fff;font-size:14.5px;line-height:1.5;color:#1d1d1b">
+<div style="font-weight:500;margin-bottom:3px">Oriel can paint this, right on your computer</div>
+<div style="color:#6b6b66;font-size:13.5px">It needs its picture maker first: a one-time download of {{{{ m.picSize }}}}. It stays on this device, and what you ask for is never sent anywhere.</div>
+<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+<button onClick="{{{{ m.picDownload }}}}" style="{BTN};background:#1d1d1b;color:#fff" style-hover="opacity:.9">Download and paint</button>
+<button onClick="{{{{ m.picDecline }}}}" style="{BTN};background:#f4f4f7;color:#1d1d1b" style-hover="background:#ececf1">Not now</button>
+</div></div></sc-if>
+<sc-if value="{{{{ m.picBusy }}}}"><div style="aspect-ratio:1;border-radius:16px;border:1px solid #e8e8ec;background:repeating-linear-gradient(135deg,#f4f4f7 0 10px,#ececf1 10px 20px);display:flex;flex-direction:column;justify-content:flex-end;gap:9px;padding:14px">
+<div style="display:flex;justify-content:space-between;gap:12px;font-size:13px;color:#4a4a46;background:rgba(255,255,255,.86);padding:8px 10px;border-radius:10px"><span>{{{{ m.picLabel }}}}</span><span style="color:#8a8a84;font-variant-numeric:tabular-nums">{{{{ m.picPct }}}}</span></div>
+<div style="height:4px;border-radius:999px;background:#e4e4e9;overflow:hidden"><div style="height:100%;width:{{{{ m.picWidth }}}};background:linear-gradient(90deg,oklch(0.68 0.19 300),oklch(0.7 0.15 230));border-radius:999px;transition:width .3s"></div></div>
+<sc-if value="{{{{ m.picCancelable }}}}"><button onClick="{{{{ m.picCancel }}}}" style="{BTN};align-self:flex-start;background:#fff;color:#1d1d1b;border:1px solid #e3e3e9">Pause download</button></sc-if>
+</div></sc-if>
+<sc-if value="{{{{ m.picDone }}}}"><div style="position:relative;border-radius:16px;overflow:hidden;border:1px solid #e8e8ec;background:#f4f4f7">
+<img src="{{{{ m.picUrl }}}}" alt="{{{{ m.picAlt }}}}" style="display:block;width:100%;aspect-ratio:1;object-fit:cover;filter:{{{{ m.picFilter }}}}">
+<sc-if value="{{{{ m.picHidden }}}}"><div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;color:#fff;font-size:14px;background:rgba(20,20,26,.35)">It might not be suitable, so it's hidden.<button onClick="{{{{ m.picShow }}}}" style="{BTN};background:rgba(255,255,255,.92);color:#1d1d1b">Show anyway</button></div></sc-if>
+</div>
+<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+<button onClick="{{{{ m.picSave }}}}" style="{BTN};background:#f4f4f7;color:#1d1d1b" style-hover="background:#ececf1"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg>Download</button>
+<button onClick="{{{{ m.picAgain }}}}" style="{BTN};background:#f4f4f7;color:#1d1d1b" style-hover="background:#ececf1">Paint another</button>
+<span style="font-size:12.5px;color:#8a8a84;margin-left:4px">{{{{ m.picNote }}}}</span>
+</div></sc-if>
+<sc-if value="{{{{ m.picErr }}}}"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:14px;color:#6b6b66">{{{{ m.picErrText }}}}<sc-if value="{{{{ m.picRetry }}}}"><button onClick="{{{{ m.picAgain }}}}" style="{BTN};background:#f4f4f7;color:#1d1d1b">Try again</button></sc-if></div></sc-if>
+</div></sc-if>"""
 
 # ------------------------------------------------------------------ helpers
 
@@ -296,7 +322,14 @@ tpl = src[:m.start()] + "\x00LOGIC\x00" + src[m.end():]
 print("template:")
 # can't be real offline, and would fabricate: removed
 tpl = remove_blocks(tpl, "button", '<button onClick="{{ pickResearch }}"', "Deep research tool")
-tpl = remove_blocks(tpl, "button", '<button onClick="{{ pickImage }}"', "Create image tool")
+if WEB:
+    # pictures are real in the web app: Z-Image Turbo on the graphics chip (web/app/image-worker.js)
+    tpl = must_replace(tpl, "Generate visuals from a description", "Paint a picture on this computer", "Create image subtitle")
+    start = tpl.index('<sc-if value="{{ m.hasImages }}">')
+    tpl = tpl[:start] + PICTURE + tpl[match_close(tpl, start, "sc-if"):]
+    print("  replaced 1× image placeholders → the picture card")
+else:
+    tpl = remove_blocks(tpl, "button", '<button onClick="{{ pickImage }}"', "Create image tool")
 # Search stays: it is backed by a real web search now. Voice goes beside it.
 tpl = insert_after_block(tpl, '<sc-if value="{{ webOff }}"', "sc-if", MIC, "microphone button")
 
@@ -391,7 +424,7 @@ tpl = must_replace(
     f'<title>{"Oriel — private AI in your browser" if WEB else "oriel.ai"}</title>\n'
     f'<link rel="icon" href="{icon}">\n'
     f'{early_theme}\n{theme_css}\n{"" if WEB else app_css}\n'
-    + (f'<script>window.ORIEL_WEB = {WEB_CONFIG};</script>\n' if WEB else '') +
+    + (f'<script>window.ORIEL_WEB = {WEB_CONFIG};</script>\n' + '<link rel="manifest" href="manifest.webmanifest">\n<meta name="theme-color" content="#17171a">\n<link rel="apple-touch-icon" href="img/apple-touch-icon.png">\n<script>if(\'serviceWorker\' in navigator)addEventListener(\'load\',()=>navigator.serviceWorker.register(\'sw.js\').catch(()=>{}));</script>\n' if WEB else '') +
     '<script src="./vendor/highlight.min.js"></script>',
     "title, favicon, theme, highlight.js", count=1)
 
@@ -404,7 +437,7 @@ out = tpl.replace("\x00LOGIC\x00",
 remote = re.findall(r'(?:src|href)="(https?://[^"]+)"', out)
 if remote:
     sys.exit(f"  ✗ remote resources still referenced: {remote}")
-for gone in ("pickResearch", "pickImage", "Free plan"):
+for gone in ("pickResearch", "Free plan") + (() if WEB else ("pickImage",)):
     if re.search(rf"\b{gone}\b", out.split("data-dc-script")[0]):
         sys.exit(f"  ✗ template still references {gone}")
 left = COLOR_RE.findall(re.sub(r"<script.*?</script>", "", re.sub(r"<style>.*?</style>", "", out.split("data-dc-script")[0], flags=re.S), flags=re.S))

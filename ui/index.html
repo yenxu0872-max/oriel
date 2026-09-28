@@ -620,7 +620,41 @@ const LENGTH = {
 const DETAIL_NOTE = 'Scale to the question: a simple fact needs only a short paragraph, while an explanation deserves the full length. Add substance, never filler — every sentence should carry information.';
 
 const THEMES = ['System', 'Light', 'Dark'];
-const TOOLS = { canvas: 'Canvas' };
+const TOOLS = { canvas: 'Canvas', ...(WEB ? { image: 'Create image' } : {}) };
+
+/* Pictures, in the web app: Z-Image Turbo painting on this computer's
+   graphics chip (web/app/image-worker.js). Asked for with the Create image
+   tool, or in plain words — "draw a…", "make a picture of…". */
+const PICTURE_ASK = /^(?:please\s+|can you\s+|could you\s+)?(?:draw|paint|sketch|illustrate)\b|^(?:please\s+|can you\s+|could you\s+)?(?:make|create|generate|design|give me)\s+(?:me\s+)?(?:an?\s+|some\s+|the\s+)?(?:\w+\s+){0,3}?(?:image|picture|photo|drawing|painting|illustration|poster|wallpaper|portrait|logo|icon|sticker|artwork)s?\b/i;
+const looksLikePicture = t => PICTURE_ASK.test((t || '').trim());
+const PICTURE_TOTAL = 6.61;      // GB: the picture maker's one-time download
+class Painter {
+  constructor() { this.w = null; this.seq = 0; this.wait = new Map(); this.on = {}; }
+  worker() {
+    if (!this.w) {
+      this.w = new Worker(WEB?.painter || 'image-worker.js', { type: 'module' });
+      this.w.onmessage = e => this.msg(e.data);
+      this.w.onerror = e => { for (const [, w] of this.wait) w.bad(new Error(e.message || 'the picture maker stopped')); this.wait.clear(); this.w = null; };
+    }
+    return this.w;
+  }
+  call(type, extra = {}) {
+    const id = ++this.seq;
+    return new Promise((ok, bad) => { this.wait.set(id, { ok, bad }); this.worker().postMessage({ type, id, ...extra }); });
+  }
+  msg(d) {
+    if (d.type === 'progress' || d.type === 'painting' || d.type === 'loading') return this.on[d.type]?.(d);
+    const w = this.wait.get(d.id);
+    if (!w) return;
+    this.wait.delete(d.id);
+    if (d.type === 'error') w.bad(Object.assign(new Error(d.error), { name: d.name })); else w.ok(d);
+  }
+}
+const painter = WEB ? new Painter() : null;
+async function pictureStore() {
+  const root = await navigator.storage.getDirectory();
+  return root.getDirectoryHandle('oriel-pictures', { create: true });
+}
 const PLACEHOLDERS = { canvas: 'What should we write?' };
 const SUGGESTIONS = [
   { label: 'Write an email',    text: 'Write a polite email asking my landlord to fix a leaking tap this week', dot: 'oklch(0.65 0.13 282)', tool: 'canvas' },
@@ -628,7 +662,7 @@ const SUGGESTIONS = [
   { label: 'Explain something', text: 'How do noise-cancelling headphones actually work?', dot: 'oklch(0.65 0.13 240)' },
   { label: 'Write code',        text: 'Write a Python function that checks whether a word is a palindrome, with a short explanation', dot: 'oklch(0.65 0.13 200)' },
   { label: 'Plan a trip',       text: 'Plan a relaxed 3-day trip to Penang focused on food', dot: 'oklch(0.65 0.13 150)', tool: 'canvas' },
-  WEB ? { label: 'Brainstorm',   text: 'Give me 10 creative ideas for a school science project', dot: 'oklch(0.65 0.13 30)' }
+  WEB ? { label: 'Create a picture', text: 'A cosy reading nook by a rainy window, soft morning light, watercolour', dot: 'oklch(0.65 0.13 30)', tool: 'image' }
       : { label: 'Latest news',  text: 'What are the latest developments in solid-state batteries?', dot: 'oklch(0.65 0.13 30)', web: true },
 ];
 const EXPORTS = [
@@ -677,6 +711,16 @@ function engineError(e) {
   if (/network|fetch|Failed to fetch|NetworkError|Load failed/i.test(t)) return "it couldn't download. Check your internet connection and try again.";
   if (/WebGPU/i.test(t)) return t.replace(/^.*?(this browser|WebGPU)/i, '$1') + '. Try Chrome or Edge.';
   return t.slice(0, 160) || 'unknown error';
+}
+
+/* What went wrong making a picture, in words. */
+function pictureError(e) {
+  const t = String(e && e.message || e || '');
+  if (/quota|QuotaExceeded|free space/i.test(t)) return `there isn't enough free space on this computer — the picture maker needs ${PICTURE_TOTAL} GB.`;
+  if (/network|fetch|Failed to fetch|stopped at|download failed|Load failed/i.test(t)) return 'the download stopped. Check your internet and try again — it carries on where it left off.';
+  if (/out of memory|OutOfMemory|device.*lost|DeviceLost|allocat|memory/i.test(t)) return 'the graphics chip ran out of memory. Close other tabs and apps, then try again.';
+  if (/webgpu|gpu|adapter/i.test(t)) return "this browser can't use the graphics chip for pictures — try Chrome or Edge.";
+  return t.slice(0, 160) || 'something went wrong';
 }
 
 /* What a text costs in the model's window. Measured against gemma4's own
@@ -1171,7 +1215,13 @@ class Component extends DCLogic {
   async mountWeb() {
     let saved = null;
     try { saved = JSON.parse(localStorage.getItem(LS_WEB) || 'null'); } catch (e) {}
-    const catalog = await fetch(WEB.models || 'models.json').then(r => r.json()).catch(() => ({ models: [] }));
+    // a picture that was still being made when the page closed stopped there
+    for (const c of saved?.chats || []) for (const m of c.messages || []) {
+      if (m.picture && ['check', 'downloading', 'loading', 'painting'].includes(m.picture.state)) {
+        m.picture = { ...m.picture, state: m.picture.state === 'downloading' ? 'offer' : 'error', error: 'it stopped when the page closed. Try again.' };
+      }
+    }
+    const catalog = await fetch(WEB.models || 'models.json', { cache: 'no-cache' }).then(r => r.json()).catch(() => ({ models: [] }));
     const models = catalog.models.filter(m => m.browser).map(m => ({
       id: m.id, name: m.name, maker: m.maker, model: m.browser.id, download_gb: m.browser.download_gb, f16: m.browser.f16,
       desc: m.maker, detail: 'brief', small: m.browser.download_gb < 1.2,
@@ -1197,7 +1247,7 @@ class Component extends DCLogic {
       // size first) or when the model is already here; never as a surprise.
       const m = this.model();
       if (wanted || this.state.have[m.model]) this.ensureEngine().catch(() => {});
-      else if (m.model) this.setState({ load: { text: `${m.name} downloads (${gbText(m.download_gb)}, first time only) when you send your first message.`, idle: true } });
+      else if (m.model) this.setState({ load: { text: `Oriel's brain, ${m.name}, downloads once (${gbText(m.download_gb)}) when you send your first message — then everything runs on this device, and nothing you type is sent anywhere.`, idle: true } });
     });
     window.oriel = {
       newChat: () => !this.state.busy && this.setState({ activeId: null, input: '', canvas: null }, () => this.inputRef.current?.focus()),
@@ -1559,6 +1609,99 @@ class Component extends DCLogic {
 
   /* --------------------------------------------------------------- send */
 
+  /* ------------------------------------------------------------- pictures */
+
+  patchPic(chatId, idx, patch) {
+    this.patchChat(chatId, c => ({ ...c, messages: c.messages.map((m, i) => i !== idx ? m
+      : { ...m, picture: { ...m.picture, ...(typeof patch === 'function' ? patch(m.picture) : patch) } }) }));
+  }
+
+  async sendPicture(text, opts = {}) {
+    if (!this.state.loaded) { this.showToast('Still loading your chats — one moment'); return; }
+    if (!this.state.activeId) {
+      const id = 'c' + Date.now();
+      await new Promise(r => this.setState(s => ({ chats: [{ id, title: text.length > 40 ? text.slice(0, 40) + '…' : text, updated: Date.now(), edited: Date.now(), messages: [] }, ...s.chats], activeId: id, canvas: null }), r));
+    }
+    const chatId = this.state.activeId;
+    const seed = Math.floor(Math.random() * 2 ** 31);
+    await new Promise(r => this.setState(s => ({
+      chats: s.chats.map(c => c.id !== chatId ? c : { ...c, updated: Date.now(), edited: Date.now(), messages: [
+        ...(opts.replaceLast ? c.messages.slice(0, -1) : c.messages),
+        ...(opts.replaceLast ? [] : [{ role: 'user', text, files: [], tool: 'image' }]),
+        { role: 'assistant', model: 'Z-Image Turbo', text: '', picture: { prompt: text, seed, state: 'check' } },
+      ] }),
+      input: '', pending: [], tool: null, toolsOpen: false,
+    }), r));
+    const idx = this.active().messages.length - 1;
+    try {
+      const st = await painter.call('status');
+      if (!st.ready) return this.patchPic(chatId, idx, { state: 'offer', have: st.have, total: st.total });
+    } catch (e) { return this.patchPic(chatId, idx, { state: 'error', error: pictureError(e) }); }
+    return this.paintPicture(chatId, idx);
+  }
+
+  // The picture maker downloads only when asked — never a surprise 6.6 GB.
+  async downloadPainter(chatId, idx) {
+    if (this.pictureBusy) { this.showToast('Oriel is busy with another picture — one at a time'); return; }
+    this.pictureBusy = true;
+    this.patchPic(chatId, idx, { state: 'downloading' });
+    painter.on.progress = d => this.patchPic(chatId, idx, { state: 'downloading', have: d.have, total: d.total });
+    try {
+      await painter.call('download');
+    } catch (e) {
+      this.pictureBusy = false;
+      painter.on.progress = null;
+      return this.patchPic(chatId, idx, /abort/i.test(e.name + e.message) ? { state: 'offer' } : { state: 'error', error: pictureError(e) });
+    }
+    painter.on.progress = null;
+    this.pictureBusy = false;
+    return this.paintPicture(chatId, idx);
+  }
+
+  async paintPicture(chatId, idx) {
+    if (this.pictureBusy) { this.showToast('Oriel is busy with another picture — one at a time'); return; }
+    const pic = this.state.chats.find(c => c.id === chatId)?.messages[idx]?.picture;
+    if (!pic) return;
+    this.pictureBusy = true;
+    this.patchPic(chatId, idx, { state: 'loading', part: 0, parts: 7 });
+    painter.on.loading = d => this.patchPic(chatId, idx, { state: 'loading', part: d.i, parts: d.n });
+    painter.on.painting = d => this.patchPic(chatId, idx, { state: 'painting', step: d.step, steps: d.steps });
+    try {
+      const r = await painter.call('paint', { prompt: pic.prompt, seed: pic.seed });
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = r.size;
+      canvas.getContext('2d').putImageData(new ImageData(r.rgba, r.size, r.size), 0, 0);
+      const id = 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      // the full picture, for downloading; the chat keeps a JPEG copy
+      try {
+        const png = await new Promise(ok => canvas.toBlob(ok, 'image/png'));
+        const fh = await (await pictureStore()).getFileHandle(id + '.png', { create: true });
+        const w = await fh.createWritable(); await w.write(png); await w.close();
+      } catch (e) {}
+      this.patchPic(chatId, idx, { state: 'done', id, url: canvas.toDataURL('image/jpeg', 0.84), flagged: r.flagged, secs: Math.max(1, Math.round(r.ms / 1000)) });
+      this.patchChat(chatId, c => ({ ...c, messages: c.messages.map((m, i) => i !== idx ? m
+        : { ...m, text: r.flagged ? 'I made it, but it might not be suitable, so it is hidden.' : 'Here it is — painted right here on your computer.' }) }));
+    } catch (e) {
+      this.patchPic(chatId, idx, { state: 'error', error: pictureError(e) });
+    } finally {
+      this.pictureBusy = false;
+      painter.on.loading = painter.on.painting = null;
+    }
+  }
+
+  async savePicture(pic) {
+    let href = pic.url, blobUrl = null;
+    try {
+      const f = await (await (await pictureStore()).getFileHandle(pic.id + '.png')).getFile();
+      href = blobUrl = URL.createObjectURL(f);
+    } catch (e) {}
+    const a = document.createElement('a');
+    a.href = href;
+    a.download = 'oriel-' + (pic.prompt || 'picture').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) + (blobUrl ? '.png' : '.jpg');
+    document.body.appendChild(a); a.click(); a.remove();
+    if (blobUrl) setTimeout(() => URL.revokeObjectURL(blobUrl), 4000);
+  }
+
   async send(textArg, opts = {}) {
     const text = (textArg ?? this.state.input).trim();
     if ((!text && !this.state.pending.length) || this.state.busy) return;
@@ -1568,6 +1711,7 @@ class Component extends DCLogic {
     const think = model.deep || (!!(opts.think ?? this.state.think) && (!WEB || !!model.thinkToggle));
     const web = !!(opts.web ?? this.state.web);
     const files = opts.keepFiles ? (opts.files || []) : this.state.pending;
+    if (WEB && (tool === 'image' || (!tool && !files.length && looksLikePicture(text)))) return this.sendPicture(text, opts);
 
     if (!this.state.activeId) {
       const id = 'c' + Date.now();
@@ -1650,7 +1794,9 @@ class Component extends DCLogic {
       if (this.engineModel !== model.model) this.patchLast({ status: `Getting ${model.name} ready…` });
       const engine = await this.ensureEngine();
       if (this.token !== started) return;
-      const req = { messages, stream: true, temperature: tool === 'canvas' ? 0.7 : 0.5, max_tokens: maxTokens };
+      const req = { messages, stream: true, temperature: tool === 'canvas' ? 0.7 : 0.5, max_tokens: maxTokens,
+                    // tiny models can get stuck repeating a line ("Pale Violet -" to the token limit)
+                    repetition_penalty: model.small ? 1.15 : 1.05 };
       if (model.thinkToggle) req.extra_body = { enable_thinking: !!think };
       let raw = '';
       for await (const chunk of await engine.chat.completions.create(req)) {
@@ -1938,7 +2084,8 @@ class Component extends DCLogic {
           });
         }
         const streaming = s.busy && idx === lastIdx;
-        const done = m.role === 'assistant' && !streaming;
+        const done = m.role === 'assistant' && !streaming
+          && !(m.picture && ['check', 'downloading', 'loading', 'painting', 'offer'].includes(m.picture.state));   // a picture being made has no actions yet
         const steps = m.steps || null;
         const stepsLive = !!steps && (m.stepIdx || 0) < steps.length;
         const thinkLive = !!m.think && !m.thinkDone;
@@ -1966,6 +2113,35 @@ class Component extends DCLogic {
           meta: m.stopped ? 'Stopped' : m.error ? 'Not answered' : '', hasMeta: done && !!(m.stopped || m.error),
           paras,
           hasImages: false, images: [],
+          ...(() => {
+            const pic = m.picture;
+            if (!pic) return { hasPicture: false };
+            const st = pic.state;
+            const busy = ['check', 'downloading', 'loading', 'painting'].includes(st);
+            const frac = st === 'downloading' ? (pic.have || 0) / (pic.total || PICTURE_TOTAL * 1e9)
+                       : st === 'loading' ? (pic.part || 0) / (pic.parts || 7) * 0.25
+                       : st === 'painting' ? 0.25 + 0.75 * (pic.step || 0) / (pic.steps || 9) : 0;
+            return {
+              hasPicture: true, picOffer: st === 'offer', picBusy: busy, picDone: st === 'done',
+              picErr: st === 'error' || st === 'declined', picRetry: st === 'error',
+              picLabel: st === 'downloading' ? `Downloading the picture maker · ${gbText((pic.have || 0) / 1e9)} of ${gbText((pic.total || PICTURE_TOTAL * 1e9) / 1e9)} · once only`
+                      : st === 'loading' ? 'Getting the picture maker ready — the first picture takes a minute'
+                      : st === 'painting' ? `Painting · step ${pic.step || 0} of ${pic.steps || 9}` : 'One moment…',
+              picPct: busy && st !== 'check' ? Math.round(frac * 100) + '%' : '', picWidth: (frac * 100).toFixed(1) + '%',
+              picCancelable: st === 'downloading', picCancel: () => painter.w?.postMessage({ type: 'cancel' }),
+              picSize: gbText(((pic.total || PICTURE_TOTAL * 1e9) - (pic.have || 0)) / 1e9),
+              picResume: (pic.have || 0) > 0,
+              picUrl: pic.url || '', picAlt: pic.prompt || '',
+              picHidden: !!pic.flagged && !pic.shown, picFilter: pic.flagged && !pic.shown ? 'blur(28px)' : 'none',
+              picNote: pic.secs ? `Painted on this computer in ${pic.secs} s` : 'Painted on this computer',
+              picErrText: st === 'declined' ? 'No problem — ask for a picture whenever you like.' : `Couldn't make it: ${pic.error || 'something went wrong'}`,
+              picShow: () => this.patchPic(s.activeId, idx, { shown: true }),
+              picSave: () => this.savePicture(pic),
+              picAgain: () => this.send(pic.prompt, { tool: 'image' }),
+              picDownload: () => this.downloadPainter(s.activeId, idx),
+              picDecline: () => this.patchPic(s.activeId, idx, { state: 'declined' }),
+            };
+          })(),
           hasArtifact: !!m.artifact && done,
           artifactTitle: m.artifact?.title,
           openArtifact: () => this.setState({ canvas: { chatId: s.activeId, idx } }),
@@ -1995,6 +2171,7 @@ class Component extends DCLogic {
       toolsOpen: s.toolsOpen, toggleTools: () => this.setState({ toolsOpen: !s.toolsOpen }),
       pickFiles: () => { this.setState({ toolsOpen: false }); this.fileRef.current?.click(); },
       pickCanvas: () => { this.setState({ tool: 'canvas', toolsOpen: false }); this.inputRef.current?.focus(); },
+      pickImage: () => { this.setState({ tool: 'image', toolsOpen: false }); this.inputRef.current?.focus(); },
       hasTool: !!s.tool, toolLabel: TOOLS[s.tool] || '', clearTool: () => this.setState({ tool: null }),
       onFiles: async e => {
         const picked = [...(e.target.files || [])];

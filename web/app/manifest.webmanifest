@@ -1,0 +1,14 @@
+{
+  "name": "Oriel — private AI",
+  "short_name": "Oriel",
+  "description": "Chat, write code and make pictures with an AI that runs on your own computer. Nothing you type leaves your device.",
+  "start_url": "chat.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#17171a",
+  "icons": [
+    { "src": "img/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "img/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

@@ -9,6 +9,10 @@
 <script>try{var t=localStorage.getItem('oriel-theme');if(t==='Dark')document.documentElement.dataset.theme='dark';else if(t==='Light')document.documentElement.dataset.theme='light';}catch(e){}</script>
 <link rel="preload" href="fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="app.css?v=1">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#17171a">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));</script>
 </head>
 <body>
 <header class="nav-wrap">
@@ -45,7 +49,7 @@
         <div class="mock-bar"><i></i><i></i><i></i><span style="margin-left:6px">Oriel</span><span class="ok">On this device</span></div>
         <div class="mock-body">
           <div class="bub me">Make a picture of a lighthouse at sunset</div>
-          <div class="bub ai">Here it is — made right here on your computer.<img class="pic" src="img/lighthouse.svg" alt=""></div>
+          <div class="bub ai">Here it is — made right here on your computer.<img class="pic" src="img/lighthouse.jpg" alt="A lighthouse at sunset over a calm sea, painted by Oriel on a MacBook Air"></div>
           <div class="bub me">Now a Python function that checks for palindromes</div>
           <div class="bub ai">Sure:<pre><span class="k">def</span> <span class="f">is_palindrome</span>(word):
     w = word.<span class="f">lower</span>()
@@ -88,7 +92,7 @@
           <div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><p style="margin:0"><b>Nothing you type leaves your device</b><span>Your messages, files and pictures are handled on your own computer. We never see them — we couldn't if we tried.</span></p></div>
           <div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><p style="margin:0"><b>No account, no tracking</b><span>No sign-up, no email, no ads, and no analytics watching what you do.</span></p></div>
           <div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><p style="margin:0"><b>Never used to train anything</b><span>Your chats aren't collected, sold or used to train AI — there's nothing to collect.</span></p></div>
-          <div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><p style="margin:0"><b>Your chats stay with you</b><span>Saved only in this browser. Delete one, or everything, whenever you like.</span></p></div>
+          <div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><p style="margin:0"><b>Works with no internet</b><span>Once it's set up, turn off your Wi-Fi: Oriel keeps going. Your chats are saved only on this device.</span></p></div>
         </div>
       </div>
     </div>
@@ -118,7 +122,7 @@
       <div class="needs">
         <div><b>Chrome, Edge or Safari 26</b><span>On a Mac, Windows PC, Linux or Chromebook — nothing to install.</span></div>
         <div><b>8 GB of memory</b><span>16 GB or more makes it faster, and lets it paint pictures.</span></div>
-        <div><b>A one-time download</b><span>About 2 GB for chat, and 6 GB more for pictures. Then it starts in seconds.</span></div>
+        <div><b>A one-time download</b><span>About 2 GB for chat, and 6.6 GB more for pictures. Then it starts in seconds — even offline.</span></div>
       </div>
       <p class="also">Want a different AI model? <a href="../">Oriel Models</a> lists every model worth trying, and how to get it.</p>
     </div>
@@ -131,7 +135,9 @@
         <details open><summary>Is it really private?</summary><p>Yes. The AI itself — the model — downloads into your browser and runs on your own computer's graphics chip. What you type, the files you add and the pictures you make are never sent to a server: not ours, not anyone's. The only things Oriel downloads are the models themselves, from Hugging Face, where their makers publish them.</p></details>
         <details><summary>Is it really free? What's the catch?</summary><p>There's no catch. Because the AI runs on your computer, it costs us nothing when you use it — so there's nothing to charge for, and no reason to collect your data.</p></details>
         <details><summary>How good is it?</summary><p>Very good for everyday things: explaining, writing, brainstorming, homework help, code and pictures. It isn't as clever as the biggest cloud AIs on hard questions, and it doesn't know today's news. Like every AI, it can make mistakes — check anything important.</p></details>
-        <details><summary>Why does it download so much the first time?</summary><p>That's the AI itself: about 2 GB of knowledge for chatting, plus about 6 GB if you make pictures. It's saved in your browser, so it only downloads once and then starts in seconds.</p></details>
+        <details><summary>Why does it download so much the first time?</summary><p>That's the AI itself: about 2 GB for chatting, plus 6.6 GB the first time you ask for a picture (it asks first). It's saved on your computer, so it only downloads once — and if the download is interrupted, it carries on where it stopped.</p></details>
+        <details><summary>Does it work offline?</summary><p>Yes. Once Oriel has downloaded its AI, it works with no internet at all — turn off your Wi-Fi and it keeps going. You can also install it from your browser's menu, to open it like any other app.</p></details>
+        <details><summary>How long does a picture take?</summary><p>About a minute on a MacBook Air — the whole picture is painted by your own computer's graphics chip. Faster computers are quicker. Chat answers start in about a second.</p></details>
         <details><summary>Which AI models does it use?</summary><p>Open models from leading labs: a Qwen model from Alibaba for chat and code, and Z-Image Turbo from Alibaba's Tongyi lab for pictures. Oriel picks the best one your computer can run; you can choose another in the menu.</p></details>
         <details><summary>How do I delete everything?</summary><p>Delete chats in Oriel's sidebar, and remove downloaded models in Settings. Clearing this site's data in your browser removes everything at once.</p></details>
       </div>
