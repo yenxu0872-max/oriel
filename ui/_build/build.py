@@ -52,7 +52,7 @@ PICTURE = f"""<sc-if value="{{{{ m.hasPicture }}}}"><div style="width:100%;max-w
 <sc-if value="{{{{ m.picCancelable }}}}"><button onClick="{{{{ m.picCancel }}}}" style="{BTN};align-self:flex-start;background:#fff;color:#1d1d1b;border:1px solid #e3e3e9">Pause download</button></sc-if>
 </div></sc-if>
 <sc-if value="{{{{ m.picDone }}}}"><div style="position:relative;border-radius:16px;overflow:hidden;border:1px solid #e8e8ec;background:#f4f4f7">
-<img src="{{{{ m.picUrl }}}}" alt="{{{{ m.picAlt }}}}" style="display:block;width:100%;aspect-ratio:1;object-fit:cover;filter:{{{{ m.picFilter }}}}">
+<div role="img" aria-label="{{{{ m.picAlt }}}}" style="width:100%;aspect-ratio:1;background:{{{{ m.picBg }}}};background-size:cover;background-position:center;filter:{{{{ m.picFilter }}}}"></div>
 <sc-if value="{{{{ m.picHidden }}}}"><div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;color:#fff;font-size:14px;background:rgba(20,20,26,.35)">It might not be suitable, so it's hidden.<button onClick="{{{{ m.picShow }}}}" style="{BTN};background:rgba(255,255,255,.92);color:#1d1d1b">Show anyway</button></div></sc-if>
 </div>
 <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
@@ -61,6 +61,15 @@ PICTURE = f"""<sc-if value="{{{{ m.hasPicture }}}}"><div style="width:100%;max-w
 <span style="font-size:12.5px;color:#8a8a84;margin-left:4px">{{{{ m.picNote }}}}</span>
 </div></sc-if>
 <sc-if value="{{{{ m.picErr }}}}"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:14px;color:#6b6b66">{{{{ m.picErrText }}}}<sc-if value="{{{{ m.picRetry }}}}"><button onClick="{{{{ m.picAgain }}}}" style="{BTN};background:#f4f4f7;color:#1d1d1b">Try again</button></sc-if></div></sc-if>
+</div></sc-if>"""
+# Settings, in the web app: what's downloaded on this device, and a way to delete it.
+STORAGE = f"""<sc-if value="{{{{ hasStorage }}}}"><div style="display:flex;flex-direction:column;gap:10px;border-top:1px solid #f0f0f3;padding-top:18px">
+<div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:14px;font-weight:500">Stored on this device</span>
+<span style="font-size:13px;color:#6b6b66;text-wrap:pretty">Oriel's AI, downloaded once. Delete what you don't use to free up space — it downloads again if you need it. Nothing here ever leaves this device.</span></div>
+<sc-for list="{{{{ storage }}}}" as="it"><div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid #eeeef1;border-radius:12px">
+<div style="flex:1;display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font-size:14px">{{{{ it.label }}}}</span><span style="font-size:12.5px;color:#8a8a84">{{{{ it.detail }}}}</span></div>
+<button onClick="{{{{ it.remove }}}}" style="{BTN};background:#f4f4f7;color:#1d1d1b;padding:6px 12px" style-hover="background:#ececf1">{{{{ it.action }}}}</button></div></sc-for>
+<sc-if value="{{{{ storageEmpty }}}}"><span style="font-size:13px;color:#8a8a84">Nothing downloaded yet.</span></sc-if>
 </div></sc-if>"""
 
 # ------------------------------------------------------------------ helpers
@@ -325,6 +334,7 @@ tpl = remove_blocks(tpl, "button", '<button onClick="{{ pickResearch }}"', "Deep
 if WEB:
     # pictures are real in the web app: Z-Image Turbo on the graphics chip (web/app/image-worker.js)
     tpl = must_replace(tpl, "Generate visuals from a description", "Paint a picture on this computer", "Create image subtitle")
+    tpl = insert_after_block(tpl, '<sc-for list="{{ toggles }}" as="tg">', "sc-for", STORAGE, "stored-on-this-device section")
     start = tpl.index('<sc-if value="{{ m.hasImages }}">')
     tpl = tpl[:start] + PICTURE + tpl[match_close(tpl, start, "sc-if"):]
     print("  replaced 1× image placeholders → the picture card")

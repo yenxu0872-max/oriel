@@ -388,9 +388,25 @@
   function kebabToCamel(s) {
     return s.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
   }
+  // Split declarations on ";" but not inside quotes or brackets: a data URL
+  // (url("data:image/jpeg;base64,...")) has one of its own.
+  function splitDecls(css) {
+    const out = [];
+    let depth = 0, quote = "", start = 0;
+    for (let i = 0; i < css.length; i++) {
+      const c = css[i];
+      if (quote) { if (c === quote) quote = ""; continue; }
+      if (c === '"' || c === "'") quote = c;
+      else if (c === "(") depth++;
+      else if (c === ")") depth = Math.max(0, depth - 1);
+      else if (c === ";" && !depth) { out.push(css.slice(start, i)); start = i + 1; }
+    }
+    out.push(css.slice(start));
+    return out;
+  }
   function cssToObj(css) {
     const o = {};
-    for (const decl of css.split(";")) {
+    for (const decl of splitDecls(css)) {
       const i = decl.indexOf(":");
       if (i < 0) continue;
       const prop = decl.slice(0, i).trim();

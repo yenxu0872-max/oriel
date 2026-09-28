@@ -1189,7 +1189,7 @@ class Component extends DCLogic {
     window.oriel = {
       newChat: () => !this.state.busy && this.setState({ activeId: null, input: '', canvas: null }, () => this.inputRef.current?.focus()),
       toggleSidebar: () => this.setState(s => ({ sidebarOpen: !s.sidebarOpen })),
-      openSettings: () => this.setState({ settingsOpen: true }),
+      openSettings: () => this.openSettings(),
       busy: () => this.state.busy,
     };
   }
@@ -1252,7 +1252,7 @@ class Component extends DCLogic {
     window.oriel = {
       newChat: () => !this.state.busy && this.setState({ activeId: null, input: '', canvas: null }, () => this.inputRef.current?.focus()),
       toggleSidebar: () => this.setState(s => ({ sidebarOpen: !s.sidebarOpen })),
-      openSettings: () => this.setState({ settingsOpen: true }),
+      openSettings: () => this.openSettings(),
       busy: () => this.state.busy,
     };
   }
@@ -1689,6 +1689,72 @@ class Component extends DCLogic {
     }
   }
 
+  // Deleting a chat deletes its pictures too — nothing is kept behind.
+  async forgetPictures(chat) {
+    if (!WEB) return;
+    const ids = (chat.messages || []).map(m => m.picture?.id).filter(Boolean);
+    if (!ids.length) return;
+    try { const dir = await pictureStore(); for (const id of ids) await dir.removeEntry(id + '.png').catch(() => {}); } catch (e) {}
+  }
+
+  /* ---------------------------------------------------- what's on this device */
+
+  openSettings() {
+    this.setState({ settingsOpen: true });
+    if (WEB) {
+      this.scanDownloads();
+      painter.call('status').then(st => this.setState({ painterStore: st })).catch(() => {});
+    }
+  }
+
+  storageItems() {
+    const s = this.state, out = [];
+    for (const m of s.models) {
+      if (!s.have[m.model]) continue;
+      out.push({ label: m.name, detail: `Chat model · ${gbText(m.download_gb)}${this.engineModel === m.model ? ' · in use now' : ''}`,
+                 action: s.deleting === m.model ? 'Deleting…' : 'Delete', remove: () => this.deleteModel(m) });
+    }
+    const p = s.painterStore;
+    if (p && p.have > 0) {
+      out.push({ label: 'Picture maker (Z-Image Turbo)', detail: p.ready ? gbText(p.total / 1e9) : `${gbText(p.have / 1e9)} of ${gbText(p.total / 1e9)} · unfinished download`,
+                 action: s.deleting === 'painter' ? 'Deleting…' : 'Delete', remove: () => this.deletePainter() });
+    }
+    return out;
+  }
+
+  async deleteModel(m) {
+    if (this.state.deleting) return;
+    if (this.state.busy && this.engineModel === m.model) { this.showToast(`${m.name} is answering — try again when it's done`); return; }
+    if (!window.confirm(`Delete ${m.name} from this device? It frees ${gbText(m.download_gb)}, and downloads again if you use it later.`)) return;
+    this.setState({ deleting: m.model });
+    try {
+      if (this.engineModel === m.model) { try { await this.engine.unload(); } catch (e) {} this.engineModel = null; }
+      const lib = await import(`https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@${WEB.webllm}/+esm`);
+      await lib.deleteModelAllInfoInCache(m.model, fastAppConfig(lib));
+      // WebLLM leaves the model's file list behind: remove every trace
+      for (const name of ['webllm/model', 'webllm/config', 'webllm/wasm']) {
+        const ch = await caches.open(name);
+        for (const k of await ch.keys()) {
+          if (k.url.includes('/' + m.model + '/') || (name === 'webllm/wasm' && k.url.includes(m.model.replace(/-MLC$/, '')))) await ch.delete(k);
+        }
+      }
+      this.showToast(`Deleted ${m.name}`);
+    } catch (e) { this.showToast(`Couldn't delete ${m.name} — clear this site's data in your browser settings instead`); }
+    this.setState({ deleting: null });
+    this.scanDownloads();
+  }
+
+  async deletePainter() {
+    if (this.state.deleting) return;
+    if (this.pictureBusy) { this.showToast('Oriel is making a picture — try again when it has finished'); return; }
+    if (!window.confirm(`Delete the picture maker from this device? It frees ${gbText((this.state.painterStore?.have || 0) / 1e9)}, and downloads again the next time you ask for a picture. Pictures you've made stay.`)) return;
+    this.setState({ deleting: 'painter' });
+    try { await painter.call('delete'); this.showToast('Deleted the picture maker'); }
+    catch (e) { this.showToast("Couldn't delete the picture maker"); }
+    const st = await painter.call('status').catch(() => null);
+    this.setState({ deleting: null, painterStore: st });
+  }
+
   async savePicture(pic) {
     let href = pic.url, blobUrl = null;
     try {
@@ -2001,7 +2067,7 @@ class Component extends DCLogic {
           pinLabel: c.pinned ? 'Unpin' : 'Pin',
           pin: () => { this.patchChat(c.id, x => ({ ...x, pinned: !x.pinned })); this.setState({ chatMenu: null }); },
           rename: () => this.setState({ renamingId: c.id, renameVal: c.title, chatMenu: null }),
-          remove: () => { this.deleted = { ...(this.deleted || {}), [c.id]: Date.now() }; this.setState(st => ({ chats: st.chats.filter(x => x.id !== c.id), chatMenu: null, activeId: st.activeId === c.id ? null : st.activeId, canvas: st.activeId === c.id ? null : st.canvas })); this.showToast('Chat deleted'); },
+          remove: () => { this.forgetPictures(c); this.deleted = { ...(this.deleted || {}), [c.id]: Date.now() }; this.setState(st => ({ chats: st.chats.filter(x => x.id !== c.id), chatMenu: null, activeId: st.activeId === c.id ? null : st.activeId, canvas: st.activeId === c.id ? null : st.canvas })); this.showToast('Chat deleted'); },
         };
       }),
     })).filter(g => g.items.length);
@@ -2034,7 +2100,7 @@ class Component extends DCLogic {
       closeMenus: () => this.setState({ modelMenu: false, toolsOpen: false, chatMenu: null, exportMenu: null }),
       userName: s.name.trim() || 'You', initial: (s.name.trim()[0] || 'O').toUpperCase(),
       planLabel: WEB ? 'In this browser · private' : s.web ? 'On this Mac · Search on' : 'On this Mac · offline',
-      openSettings: () => this.setState({ settingsOpen: true }),
+      openSettings: () => this.openSettings(),
       modelName: model.name, modelMenuOpen: s.modelMenu,
       toggleModelMenu: () => this.setState({ modelMenu: !s.modelMenu }),
       // The web menu lists what's already in this browser (and the model in
@@ -2131,7 +2197,7 @@ class Component extends DCLogic {
               picCancelable: st === 'downloading', picCancel: () => painter.w?.postMessage({ type: 'cancel' }),
               picSize: gbText(((pic.total || PICTURE_TOTAL * 1e9) - (pic.have || 0)) / 1e9),
               picResume: (pic.have || 0) > 0,
-              picUrl: pic.url || '', picAlt: pic.prompt || '',
+              picBg: pic.url ? `url("${pic.url}")` : 'none', picAlt: pic.prompt || '',   // a background, as the design shows files: an <img> in the template would fetch its placeholder
               picHidden: !!pic.flagged && !pic.shown, picFilter: pic.flagged && !pic.shown ? 'blur(28px)' : 'none',
               picNote: pic.secs ? `Painted on this computer in ${pic.secs} s` : 'Painted on this computer',
               picErrText: st === 'declined' ? 'No problem — ask for a picture whenever you like.' : `Couldn't make it: ${pic.error || 'something went wrong'}`,
@@ -2215,6 +2281,7 @@ class Component extends DCLogic {
       canvasFormal: () => this.send(`Rewrite “${cmsg?.artifact.title}” in a more formal tone. Current version:\n\n${cmsg?.artifact.body}`, { tool: 'canvas' }),
       hasToast: !!s.toast, toast: s.toast,
       settingsOpen: s.settingsOpen, closeSettings: () => this.setState({ settingsOpen: false }),
+      hasStorage: !!WEB, storage: WEB ? this.storageItems() : [], storageEmpty: !!WEB && !this.storageItems().length,
       onName: e => this.setState({ name: e.target.value }),
       styles: STYLES.map(x => ({ label: x, active: x === s.style, inactive: x !== s.style, pick: () => this.setState({ style: x }) })),
       themes: THEMES.map(x => ({ label: x, active: x === s.theme, inactive: x !== s.theme, pick: () => { this.setState({ theme: x }); applyTheme(x); } })),

@@ -9,7 +9,7 @@
      the picture maker's folder), so they pass straight through here
 
    Nothing is ever sent anywhere by this file; it only keeps copies. */
-const APP = 'oriel-app-v1', LIBS = 'oriel-libs-v1';
+const APP = 'oriel-app-v2', LIBS = 'oriel-libs-v1';
 const PINNED = /^https:\/\/cdn\.jsdelivr\.net\/npm\/(?:@[^/]+\/)?[^/@]+@\d+\.\d+\.\d+[^/]*\//;
 
 self.addEventListener('install', e => {
@@ -25,7 +25,9 @@ self.addEventListener('fetch', e => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin === location.origin) {
-    e.respondWith(fetch(req).then(res => {
+    // always ask the server (a cheap "not modified" when nothing changed), so an update shows at once
+    const fresh = req.mode === 'navigate' ? fetch(req.url, { cache: 'no-cache' }) : fetch(req, { cache: 'no-cache' });
+    e.respondWith(fresh.then(res => {
       if (res.ok && res.type === 'basic') { const copy = res.clone(); caches.open(APP).then(c => c.put(req, copy)); }
       return res;
     }).catch(() => caches.match(req, { ignoreSearch: true }).then(r => r || caches.match('chat.html'))));

@@ -291,7 +291,7 @@ textarea::placeholder,input::placeholder{color:var(--c-8f8f89-t)}
 <sc-if value="{{ m.picCancelable }}"><button onClick="{{ m.picCancel }}" style="border:0;border-radius:10px;padding:8px 14px;font-family:inherit;font-size:13.5px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:7px;align-self:flex-start;background:var(--c-ffffff-b);color:var(--c-1d1d1b-t);border:1px solid var(--c-e3e3e9-l)">Pause download</button></sc-if>
 </div></sc-if>
 <sc-if value="{{ m.picDone }}"><div style="position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--c-e8e8ec-l);background:var(--c-f4f4f7-b)">
-<img src="{{ m.picUrl }}" alt="{{ m.picAlt }}" style="display:block;width:100%;aspect-ratio:1;object-fit:cover;filter:{{ m.picFilter }}">
+<div role="img" aria-label="{{ m.picAlt }}" style="width:100%;aspect-ratio:1;background:{{ m.picBg }};background-size:cover;background-position:center;filter:{{ m.picFilter }}"></div>
 <sc-if value="{{ m.picHidden }}"><div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;color:var(--c-ffffff-t);font-size:14px;background:var(--c-rgba-20-20-26-35-b)">It might not be suitable, so it's hidden.<button onClick="{{ m.picShow }}" style="border:0;border-radius:10px;padding:8px 14px;font-family:inherit;font-size:13.5px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:7px;background:var(--c-rgba-255-255-255-92-b);color:var(--c-1d1d1b-t)">Show anyway</button></div></sc-if>
 </div>
 <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
@@ -576,7 +576,14 @@ textarea::placeholder,input::placeholder{color:var(--c-8f8f89-t)}
                 </button>
               </sc-if>
             </div>
-          </sc-for>
+          </sc-for><sc-if value="{{ hasStorage }}"><div style="display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--c-f0f0f3-l);padding-top:18px">
+<div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:14px;font-weight:500">Stored on this device</span>
+<span style="font-size:13px;color:var(--c-6b6b66-t);text-wrap:pretty">Oriel's AI, downloaded once. Delete what you don't use to free up space — it downloads again if you need it. Nothing here ever leaves this device.</span></div>
+<sc-for list="{{ storage }}" as="it"><div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--c-eeeef1-l);border-radius:12px">
+<div style="flex:1;display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font-size:14px">{{ it.label }}</span><span style="font-size:12.5px;color:var(--c-8a8a84-t)">{{ it.detail }}</span></div>
+<button onClick="{{ it.remove }}" style="border:0;border-radius:10px;padding:8px 14px;font-family:inherit;font-size:13.5px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:7px;background:var(--c-f4f4f7-b);color:var(--c-1d1d1b-t);padding:6px 12px" style-hover="background:var(--c-ececf1-b)">{{ it.action }}</button></div></sc-for>
+<sc-if value="{{ storageEmpty }}"><span style="font-size:13px;color:var(--c-8a8a84-t)">Nothing downloaded yet.</span></sc-if>
+</div></sc-if>
         </div>
         <div style="display:flex;justify-content:flex-end;padding:14px 24px 20px;border-top:1px solid var(--c-f0f0f3-l)">
           <button onClick="{{ closeSettings }}" style="height:40px;padding:0 20px;border-radius:999px;border:0;background:var(--c-1d1d1b-b);color:var(--c-ffffff-t);font-family:inherit;font-size:14px;font-weight:500;cursor:pointer" style-hover="background:var(--c-3a3a37-b)">Done</button>
@@ -1218,7 +1225,7 @@ class Component extends DCLogic {
     window.oriel = {
       newChat: () => !this.state.busy && this.setState({ activeId: null, input: '', canvas: null }, () => this.inputRef.current?.focus()),
       toggleSidebar: () => this.setState(s => ({ sidebarOpen: !s.sidebarOpen })),
-      openSettings: () => this.setState({ settingsOpen: true }),
+      openSettings: () => this.openSettings(),
       busy: () => this.state.busy,
     };
   }
@@ -1281,7 +1288,7 @@ class Component extends DCLogic {
     window.oriel = {
       newChat: () => !this.state.busy && this.setState({ activeId: null, input: '', canvas: null }, () => this.inputRef.current?.focus()),
       toggleSidebar: () => this.setState(s => ({ sidebarOpen: !s.sidebarOpen })),
-      openSettings: () => this.setState({ settingsOpen: true }),
+      openSettings: () => this.openSettings(),
       busy: () => this.state.busy,
     };
   }
@@ -1718,6 +1725,72 @@ class Component extends DCLogic {
     }
   }
 
+  // Deleting a chat deletes its pictures too — nothing is kept behind.
+  async forgetPictures(chat) {
+    if (!WEB) return;
+    const ids = (chat.messages || []).map(m => m.picture?.id).filter(Boolean);
+    if (!ids.length) return;
+    try { const dir = await pictureStore(); for (const id of ids) await dir.removeEntry(id + '.png').catch(() => {}); } catch (e) {}
+  }
+
+  /* ---------------------------------------------------- what's on this device */
+
+  openSettings() {
+    this.setState({ settingsOpen: true });
+    if (WEB) {
+      this.scanDownloads();
+      painter.call('status').then(st => this.setState({ painterStore: st })).catch(() => {});
+    }
+  }
+
+  storageItems() {
+    const s = this.state, out = [];
+    for (const m of s.models) {
+      if (!s.have[m.model]) continue;
+      out.push({ label: m.name, detail: `Chat model · ${gbText(m.download_gb)}${this.engineModel === m.model ? ' · in use now' : ''}`,
+                 action: s.deleting === m.model ? 'Deleting…' : 'Delete', remove: () => this.deleteModel(m) });
+    }
+    const p = s.painterStore;
+    if (p && p.have > 0) {
+      out.push({ label: 'Picture maker (Z-Image Turbo)', detail: p.ready ? gbText(p.total / 1e9) : `${gbText(p.have / 1e9)} of ${gbText(p.total / 1e9)} · unfinished download`,
+                 action: s.deleting === 'painter' ? 'Deleting…' : 'Delete', remove: () => this.deletePainter() });
+    }
+    return out;
+  }
+
+  async deleteModel(m) {
+    if (this.state.deleting) return;
+    if (this.state.busy && this.engineModel === m.model) { this.showToast(`${m.name} is answering — try again when it's done`); return; }
+    if (!window.confirm(`Delete ${m.name} from this device? It frees ${gbText(m.download_gb)}, and downloads again if you use it later.`)) return;
+    this.setState({ deleting: m.model });
+    try {
+      if (this.engineModel === m.model) { try { await this.engine.unload(); } catch (e) {} this.engineModel = null; }
+      const lib = await import(`https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@${WEB.webllm}/+esm`);
+      await lib.deleteModelAllInfoInCache(m.model, fastAppConfig(lib));
+      // WebLLM leaves the model's file list behind: remove every trace
+      for (const name of ['webllm/model', 'webllm/config', 'webllm/wasm']) {
+        const ch = await caches.open(name);
+        for (const k of await ch.keys()) {
+          if (k.url.includes('/' + m.model + '/') || (name === 'webllm/wasm' && k.url.includes(m.model.replace(/-MLC$/, '')))) await ch.delete(k);
+        }
+      }
+      this.showToast(`Deleted ${m.name}`);
+    } catch (e) { this.showToast(`Couldn't delete ${m.name} — clear this site's data in your browser settings instead`); }
+    this.setState({ deleting: null });
+    this.scanDownloads();
+  }
+
+  async deletePainter() {
+    if (this.state.deleting) return;
+    if (this.pictureBusy) { this.showToast('Oriel is making a picture — try again when it has finished'); return; }
+    if (!window.confirm(`Delete the picture maker from this device? It frees ${gbText((this.state.painterStore?.have || 0) / 1e9)}, and downloads again the next time you ask for a picture. Pictures you've made stay.`)) return;
+    this.setState({ deleting: 'painter' });
+    try { await painter.call('delete'); this.showToast('Deleted the picture maker'); }
+    catch (e) { this.showToast("Couldn't delete the picture maker"); }
+    const st = await painter.call('status').catch(() => null);
+    this.setState({ deleting: null, painterStore: st });
+  }
+
   async savePicture(pic) {
     let href = pic.url, blobUrl = null;
     try {
@@ -2030,7 +2103,7 @@ class Component extends DCLogic {
           pinLabel: c.pinned ? 'Unpin' : 'Pin',
           pin: () => { this.patchChat(c.id, x => ({ ...x, pinned: !x.pinned })); this.setState({ chatMenu: null }); },
           rename: () => this.setState({ renamingId: c.id, renameVal: c.title, chatMenu: null }),
-          remove: () => { this.deleted = { ...(this.deleted || {}), [c.id]: Date.now() }; this.setState(st => ({ chats: st.chats.filter(x => x.id !== c.id), chatMenu: null, activeId: st.activeId === c.id ? null : st.activeId, canvas: st.activeId === c.id ? null : st.canvas })); this.showToast('Chat deleted'); },
+          remove: () => { this.forgetPictures(c); this.deleted = { ...(this.deleted || {}), [c.id]: Date.now() }; this.setState(st => ({ chats: st.chats.filter(x => x.id !== c.id), chatMenu: null, activeId: st.activeId === c.id ? null : st.activeId, canvas: st.activeId === c.id ? null : st.canvas })); this.showToast('Chat deleted'); },
         };
       }),
     })).filter(g => g.items.length);
@@ -2063,7 +2136,7 @@ class Component extends DCLogic {
       closeMenus: () => this.setState({ modelMenu: false, toolsOpen: false, chatMenu: null, exportMenu: null }),
       userName: s.name.trim() || 'You', initial: (s.name.trim()[0] || 'O').toUpperCase(),
       planLabel: WEB ? 'In this browser · private' : s.web ? 'On this Mac · Search on' : 'On this Mac · offline',
-      openSettings: () => this.setState({ settingsOpen: true }),
+      openSettings: () => this.openSettings(),
       modelName: model.name, modelMenuOpen: s.modelMenu,
       toggleModelMenu: () => this.setState({ modelMenu: !s.modelMenu }),
       // The web menu lists what's already in this browser (and the model in
@@ -2160,7 +2233,7 @@ class Component extends DCLogic {
               picCancelable: st === 'downloading', picCancel: () => painter.w?.postMessage({ type: 'cancel' }),
               picSize: gbText(((pic.total || PICTURE_TOTAL * 1e9) - (pic.have || 0)) / 1e9),
               picResume: (pic.have || 0) > 0,
-              picUrl: pic.url || '', picAlt: pic.prompt || '',
+              picBg: pic.url ? `url("${pic.url}")` : 'none', picAlt: pic.prompt || '',   // a background, as the design shows files: an <img> in the template would fetch its placeholder
               picHidden: !!pic.flagged && !pic.shown, picFilter: pic.flagged && !pic.shown ? 'blur(28px)' : 'none',
               picNote: pic.secs ? `Painted on this computer in ${pic.secs} s` : 'Painted on this computer',
               picErrText: st === 'declined' ? 'No problem — ask for a picture whenever you like.' : `Couldn't make it: ${pic.error || 'something went wrong'}`,
@@ -2244,6 +2317,7 @@ class Component extends DCLogic {
       canvasFormal: () => this.send(`Rewrite “${cmsg?.artifact.title}” in a more formal tone. Current version:\n\n${cmsg?.artifact.body}`, { tool: 'canvas' }),
       hasToast: !!s.toast, toast: s.toast,
       settingsOpen: s.settingsOpen, closeSettings: () => this.setState({ settingsOpen: false }),
+      hasStorage: !!WEB, storage: WEB ? this.storageItems() : [], storageEmpty: !!WEB && !this.storageItems().length,
       onName: e => this.setState({ name: e.target.value }),
       styles: STYLES.map(x => ({ label: x, active: x === s.style, inactive: x !== s.style, pick: () => this.setState({ style: x }) })),
       themes: THEMES.map(x => ({ label: x, active: x === s.theme, inactive: x !== s.theme, pick: () => { this.setState({ theme: x }); applyTheme(x); } })),
