@@ -196,9 +196,9 @@ footer p{margin:0 0 6px;max-width:720px}
 
 /* what it's good for: plain tabs */
 .tabs-bar{border-bottom:1px solid var(--line);margin:30px 0 14px}
-.utabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.utabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 36px),transparent)}
 .utabs::-webkit-scrollbar{display:none}
-.utab{border:0;background:none;padding:10px 12px;font-size:14px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;display:inline-flex;gap:8px;align-items:center}
+.utab{border:0;background:none;padding:10px 10px;font-size:14px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;display:inline-flex;gap:8px;align-items:center}
 .utab svg{width:16px;height:16px}
 .utab:hover{color:var(--text)}
 .utab[aria-selected=true]{color:var(--text);border-bottom-color:var(--ink);font-weight:500}
@@ -251,7 +251,11 @@ footer p{margin:0 0 6px;max-width:720px}
 @media (max-width:900px){.rows{grid-template-columns:1fr}}
 .row{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:var(--card);cursor:pointer;min-width:0;transition:border-color .15s,box-shadow .15s}
 .row:hover{border-color:var(--line2);box-shadow:var(--shadow-sm)}
-.row > img{width:44px;height:44px;border-radius:12px;object-fit:contain;background:#fff;box-shadow:0 0 0 1px var(--line);flex-shrink:0}
+.av{border-radius:24%;object-fit:contain;background:#fff;box-shadow:0 0 0 1px var(--line);flex-shrink:0;display:block}
+.lav{display:flex;align-items:center;justify-content:center;background:hsl(var(--h) 70% 94%);color:hsl(var(--h) 45% 32%);font-weight:650;letter-spacing:-.02em;text-transform:uppercase;box-shadow:none}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .lav{background:hsl(var(--h) 28% 24%);color:hsl(var(--h) 70% 82%)}}
+:root[data-theme=dark] .lav{background:hsl(var(--h) 28% 24%);color:hsl(var(--h) 70% 82%)}
+.row > .av{width:44px;height:44px}
 .row-main{flex:1;min-width:0}
 .row-name{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;letter-spacing:-.02em}
 .row-desc{font-size:13.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
@@ -323,3 +327,40 @@ ol.howto li::marker{color:var(--faint)}
 .myrow{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;font-size:14px}
 .myrow img{width:32px;height:32px;border-radius:9px;object-fit:contain;background:#fff;box-shadow:0 0 0 1px var(--line)}
 .myrow .grow{flex:1;min-width:0}
+
+/* ------------------------------------------------------------ the big catalog */
+.row-name .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.row-meta .kind{color:var(--accent-text);font-weight:500}
+.bdg{font-size:11px;font-weight:500;padding:1px 7px;border-radius:999px;background:var(--chip);color:var(--muted);white-space:nowrap;flex-shrink:0}
+.bdg.new{background:color-mix(in oklab,var(--good) 16%,transparent);color:color-mix(in oklab,var(--good) 75%,var(--text))}
+.act{display:flex;gap:6px;flex-shrink:0;align-items:center}
+.act .btn svg{flex-shrink:0}
+@media (max-width:560px){.row{flex-wrap:wrap}.row-main{flex-basis:calc(100% - 58px)}.act{width:100%;justify-content:flex-end}.hide-sm{display:none}}
+.shelf{margin-bottom:40px}
+.shelf-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:14px}
+.shelf-head h2{margin:0;font-size:20px;font-weight:600;letter-spacing:-.03em}
+.see{display:inline-flex;align-items:center;gap:4px;border:0;background:none;color:var(--accent-text);font-weight:500;font-size:14px;cursor:pointer;padding:4px 2px}
+.see svg{width:14px;height:14px}
+.see:hover{text-decoration:underline}
+.more-wrap{display:flex;justify-content:center;margin:22px 0 8px}
+.banner .logo.av{width:52px;height:52px;border-radius:15px}
+.pick .logo.av{width:36px;height:36px;border-radius:10px;margin-bottom:12px}
+.sheet-head .av{width:48px;height:48px;border-radius:13px}
+.linkish{border:0;background:none;padding:0;font:inherit;color:var(--accent-text);cursor:pointer}
+.linkish:hover{text-decoration:underline}
+.get h3{margin:0 0 10px;font-size:17px;font-weight:600;letter-spacing:-.02em}
+.ways{display:flex;flex-direction:column;gap:8px}
+.way-item{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:16px;padding:12px 14px;background:var(--card)}
+.way-item.oriel{background:var(--panel);border-color:transparent}
+.way-item.warn{background:color-mix(in oklab,var(--warn) 10%,var(--card))}
+.wi-ic{width:36px;height:36px;border-radius:10px;background:var(--chip);color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.wi-ic svg{width:19px;height:19px}
+.way-item.oriel .wi-ic{background:transparent}
+.way-item.oriel .wi-ic svg{width:30px;height:30px}
+.wi-main{flex:1;min-width:0}
+.wi-main b{display:block;font-size:14.5px;font-weight:600}
+.wi-main small{display:block;color:var(--muted);font-size:13px;margin-top:1px}
+.wi-main small b{display:inline;font-size:inherit;color:var(--text)}
+.wi-main .cmd{margin-top:8px}
+.way-item > .btn{flex-shrink:0}
+@media (max-width:560px){.way-item{flex-wrap:wrap}.way-item > .btn{margin-left:50px}}

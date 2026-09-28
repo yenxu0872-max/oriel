@@ -2,7 +2,7 @@
 """Assemble ui/index.html from the Oriel v3 design.
 
     python3 ui/_build/build.py          the Mac app's page (ui/index.html)
-    python3 ui/_build/build.py --web    the website's chat page (web/chat.html),
+    python3 ui/_build/build.py --web    the Oriel web app's chat (web/app/chat.html),
                                         where models run in the browser itself
 
 Steps, in order:
@@ -27,7 +27,7 @@ HERE = Path(__file__).resolve().parent
 UI = HERE.parent
 SRC = UI / "_design" / "Oriel v3.dc.html"
 WEB = "--web" in sys.argv
-SITE = UI.parent / "web"
+SITE = UI.parent / "web" / "app"           # the Oriel app: its own folder, deployable on its own
 OUT = SITE / "chat.html" if WEB else UI / "index.html"
 
 # The web page's model download, shown in the empty chat and above the messages.
@@ -366,8 +366,9 @@ tpl = must_replace(
 
 tpl, theme_css, _ = colour_pass(tpl)
 if WEB:
+    shutil.copy2(SITE.parent / "models.json", SITE / "models.json")      # the models Oriel runs (web/_build/catalog.py)
     WEB_CONFIG = json.dumps({"webllm": json.loads((SITE / "models.json").read_text())["engine"]["webllm"],
-                             "models": "models.json", "worker": "engine-worker.js", "browse": "models.html"})
+                             "models": "models.json", "worker": "engine-worker.js", "browse": "../models.html"})
 
 icon = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E"
         "%3Ccircle cx='16' cy='16' r='14' fill='%2317171a'/%3E"
