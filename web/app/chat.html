@@ -1811,7 +1811,7 @@ class Component extends DCLogic {
     const model = this.model();
     const tool = opts.tool !== undefined ? opts.tool : this.state.tool;
     const think = model.deep || (!!(opts.think ?? this.state.think) && (!WEB || !!model.thinkToggle));
-    const web = !!(opts.web ?? this.state.web);
+    const web = !WEB && !!(opts.web ?? this.state.web);   // the web app has no server: nothing typed ever leaves the browser
     const files = opts.keepFiles ? (opts.files || []) : this.state.pending;
     if (WEB && (tool === 'image' || (!tool && !files.length && looksLikePicture(text)))) return this.sendPicture(text, opts);
 

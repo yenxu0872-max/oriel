@@ -53,6 +53,19 @@ a{color:inherit}
 .nav .btn-line{height:34px;padding:0 15px;font-size:13.5px}
 @media (max-width:520px){.nav .hide-sm{display:none}}
 
+/* chapter rail: where you are in the story; hover to read, click to jump */
+.rail{position:fixed;right:16px;top:50%;transform:translateY(-50%);z-index:45;display:flex;flex-direction:column;gap:2px;color:var(--day-text);transition:color .5s}
+.rail[data-tone=night]{color:var(--night-text)}
+.rail button{display:flex;align-items:center;justify-content:flex-end;gap:10px;height:20px;padding:0;border:0;background:none;color:inherit;cursor:pointer;font:500 12px/1 'Geist',system-ui,sans-serif}
+.rail button i{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.3;transition:transform .3s var(--ease),opacity .3s}
+.rail button.on i{opacity:1;transform:scale(1.5)}
+.rail button span{padding:4px 8px;border-radius:7px;white-space:nowrap;opacity:0;transform:translateX(6px);transition:opacity .25s,transform .25s var(--ease);
+  background:color-mix(in oklab,var(--day) 90%,transparent);box-shadow:0 6px 16px -10px rgba(0,0,0,.4)}
+.rail[data-tone=night] button span{background:color-mix(in oklab,#1c1c20 92%,transparent)}
+.rail:hover button span,.rail button:focus-visible span{opacity:1;transform:none}
+.rail button.on span{font-weight:650}
+@media (max-width:1180px){.rail{display:none}}
+
 /* ------------------------------------------------------------ shared */
 .scene{position:relative}
 .stick{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
@@ -205,7 +218,62 @@ a{color:inherit}
   .card p{max-width:none}
 }
 
-/* ------------------------------------------------------------ 03: the leaks, rolling by */
+/* ------------------------------------------------------------ 03: it learns who you are */
+.prof .stick{display:grid;place-items:center}
+.prof .stage{width:min(1120px,94vw);display:grid;grid-template-columns:.95fr 1.05fr;gap:clamp(28px,5vw,72px);align-items:center}
+.prof .chap{justify-content:flex-start;margin-bottom:10px}
+.prof .gets{min-height:290px}
+.prof .get h3 em{background:var(--hot);-webkit-background-clip:text;background-clip:text;color:transparent}
+.prof .get p{color:var(--night-muted);max-width:30ch}
+.prof .get .src{margin-top:14px;align-self:flex-start}
+.prof .pips i{background:#26262b}
+.prof .pips i::after{background:var(--hot)}
+.dossier{position:relative;justify-self:center;width:min(440px,100%);border-radius:24px;padding:20px;background:linear-gradient(170deg,#18181c,#0e0e11);border:1px solid #2a2a30;box-shadow:0 40px 80px -40px #000}
+.dz-top{display:flex;align-items:center;gap:12px;padding-bottom:14px;border-bottom:1px solid #26262b}
+.dz-top .face{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#232328;color:#a1a1a6}
+.dz-top b{display:block;font-size:16px;line-height:1.2}
+.dz-top small{font-size:12.5px;color:var(--night-muted)}
+.dz-top .live{margin-left:auto;display:flex;align-items:center;gap:6px;font:500 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--alarm)}
+.dz-top .live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--alarm);animation:blink 1.2s ease-in-out infinite}
+@keyframes blink{50%{opacity:.25}}
+.dz-facts{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:8px}
+.dz-facts li{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:#141417;border:1px solid #232328;font-size:14.5px;transition:border-color .3s,box-shadow .3s}
+.dz-facts li > i{min-width:60px;text-align:center;font:600 10.5px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;font-style:normal;padding:5px 7px;border-radius:7px;background:#26262b;color:#c7c7cc}
+.dz-facts li.hit{border-color:oklch(0.68 0.2 32 / .7);box-shadow:0 0 24px -8px oklch(0.68 0.2 32 / .6)}
+.dz-ads{display:grid;gap:8px;margin-top:14px}
+.ad{padding:12px 14px;border-radius:14px;background:#f5f5f7;color:#1d1d1f}
+.ad .sp{display:inline-block;font:600 10px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#6e6e73;padding:4px 6px;border-radius:5px;background:#e5e5ea}
+.ad b{display:block;margin-top:6px;font-size:15px;line-height:1.25}
+.ad small{display:block;margin-top:2px;font-size:12px;color:oklch(0.55 0.19 32)}
+.dz-opt{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding:12px 14px;border-radius:14px;border:1px dashed oklch(0.68 0.2 32 / .55)}
+.dz-opt span{font-size:14px;font-weight:500}
+.dz-opt small{display:flex;align-items:center;gap:5px;margin-top:3px;font-size:12px;color:var(--alarm)}
+.dz-opt small .i{width:13px;height:13px}
+.dz-opt .tog{position:relative;width:44px;height:26px;border-radius:99px;background:var(--alarm);flex-shrink:0}
+.dz-opt .tog i{position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.3)}
+@keyframes nope{0%,55%,100%{transform:none}65%{transform:translateX(-9px)}75%{transform:none}83%{transform:translateX(-4px)}90%{transform:none}}
+@media (max-width:860px){
+  .prof .stick{place-items:start center;padding-top:68px}
+  .prof .stage{grid-template-columns:1fr;gap:16px}
+  .dossier{order:-1;padding:14px;border-radius:20px}
+  .dz-top{padding-bottom:10px}
+  .dz-facts{margin-top:10px;gap:6px}
+  .dz-facts li{padding:7px 10px;font-size:13px}
+  .js .dz-facts li:not(.on)::before{left:78px}
+  .dz-ads{margin-top:10px}
+  .dz-ads .ad:nth-child(2){display:none}
+  .ad{padding:9px 12px}
+  .ad b{font-size:14px}
+  .dz-opt{margin-top:10px;padding:9px 12px}
+  .prof .say{text-align:center}
+  .prof .chap{justify-content:center;margin-bottom:4px}
+  .prof .gets{min-height:clamp(150px,22svh,200px)}
+  .prof .get p{margin:10px auto 0}
+  .prof .get .src{align-self:center}
+  .prof .pips{justify-content:center;margin-top:10px}
+}
+
+/* ------------------------------------------------------------ 04: the leaks, rolling by */
 .leaks{--pad:max(24px,calc((100vw - 1072px) / 2))}
 .leaks .stick{display:flex;flex-direction:column;justify-content:center;gap:clamp(18px,3.6svh,40px);padding-top:44px}
 .leaks .head{text-align:left;padding:0 var(--pad)}
@@ -292,6 +360,11 @@ a{color:inherit}
 .thread .me{align-self:flex-end;max-width:80%;background:var(--day-text);color:#fff;padding:9px 14px;border-radius:17px;border-bottom-right-radius:6px}
 .thread .ai{position:relative;align-self:flex-start;max-width:88%;background:var(--day-2);padding:10px 14px;border-radius:17px;border-bottom-left-radius:6px}
 .thread .code{max-width:96%;background:#15151a;color:#e8e8ed}
+.thread .me.file{display:flex;flex-direction:column;align-items:flex-end;gap:6px;padding:0;background:none;color:var(--day-text)}
+.thread .me.file .t{background:var(--day-text);color:#fff;padding:9px 14px;border-radius:17px;border-bottom-right-radius:6px}
+.thread .chip{display:flex;align-items:center;gap:10px;padding:8px 14px 8px 8px;border-radius:14px;background:#fff;border:1px solid var(--day-line);font-size:13px;font-weight:500;box-shadow:0 6px 16px -12px rgba(20,20,40,.4)}
+.thread .chip .i{width:32px;height:32px;padding:7px;border-radius:9px;background:oklch(0.95 0.035 30);color:var(--alarm);stroke-width:1.8}
+.thread .chip small{display:block;font-size:11px;font-weight:400;color:var(--day-muted)}
 .thread pre{margin:0;font:11.5px/1.6 var(--mono);white-space:pre;overflow:hidden}
 .thread pre b{color:oklch(0.76 0.14 300);font-weight:500}
 .thread pre u{text-decoration:none;color:oklch(0.8 0.13 150)}
@@ -398,6 +471,34 @@ a{color:inherit}
 .m-off .c1{align-self:flex-end;background:var(--day-text);color:#fff;border-bottom-right-radius:5px}
 .m-off .c2{align-self:flex-start;background:#fff;border-bottom-left-radius:5px}
 @media (max-width:860px){.steps{grid-template-columns:1fr}.step{min-height:0}.step h3{margin-top:0}}
+.makers{margin-top:64px}
+.mk-h{text-align:center;font-size:15px;color:var(--day-muted);margin:0 0 18px;padding:0 12px}
+.mk-h a{display:inline-block;color:var(--day-text);font-weight:600;text-decoration:none;margin-left:4px}
+.mk-h a:hover{text-decoration:underline;text-underline-offset:3px}
+.mk-row{overflow:hidden;padding:8px 0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent)}
+.mk-track{display:flex;gap:14px;width:max-content;transform:translate3d(calc(var(--pos,.5) * -420px + 60px),0,0)}
+.mk-row.rev .mk-track{transform:translate3d(calc(var(--pos,.5) * 420px - 480px),0,0)}
+.mk{display:flex;align-items:center;gap:12px;padding:9px 20px 9px 9px;border-radius:18px;background:#fff;border:1px solid var(--day-line);box-shadow:0 12px 26px -20px rgba(20,20,40,.45)}
+.mk img{width:44px;height:44px;border-radius:12px;object-fit:cover;background:var(--day-2)}
+.mk b{display:block;font-size:15px;line-height:1.15}
+.mk small{font-size:12.5px;color:var(--day-muted)}
+.check{margin-top:44px;display:grid;grid-template-columns:1fr 1.1fr;gap:28px;align-items:center;padding:30px;border-radius:28px;background:var(--day-2)}
+.ck-l h3{margin:0;font-size:clamp(24px,2.6vw,32px);letter-spacing:-.03em;line-height:1.1}
+.ck-l p{margin:10px 0 20px;color:var(--day-muted);font-size:15.5px;max-width:36ch}
+.check .btn[disabled]{opacity:.6;cursor:progress;transform:none}
+.ck-r{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.ck-r li{display:grid;grid-template-columns:auto auto 1fr;align-items:center;gap:12px;padding:13px 16px;border-radius:14px;background:#fff;border:1px solid var(--day-line);font-size:14.5px}
+.ck-r li span{color:var(--day-muted)}
+.ck-r li b{font-weight:600;text-align:right}
+.ck-r .dot{width:10px;height:10px;border-radius:50%;background:#d1d1d6;transition:background .3s,box-shadow .3s}
+.ck-r li.ok .dot{background:var(--good);box-shadow:0 0 0 4px oklch(0.62 0.15 150 / .18)}
+.ck-r li.warn .dot{background:oklch(0.78 0.16 75);box-shadow:0 0 0 4px oklch(0.78 0.16 75 / .2)}
+.ck-r li.bad .dot{background:var(--alarm);box-shadow:0 0 0 4px oklch(0.68 0.2 32 / .18)}
+.ck-r li.busy .dot{animation:blink 1s ease-in-out infinite}
+.ck-r li.pick{background:linear-gradient(120deg,oklch(0.97 0.03 300),oklch(0.97 0.03 230));border-color:transparent}
+.ck-r li.fresh{animation:pop .45s var(--ease)}
+@keyframes pop{from{transform:scale(.97);opacity:.5}}
+@media (max-width:860px){.check{grid-template-columns:1fr;padding:22px}.ck-r li{font-size:13.5px;padding:11px 13px}}
 
 /* ------------------------------------------------------------ side by side */
 .versus{padding:clamp(50px,9vh,100px) 0 clamp(60px,12vh,120px)}
@@ -483,14 +584,30 @@ footer p{margin:0 0 8px;max-width:420px}
 .js .leaks{height:320vh}
 .js .turn{height:320vh}
 .js .turn .say{opacity:0}
-.js .lap{height:560vh}
+.js .lap{height:660vh}
+.js .prof{height:420vh}
 .js .lines{height:200vh}
 .js .card,.js .lk-in,.js .fl,.js .lane .track,.js .turn .core,.js .turn .rings i{will-change:transform}
-.js .get{opacity:0;transform:translateY(34px);transition:opacity .5s,transform .6s var(--ease)}
-.js .get.on{opacity:1;transform:none}
+.js .get{opacity:0;transform:translateY(34px);transition:opacity .5s,transform .6s var(--ease);pointer-events:none}
+.js .get.on{opacity:1;transform:none;pointer-events:auto}
 .js .get.past{opacity:0;transform:translateY(-34px)}
 .js .badge{opacity:0;transform:translateY(10px) scale(.9);transition:opacity .4s,transform .45s var(--ease)}
 .js .badge.on{opacity:1;transform:none}
+/* not learned yet: a faint blank row; learned: the words write themselves in, with a flash */
+.js .dz-facts li{opacity:.55}
+.js .dz-facts li > i{color:transparent;transition:color .3s}
+.js .dz-facts li > span{position:relative;color:transparent;clip-path:inset(0 100% 0 0);transition:clip-path .7s var(--ease),color 0s .7s}
+.js .dz-facts li{position:relative}
+.js .dz-facts li:not(.on)::before{content:"";position:absolute;left:84px;right:30%;top:50%;height:8px;margin-top:-4px;border-radius:4px;background:#26262b}
+.js .dz-facts li.on{opacity:1;animation:learned 1s var(--ease)}
+.js .dz-facts li.on > i{color:#c7c7cc}
+.js .dz-facts li.on > span{color:inherit;clip-path:inset(0 0 0 0);transition:clip-path .7s var(--ease),color 0s}
+@keyframes learned{0%{box-shadow:inset 0 0 0 1px var(--alarm),0 0 30px -6px var(--alarm)}100%{box-shadow:inset 0 0 0 1px transparent,0 0 30px -6px transparent}}
+.js .dz-ads .ad{opacity:0;transform:translateY(18px) scale(.97);transition:opacity .45s var(--ease),transform .55s var(--ease)}
+.js .dz-ads .ad.on{opacity:1;transform:none}
+.js .dz-opt{opacity:0;transform:translateY(18px);transition:opacity .45s var(--ease),transform .55s var(--ease)}
+.js .prof[data-at="2"] .dz-opt{opacity:1;transform:none}
+.js .prof[data-at="2"] .dz-opt .tog i{animation:nope 2.6s ease-in-out .5s infinite}
 .js .thread{transition:transform .8s var(--ease)}
 .js .thread [data-k]{visibility:hidden;opacity:0;transform:translateY(14px)}
 .js .thread [data-k].shown{visibility:visible;opacity:1;transform:none;transition:opacity .5s var(--ease),transform .6s var(--ease),visibility 0s}

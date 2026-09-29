@@ -125,14 +125,21 @@
     leaks: {
       init(s) {
         this.row = $('.row', s); this.axis = $('.years .axis', s); this.done = $('.years .done', s); this.dot = $('.years .dot', s);
-        this.cards = $$('.lk', s).map(el => ({ el, box: $('.lk-in', el), when: parseFloat(el.dataset.when) }));
+        this.cards = $$('.lk', s).map(el => ({ el, box: $('.lk-in', el), when: parseFloat(el.dataset.when), big: $('.big[data-to]', el) }));
+        // big numbers count up as their card slides in; the real figure stays for screen readers
+        for (const c of this.cards) if (c.big) {
+          const final = c.big.textContent;
+          Object.assign(c, { to: +c.big.dataset.to, pre: c.big.dataset.pre || '', post: c.big.dataset.post || '', v: -1 });
+          c.big.innerHTML = `<span class="sr">${final}</span><span aria-hidden="true">${final}</span>`;
+          c.num = c.big.lastChild;
+        }
       },
       measure(s) {
         const pad = parseFloat(getComputedStyle(this.row).paddingLeft) || 24;
         const last = this.cards[this.cards.length - 1].el;
         this.over = Math.max(0, last.offsetLeft + last.offsetWidth + pad - innerWidth);
         s.style.height = `${Math.round(innerHeight * 1.5 + this.over)}px`;
-        for (const c of this.cards) c.mid = c.el.offsetLeft + c.el.offsetWidth / 2;
+        for (const c of this.cards) { c.w = c.el.offsetWidth; c.mid = c.el.offsetLeft + c.w / 2; }
         this.aw = this.axis.offsetWidth;
       },
       draw(s, p) {
@@ -142,12 +149,37 @@
           const d = (c.mid + x - W / 2) / W, a = Math.min(1, Math.abs(d) * 1.25);
           c.box.style.transform = `translate3d(0,${f(a * 26, 1)}px,0) scale(${f(1 - a * .06, 4)}) rotate(${f(d * 2.5, 2)}deg)`;
           c.box.style.opacity = f(1 - a * .45);
+          if (c.big) {
+            const v = Math.round(c.to * ease(clamp((W * .96 - (c.mid + x - c.w / 2)) / (W * .42))));
+            if (v !== c.v) { c.v = v; c.num.textContent = c.pre + v.toLocaleString('en-US') + c.post; }
+          }
         }
         const k = q * (this.cards.length - 1), i = Math.min(this.cards.length - 2, Math.floor(k));
         const when = this.cards[i].when + (this.cards[i + 1].when - this.cards[i].when) * (k - i);
         const at = when <= 2026 ? (when - 2023) * .25 : .75 + (when - 2026) / .75 * .25;
         this.done.style.transform = `scaleX(${f(at, 4)})`;
         this.dot.style.transform = `translate3d(${f(at * this.aw, 1)}px,0,0)`;
+      },
+    },
+
+    // 03: the profile fills in, the ads arrive, then the switch that won't move
+    prof: {
+      init(s) {
+        this.gets = $$('.get', s); this.pips = $$('.pips i', s);
+        this.facts = $$('.dz-facts li', s); this.ads = $$('.dz-ads .ad', s); this.at = -1;
+      },
+      draw(s, p) {
+        const n = this.gets.length, u = clamp(p / .95) * n;
+        const at = Math.min(n - 1, Math.floor(u)), local = clamp(u - at);
+        if (at !== this.at) {
+          this.at = at; s.dataset.at = at;
+          this.gets.forEach((g, i) => { g.classList.toggle('on', i === at); g.classList.toggle('past', i < at); });
+        }
+        this.pips.forEach((pip, i) => pip.style.setProperty('--f', i < at ? 1 : i === at ? f(local) : 0));
+        const facts = at > 0 ? this.facts.length : Math.ceil(clamp(local * 1.3) * this.facts.length);
+        const ads = at > 1 ? this.ads.length : at < 1 ? 0 : Math.ceil(clamp(local * 1.6 - .1) * this.ads.length);
+        this.facts.forEach((li, i) => { li.classList.toggle('on', i < facts); li.classList.toggle('hit', at === 1 && i < ads); });
+        this.ads.forEach((ad, i) => ad.classList.toggle('on', i < ads));
       },
     },
 
@@ -184,12 +216,12 @@
         this.img = $('.pic img', s); this.stp = $('.stp', s); this.at = -1; this.paint = -1;
       },
       measure() { this.vh = this.view.clientHeight; this.fit(); },
-      // slide the thread up so the newest message sits at the bottom of the screen
+      // keep the newest message just above the input bar, like a real chat
       fit() {
         const shown = this.items.filter(m => m.k <= this.at), last = shown[shown.length - 1];
         if (!last) return;
-        const bottom = last.el.offsetTop + last.el.offsetHeight + 18;
-        this.thread.style.transform = `translate3d(0,${Math.min(0, this.vh - bottom)}px,0)`;
+        const bottom = last.el.offsetTop + last.el.offsetHeight + 16;
+        this.thread.style.transform = `translate3d(0,${this.vh - bottom}px,0)`;
       },
       draw(s, p) {
         const n = this.gets.length, u = clamp(p / .95) * n;
@@ -205,7 +237,7 @@
           this.net.animate([{ background: 'oklch(0.9 0.08 150)' }, { background: '#f5f5f7' }], { duration: 700, easing: 'ease-out' });
         }
         this.pips.forEach((pip, i) => pip.style.setProperty('--f', i < at ? 1 : i === at ? f(local) : 0));
-        const paint = at < 3 ? 0 : at > 3 ? 1 : clamp(local * 1.4);
+        const paint = at < 4 ? 0 : at > 4 ? 1 : clamp(local * 1.4);
         if (paint !== this.paint) {
           this.paint = paint;
           this.stp.textContent = Math.max(1, Math.ceil(paint * 9));
@@ -249,6 +281,57 @@
     });
   }
 
+  // ------------------------------------------------------------ chapter rail
+  // one dot per [data-chapter]; hover shows the names, a click jumps to the start of that chapter
+  const chapters = $$('[data-chapter]'), rail = $('.rail');
+  let railAt = -1, railTone = '';
+  if (rail) {
+    rail.innerHTML = chapters.map((c, i) => `<button type="button" data-i="${i}"><span>${c.dataset.chapter}</span><i aria-hidden="true"></i></button>`).join('');
+    rail.addEventListener('click', e => {
+      const b = e.target.closest('button');
+      if (b) scrollTo({ top: chapters[+b.dataset.i].getBoundingClientRect().top + scrollY + 2, behavior: moving ? 'smooth' : 'auto' });
+    });
+  }
+  const railButtons = rail ? [...rail.children] : [];
+  const drifts = $$('[data-drift]');   // rows that slide sideways as they pass up the screen
+
+  // ------------------------------------------------------------ "will it run on my computer?"
+  // everything is read from this browser; nothing is sent anywhere
+  const checkBtn = $('#check-run');
+  checkBtn?.addEventListener('click', async () => {
+    const rows = Object.fromEntries($$('.ck-r li').map(li => [li.dataset.k, li]));
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    const set = (k, state, text) => {
+      const li = rows[k];
+      li.className = (k === 'pick' ? 'pick ' : '') + state;
+      li.querySelector('b').textContent = text;
+      if (state !== 'busy') { li.classList.remove('fresh'); void li.offsetWidth; li.classList.add('fresh'); }
+    };
+    checkBtn.disabled = true; checkBtn.textContent = 'Checking…';
+    for (const k in rows) set(k, 'busy', 'Checking…');
+    await wait(300);
+    let adapter = null;
+    try { adapter = navigator.gpu ? await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' }) : null; } catch {}
+    const vendor = { apple: 'Apple', nvidia: 'NVIDIA', amd: 'AMD', intel: 'Intel', qualcomm: 'Qualcomm', arm: 'Arm' }[(adapter?.info?.vendor || '').toLowerCase()];
+    if (adapter) set('gpu', 'ok', vendor ? `Ready · ${vendor} graphics` : 'Ready');
+    else set('gpu', 'bad', navigator.gpu ? 'No usable graphics chip found' : 'This browser can’t run it yet');
+    await wait(280);
+    const mem = navigator.deviceMemory;   // Chrome and Edge only, and never above 8
+    if (!mem) set('mem', 'warn', 'Your browser doesn’t say');
+    else set('mem', mem >= 8 ? 'ok' : mem >= 4 ? 'warn' : 'bad', mem >= 8 ? '8 GB or more' : `About ${mem} GB`);
+    await wait(280);
+    let room = null;
+    try { const e = await navigator.storage.estimate(); room = (e.quota - e.usage) / 1e9; } catch {}
+    if (room == null) set('disk', 'warn', 'Your browser doesn’t say');
+    else set('disk', room > 3 ? 'ok' : room > 1 ? 'warn' : 'bad', room > 50 ? 'Plenty' : `About ${room.toFixed(room < 10 ? 1 : 0)} GB`);
+    await wait(280);
+    if (!adapter) set('pick', 'bad', 'Try Chrome, Edge or Safari 26');
+    else if (!mem || mem >= 8) set('pick', 'ok', 'Qwen3 4B · 2.3 GB download');
+    else if (mem >= 4) set('pick', 'ok', 'Llama 3.2 1B · 0.7 GB download');
+    else set('pick', 'warn', 'SmolLM2 360M · 0.2 GB download');
+    checkBtn.disabled = false; checkBtn.textContent = 'Check again';
+  });
+
   // ------------------------------------------------------------ the loop
   const FOLLOW = .14;           // how quickly a scene catches up with the scroll, per 60 Hz frame
   const live = scenes.filter(s => scene[s.dataset.scene]).map(s => {
@@ -272,6 +355,10 @@
     const targets = moving ? live.map(l => through(l.s)) : [];
     const tops = moving ? reveals.map(r => r.probe ? r.probe.getBoundingClientRect().top : r.el.getBoundingClientRect().top - (1 - r.v) * 44) : [];
     const under = zones.find(z => { const r = z.getBoundingClientRect(); return r.top <= 28 && r.bottom > 28; });
+    const mid = zones.find(z => { const r = z.getBoundingClientRect(); return r.top <= innerHeight / 2 && r.bottom > innerHeight / 2; });
+    const driftBoxes = moving ? drifts.map(el => el.getBoundingClientRect()) : [];
+    let chapter = -1;
+    chapters.forEach((c, i) => { if (c.getBoundingClientRect().top <= innerHeight * .4) chapter = i; });
     const max = root.scrollHeight - innerHeight;
     // …then write
     let busy = false;
@@ -289,9 +376,17 @@
       r.el.style.setProperty('--v', v);
       if (r.odos) roll(r.odos, v);
     });
+    if (moving) drifts.forEach((el, i) => el.style.setProperty('--pos', f(clamp((H - driftBoxes[i].top) / (H + driftBoxes[i].height)))));
     bar.style.transform = `scaleX(${f(max > 0 ? clamp(scrollY / max) : 0, 4)})`;
+    if (chapter !== railAt) {
+      railButtons.forEach((b, i) => { b.classList.toggle('on', i === chapter); b.toggleAttribute('aria-current', i === chapter); });
+      railAt = chapter;
+    }
     const t = under?.dataset.tone || 'day';
     if (t !== tone) { tone = t; nav.dataset.tone = t; themeColor.content = t === 'night' ? '#050507' : '#ffffff'; }
+    // the rail sits mid-screen, so it follows the scene there rather than the one under the header
+    const rt = mid?.dataset.tone || 'day';
+    if (rail && rt !== railTone) { railTone = rt; rail.dataset.tone = rt; }
     if (busy) ask();
   }
   const ask = () => { if (!queued) { queued = true; requestAnimationFrame(frame); } };

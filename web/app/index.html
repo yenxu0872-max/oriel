@@ -5,10 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Oriel — private AI that never leaves your computer</title>
 <meta name="description" content="Cloud AI keeps, reads and trains on what you type. Oriel’s AI runs on your own computer: chat, code and pictures — private, free, no account.">
+<link rel="canonical" href="https://yenxu0872-max.github.io/oriel/app/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Oriel">
+<meta property="og:title" content="Oriel — private AI that never leaves your computer">
+<meta property="og:description" content="Cloud AI keeps, reads and trains on what you type. Oriel’s AI runs on your own computer — private, free, no account.">
+<meta property="og:url" content="https://yenxu0872-max.github.io/oriel/app/">
+<meta property="og:image" content="https://yenxu0872-max.github.io/oriel/app/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Do you know what happens to your personal data in cloud AI? — Oriel">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%2317171a'/%3E%3Ccircle cx='15' cy='17' r='8' fill='%237b8cf5'/%3E%3Ccircle cx='22.5' cy='9.5' r='3.6' fill='%23fff' stroke='%2317171a' stroke-width='1.6'/%3E%3C/svg%3E">
 <script>document.documentElement.classList.add(matchMedia('(prefers-reduced-motion: reduce)').matches ? 'still' : 'js')</script>
 <link rel="preload" href="fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="app.css?v=7">
+<link rel="stylesheet" href="app.css?v=8">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#ffffff">
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
@@ -36,6 +47,7 @@
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
   <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
   <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 19h10a5 5 0 0 0 .7-9.95A7 7 0 0 0 4.3 11.5 4 4 0 0 0 7 19Z"/></symbol>
 </svg>
 <div class="grain" aria-hidden="true"></div>
@@ -49,10 +61,11 @@
   </div>
   <i class="prog" aria-hidden="true"></i>
 </header>
+<nav class="rail" aria-label="Chapters"></nav>
 
 <main>
   <!-- the question, in daylight — then the lights go down -->
-  <section class="scene hero" data-scene="hero" data-tone="day">
+  <section class="scene hero" data-scene="hero" data-tone="day" data-chapter="The question">
     <div class="stick">
       <div class="sky" aria-hidden="true">
         <div class="fl" style="--x:5%;--y:14%;--xs:4%;--ys:11%;--d:1.1;--r:-6deg;--i:0"><div class="fi"><div class="bub">Is this mole something to worry about?</div></div></div>
@@ -75,7 +88,7 @@
   </section>
 
   <!-- 01: it leaves -->
-  <section class="scene belt night" data-scene="belt" data-tone="night">
+  <section class="scene belt night" data-scene="belt" data-tone="night" data-chapter="It leaves">
     <div class="stick">
       <div class="head">
         <p class="chap"><b>01</b>It leaves your computer</p>
@@ -105,7 +118,7 @@
   </section>
 
   <!-- 02: what happens there -->
-  <section class="scene stack night" data-scene="stack" data-tone="night">
+  <section class="scene stack night" data-scene="stack" data-tone="night" data-chapter="What happens there">
     <div class="stick">
       <p class="chap"><b>02</b>What happens there</p>
       <div class="deck">
@@ -179,11 +192,42 @@
     </div>
   </section>
 
-  <!-- 03: when it goes wrong -->
-  <section class="scene leaks night" data-scene="leaks" data-tone="night">
+  <!-- 03: it learns who you are -->
+  <section class="scene prof night" data-scene="prof" data-tone="night" data-chapter="It learns who you are" data-at="0">
+    <div class="stick">
+      <div class="stage">
+        <div class="say">
+          <p class="chap"><b>03</b>It learns who you are</p>
+          <div class="gets">
+            <div class="get"><h3>It <em>remembers.</em></h3><p>With Memory on, ChatGPT can remember details from your past chats — and from connected apps like Gmail.</p><a class="src" href="https://help.openai.com/en/articles/8590148-memory-faq" target="_blank" rel="noopener">OpenAI Help Center</a></div>
+            <div class="get"><h3>It sells <em>ads.</em></h3><p>Since February 2026, ChatGPT’s Free and Go plans show ads picked from what you talk about. OpenAI says advertisers don’t see your chats.</p><a class="src" href="https://www.macrumors.com/2026/02/09/chatgpt-now-has-ads/" target="_blank" rel="noopener">MacRumors, February 2026</a></div>
+            <div class="get"><h3>No way <em>out.</em></h3><p>Since December 2025, Meta uses what you tell its AI to target ads on Facebook and Instagram — with no way to opt out, outside the EU, UK and South Korea.</p><a class="src" href="https://techcrunch.com/2025/10/01/meta-plans-to-sell-targeted-ads-based-on-data-in-your-ai-chats/" target="_blank" rel="noopener">TechCrunch, October 2025</a></div>
+          </div>
+          <div class="pips" aria-hidden="true"><i></i><i></i><i></i></div>
+        </div>
+        <div class="dossier" aria-hidden="true">
+          <div class="dz-top"><span class="face"><svg class="i"><use href="#i-user"/></svg></span><div><b>You</b><small>A profile built from your chats</small></div><span class="live">Updating</span></div>
+          <ul class="dz-facts">
+            <li><i>Work</i><span>Plans to quit their job</span></li>
+            <li><i>Money</i><span>Trying to save money</span></li>
+            <li><i>Home</i><span>Has a partner</span></li>
+            <li><i>Code</i><span>Works on their company’s login code</span></li>
+          </ul>
+          <div class="dz-ads">
+            <div class="ad"><span class="sp">Sponsored</span><b>Remote jobs — hiring now</b><small>Because you talked about quitting</small></div>
+            <div class="ad"><span class="sp">Sponsored</span><b>A budgeting app, 30 days free</b><small>Because you talked about saving</small></div>
+          </div>
+          <div class="dz-opt"><div><span>Use my AI chats for ads</span><small><svg class="i"><use href="#i-lock"/></svg>Can’t be turned off</small></div><span class="tog"><i></i></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04: when it goes wrong -->
+  <section class="scene leaks night" data-scene="leaks" data-tone="night" data-chapter="When it goes wrong">
     <div class="stick">
       <div class="head">
-        <p class="chap"><b>03</b>When it goes wrong</p>
+        <p class="chap"><b>04</b>When it goes wrong</p>
         <h2>It’s already <em>happened.</em></h2>
       </div>
       <ol class="row">
@@ -211,7 +255,7 @@
         <li class="lk" data-when="2025.6"><div class="lk-in">
           <time>Aug 2025</time><span class="who">ChatGPT</span>
           <a class="clip" href="https://www.404media.co/nearly-100-000-chatgpt-conversations-were-searchable-on-google/" target="_blank" rel="noopener"><img src="img/news/404-chatgpt.webp" width="640" height="327" loading="lazy" decoding="async" alt="404 Media headline, 5 August 2025: “Nearly 100,000 ChatGPT Conversations Were Searchable on Google”"><span class="go" aria-hidden="true">↗</span><span class="sr"> — opens the report on 404 Media</span></a>
-          <b class="big">~100,000</b>
+          <b class="big" data-to="100000" data-pre="~">~100,000</b>
           <h3>shared chats turned up in Google search.</h3>
           <p>Some held what looked like NDAs and confidential contracts.</p>
           <a class="src" href="https://www.404media.co/nearly-100-000-chatgpt-conversations-were-searchable-on-google/" target="_blank" rel="noopener">404 Media</a>
@@ -219,7 +263,7 @@
         <li class="lk" data-when="2025.64"><div class="lk-in">
           <time>Aug 2025</time><span class="who">Grok</span>
           <a class="clip" href="https://fortune.com/2025/08/22/xai-grok-chats-public-on-google-search-elon-musk/" target="_blank" rel="noopener"><img src="img/news/fortune-grok.webp" width="640" height="365" loading="lazy" decoding="async" alt="Fortune headline, 22 August 2025: “Thousands of private user conversations with Elon Musk’s Grok AI chatbot have been exposed on Google Search”"><span class="go" aria-hidden="true">↗</span><span class="sr"> — opens the report on Fortune</span></a>
-          <b class="big">370,000+</b>
+          <b class="big" data-to="370000" data-post="+">370,000+</b>
           <h3>chats could be found on Google.</h3>
           <p>Including medical questions — and at least one password.</p>
           <a class="src" href="https://fortune.com/2025/08/22/xai-grok-chats-public-on-google-search-elon-musk/" target="_blank" rel="noopener">Fortune</a>
@@ -227,7 +271,7 @@
         <li class="lk" data-when="2026.08"><div class="lk-in">
           <time>Jan 2026</time><span class="who">Chat &amp; Ask AI</span>
           <a class="clip" href="https://www.404media.co/massive-ai-chat-app-leaked-millions-of-users-private-conversations/" target="_blank" rel="noopener"><img src="img/news/404-chatask.webp" width="640" height="327" loading="lazy" decoding="async" alt="404 Media headline, 29 January 2026: “Massive AI Chat App Leaked Millions of Users Private Conversations”"><span class="go" aria-hidden="true">↗</span><span class="sr"> — opens the report on 404 Media</span></a>
-          <b class="big">300 million</b>
+          <b class="big" data-to="300" data-post=" million">300 million</b>
           <h3>messages from one AI chat app were left open.</h3>
           <p>From more than 25 million people, through a badly set-up database.</p>
           <a class="src" href="https://www.404media.co/massive-ai-chat-app-leaked-millions-of-users-private-conversations/" target="_blank" rel="noopener">404 Media</a>
@@ -235,7 +279,7 @@
         <li class="lk" data-when="2026.35"><div class="lk-in">
           <time>May 2026</time><span class="who">ChatGPT, Claude, Grok, Perplexity</span>
           <a class="clip" href="https://decrypt.co/367164/your-ai-chatbot-leaking-chats-meta-tiktok-google" target="_blank" rel="noopener"><img src="img/news/decrypt-trackers.webp" width="640" height="371" loading="lazy" decoding="async" alt="Decrypt headline, 8 May 2026: “Your AI Chatbot May Be Leaking Your Chats to Meta, TikTok and Google”"><span class="go" aria-hidden="true">↗</span><span class="sr"> — opens the report on Decrypt</span></a>
-          <b class="big">4 of 4</b>
+          <b class="big" data-to="4" data-post=" of 4">4 of 4</b>
           <h3>AI assistants studied had trackers from Meta, Google, TikTok and others.</h3>
           <p>With Grok, message text itself reached TikTok.</p>
           <a class="src" href="https://networks.imdea.org/your-conversations-with-ai-may-not-be-as-private-as-you-think/" target="_blank" rel="noopener">IMDEA Networks</a>
@@ -249,7 +293,7 @@
   </section>
 
   <!-- the turn: a light at the end -->
-  <section class="scene turn" data-scene="turn" data-tone="night">
+  <section class="scene turn" data-scene="turn" data-tone="night" data-chapter="Oriel">
     <div class="stick">
       <div class="rings" aria-hidden="true"><i></i><i></i><i></i></div>
       <div class="core" aria-hidden="true"></div>
@@ -279,18 +323,20 @@
                 <div class="ai" data-k="0"><span class="typing"><i></i><i></i><i></i></span><span class="txt">Most lumps turn out to be harmless, but it’s worth getting it checked. Here’s what to tell your doctor: when you noticed it, whether it’s changed…</span></div>
                 <div class="me" data-k="1">Wait — my Wi-Fi is off. Are you still working?</div>
                 <div class="ai" data-k="1"><span class="typing"><i></i><i></i><i></i></span><span class="txt">Yes. I run on this laptop, so I don’t need the internet.</span></div>
-                <div class="me" data-k="2">Write a function that checks how strong a password is</div>
-                <div class="ai code" data-k="2"><span class="typing"><i></i><i></i><i></i></span><pre class="txt"><b>function</b> strength(pw) {
+                <div class="me file" data-k="2"><span class="chip"><svg class="i"><use href="#i-file"/></svg><span>bank-statement-march.pdf<small>PDF · 3 pages</small></span></span><span class="t">Where can I save money?</span></div>
+                <div class="ai" data-k="2"><span class="typing"><i></i><i></i><i></i></span><span class="txt">You spent $214 on takeaways in March. Cooking at home two more nights a week would save about $90 a month.</span></div>
+                <div class="me" data-k="3">Write a function that checks how strong a password is</div>
+                <div class="ai code" data-k="3"><span class="typing"><i></i><i></i><i></i></span><pre class="txt"><b>function</b> strength(pw) {
   <b>let</b> score = 0;
   <b>if</b> (pw.length &gt;= 12) score++;
   <b>if</b> (<u>/[A-Z]/</u>.test(pw) &amp;&amp; <u>/\d/</u>.test(pw)) score++;
   <b>if</b> (<u>/[^\w]/</u>.test(pw)) score++;
   <b>return</b> [<s>'weak'</s>, <s>'okay'</s>, <s>'good'</s>, <s>'strong'</s>][score];
 }</pre></div>
-                <div class="me" data-k="3">Make a picture of a lighthouse at sunset</div>
-                <div class="ai pic" data-k="3"><span class="wait">Painting on this laptop · step <b class="stp">1</b> of 9</span><span class="done">Here it is — made on this laptop.</span><div class="frame"><img src="img/lighthouse.jpg" alt=""></div></div>
-                <div class="me" data-k="4">How much do I owe you?</div>
-                <div class="ai" data-k="4"><span class="typing"><i></i><i></i><i></i></span><span class="txt">Nothing. No account, no subscription, no ads — ever.</span></div>
+                <div class="me" data-k="4">Make a picture of a lighthouse at sunset</div>
+                <div class="ai pic" data-k="4"><span class="wait">Painting on this laptop · step <b class="stp">1</b> of 9</span><span class="done">Here it is — made on this laptop.</span><div class="frame"><img src="img/lighthouse.jpg" alt=""></div></div>
+                <div class="me" data-k="5">How much do I owe you?</div>
+                <div class="ai" data-k="5"><span class="typing"><i></i><i></i><i></i></span><span class="txt">Nothing. No account, no subscription, no ads — ever.</span></div>
               </div>
             </div>
             <div class="bar2"><span>Ask anything — it stays here</span><i class="send"><svg class="i"><use href="#i-up"/></svg></i></div>
@@ -298,6 +344,7 @@
           <div class="base"></div>
           <div class="badge"><svg class="i"><use href="#i-lock"/></svg>Stays on this laptop</div>
           <div class="badge"><svg class="i"><use href="#i-wifi-off"/></svg>No internet needed</div>
+          <div class="badge"><svg class="i"><use href="#i-file"/></svg>Read on this laptop</div>
           <div class="badge"><svg class="i"><use href="#i-code"/></svg>Code, privately</div>
           <div class="badge"><svg class="i"><use href="#i-spark"/></svg>Painted by your graphics chip</div>
           <div class="badge"><svg class="i"><use href="#i-gift"/></svg>$0 · no account</div>
@@ -307,11 +354,12 @@
           <div class="gets">
             <div class="get"><h3>Nothing <em>leaves.</em></h3><p>Your words, files and pictures never touch a server.</p></div>
             <div class="get"><h3>Works <em>offline.</em></h3><p>Turn off the Wi-Fi. It keeps going.</p></div>
+            <div class="get"><h3>Reads your <em>files.</em></h3><p>PDFs, notes and photos are read right here. Your bank statement stays home.</p></div>
             <div class="get"><h3>Writes <em>code.</em></h3><p>Explains it, fixes it, writes it — and your code stays yours.</p></div>
             <div class="get"><h3>Makes <em>pictures.</em></h3><p>Painted by your computer’s own graphics chip.</p></div>
             <div class="get"><h3>Free. <em>Forever.</em></h3><p>No account. No subscription. No ads.</p></div>
           </div>
-          <div class="pips" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="pips" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
         </div>
       </div>
     </div>
@@ -330,7 +378,7 @@
   </section>
 
   <!-- how it works -->
-  <section class="how day" data-tone="day">
+  <section class="how day" data-tone="day" data-chapter="How it works">
     <div class="wrap">
       <h2 class="sec-h" data-reveal>Ready in <em>three steps.</em></h2>
       <ol class="steps">
@@ -353,11 +401,29 @@
           <p>Chat, write, code and make pictures — even with the Wi-Fi off.</p>
         </li>
       </ol>
+      <div class="makers" data-reveal data-drift>
+        <p class="mk-h">Open models from the world’s leading AI labs. <a href="../models.html">See every model on Oriel Models →</a></p>
+        <div class="mk-row" aria-hidden="true"><div class="mk-track"><span class="mk"><img src="img/makers/Qwen.webp" alt="" width="44" height="44" loading="lazy"><span><b>Qwen</b><small>Alibaba</small></span></span><span class="mk"><img src="img/makers/google.webp" alt="" width="44" height="44" loading="lazy"><span><b>Gemma</b><small>Google</small></span></span><span class="mk"><img src="img/makers/meta-llama.webp" alt="" width="44" height="44" loading="lazy"><span><b>Llama</b><small>Meta</small></span></span><span class="mk"><img src="img/makers/microsoft.webp" alt="" width="44" height="44" loading="lazy"><span><b>Phi</b><small>Microsoft</small></span></span><span class="mk"><img src="img/makers/mistralai.webp" alt="" width="44" height="44" loading="lazy"><span><b>Mistral</b><small>Mistral AI</small></span></span><span class="mk"><img src="img/makers/deepseek-ai.webp" alt="" width="44" height="44" loading="lazy"><span><b>R1</b><small>DeepSeek</small></span></span><span class="mk"><img src="img/makers/NousResearch.webp" alt="" width="44" height="44" loading="lazy"><span><b>Hermes</b><small>Nous Research</small></span></span><span class="mk"><img src="img/makers/HuggingFaceTB.webp" alt="" width="44" height="44" loading="lazy"><span><b>SmolLM</b><small>Hugging Face</small></span></span></div></div>
+        <div class="mk-row rev" aria-hidden="true"><div class="mk-track"><span class="mk"><img src="img/makers/mistralai.webp" alt="" width="44" height="44" loading="lazy"><span><b>Mistral</b><small>Mistral AI</small></span></span><span class="mk"><img src="img/makers/deepseek-ai.webp" alt="" width="44" height="44" loading="lazy"><span><b>R1</b><small>DeepSeek</small></span></span><span class="mk"><img src="img/makers/NousResearch.webp" alt="" width="44" height="44" loading="lazy"><span><b>Hermes</b><small>Nous Research</small></span></span><span class="mk"><img src="img/makers/HuggingFaceTB.webp" alt="" width="44" height="44" loading="lazy"><span><b>SmolLM</b><small>Hugging Face</small></span></span><span class="mk"><img src="img/makers/Qwen.webp" alt="" width="44" height="44" loading="lazy"><span><b>Qwen</b><small>Alibaba</small></span></span><span class="mk"><img src="img/makers/google.webp" alt="" width="44" height="44" loading="lazy"><span><b>Gemma</b><small>Google</small></span></span><span class="mk"><img src="img/makers/meta-llama.webp" alt="" width="44" height="44" loading="lazy"><span><b>Llama</b><small>Meta</small></span></span><span class="mk"><img src="img/makers/microsoft.webp" alt="" width="44" height="44" loading="lazy"><span><b>Phi</b><small>Microsoft</small></span></span></div></div>
+      </div>
+      <div class="check" data-reveal>
+        <div class="ck-l">
+          <h3>Will it run on my computer?</h3>
+          <p>Find out in a second. The check runs in this page — nothing is sent.</p>
+          <button class="btn btn-glow" type="button" id="check-run">Check my computer</button>
+        </div>
+        <ul class="ck-r" aria-live="polite">
+          <li data-k="gpu"><i class="dot"></i><span>Graphics</span><b>Not checked yet</b></li>
+          <li data-k="mem"><i class="dot"></i><span>Memory</span><b>—</b></li>
+          <li data-k="disk"><i class="dot"></i><span>Room for models</span><b>—</b></li>
+          <li data-k="pick" class="pick"><i class="dot"></i><span>Start with</span><b>—</b></li>
+        </ul>
+      </div>
     </div>
   </section>
 
   <!-- side by side -->
-  <section class="versus day" data-tone="day">
+  <section class="versus day" data-tone="day" data-chapter="Cloud AI vs Oriel">
     <div class="wrap">
       <h2 class="sec-h" data-reveal>Cloud AI vs <em>Oriel</em></h2>
       <table class="vs">
@@ -367,11 +433,12 @@
           <tr data-reveal><th scope="row">Who else can read them</th><td class="bad" data-l="Cloud AI"><svg class="i"><use href="#i-x"/></svg>Reviewers, for some chats<sup>1</sup></td><td class="good" data-l="Oriel"><svg class="i"><use href="#i-check"/></svg>No one</td></tr>
           <tr data-reveal><th scope="row">Used to train AI</th><td class="bad" data-l="Cloud AI"><svg class="i"><use href="#i-x"/></svg>Often, by default<sup>2</sup></td><td class="good" data-l="Oriel"><svg class="i"><use href="#i-check"/></svg>Never</td></tr>
           <tr data-reveal><th scope="row">Gone when you delete</th><td class="bad" data-l="Cloud AI"><svg class="i"><use href="#i-x"/></svg>Not always<sup>3</sup></td><td class="good" data-l="Oriel"><svg class="i"><use href="#i-check"/></svg>Yes</td></tr>
+          <tr data-reveal><th scope="row">Uses your chats for ads</th><td class="bad" data-l="Cloud AI"><svg class="i"><use href="#i-x"/></svg>Some do<sup>4</sup></td><td class="good" data-l="Oriel"><svg class="i"><use href="#i-check"/></svg>Never — no ads at all</td></tr>
           <tr data-reveal><th scope="row">Works without internet</th><td class="bad" data-l="Cloud AI"><svg class="i"><use href="#i-x"/></svg>No</td><td class="good" data-l="Oriel"><svg class="i"><use href="#i-check"/></svg>Yes</td></tr>
           <tr data-reveal><th scope="row">Price</th><td class="bad" data-l="Cloud AI"><svg class="i"><use href="#i-x"/></svg>Free with limits, or a subscription</td><td class="good" data-l="Oriel"><svg class="i"><use href="#i-check"/></svg>Free</td></tr>
         </tbody>
       </table>
-      <p class="notes" data-reveal><sup>1</sup> <a href="https://support.google.com/gemini/answer/13594961" target="_blank" rel="noopener">Gemini</a> · <sup>2</sup> <a href="https://help.openai.com/en/articles/7730893-data-controls-faq" target="_blank" rel="noopener">ChatGPT</a>, unless you turn it off · <sup>3</sup> <a href="https://support.google.com/gemini/answer/13594961" target="_blank" rel="noopener">Gemini</a> keeps reviewed chats up to 3 years; a <a href="https://openai.com/index/response-to-nyt-data-demands/" target="_blank" rel="noopener">2025 court order</a> made OpenAI keep deleted chats</p>
+      <p class="notes" data-reveal><sup>1</sup> <a href="https://support.google.com/gemini/answer/13594961" target="_blank" rel="noopener">Gemini</a> · <sup>2</sup> <a href="https://help.openai.com/en/articles/7730893-data-controls-faq" target="_blank" rel="noopener">ChatGPT</a>, unless you turn it off · <sup>3</sup> <a href="https://support.google.com/gemini/answer/13594961" target="_blank" rel="noopener">Gemini</a> keeps reviewed chats up to 3 years; a <a href="https://openai.com/index/response-to-nyt-data-demands/" target="_blank" rel="noopener">2025 court order</a> made OpenAI keep deleted chats · <sup>4</sup> <a href="https://www.macrumors.com/2026/02/09/chatgpt-now-has-ads/" target="_blank" rel="noopener">ChatGPT’s free plans</a> and <a href="https://techcrunch.com/2025/10/01/meta-plans-to-sell-targeted-ads-based-on-data-in-your-ai-chats/" target="_blank" rel="noopener">Meta AI</a></p>
     </div>
   </section>
 
@@ -383,11 +450,12 @@
   </section>
 
   <!-- questions -->
-  <section class="faq day" data-tone="day">
+  <section class="faq day" data-tone="day" data-chapter="Questions">
     <div class="wrap narrow">
       <h2 class="sec-h" data-reveal>Fair <em>questions.</em></h2>
       <details data-reveal><summary>Is it really private?<i class="pm" aria-hidden="true"></i></summary><div class="a"><p>Yes. Oriel’s AI runs inside your browser, on your own computer, and your chats are saved there too. Nothing you type is sent anywhere — once a model has downloaded, you can turn off the Wi-Fi and keep going.</p></div></details>
       <details data-reveal><summary>How can it be free?<i class="pm" aria-hidden="true"></i></summary><div class="a"><p>Your computer does the work, so there are no servers to pay for. No account, no subscription, no ads.</p></div></details>
+      <details data-reveal><summary>Does Oriel show ads or use my chats?<i class="pm" aria-hidden="true"></i></summary><div class="a"><p>No. There are no ads, no accounts and no trackers. Your chats are saved in your browser, on your computer — Oriel has no server for them to go to.</p></div></details>
       <details data-reveal><summary>Is it as smart as ChatGPT?<i class="pm" aria-hidden="true"></i></summary><div class="a"><p>Not at everything. Cloud AI runs giant models in data centres; Oriel runs smaller ones that fit on your computer. They’re very good at everyday questions, writing, code and pictures — and they keep your secrets.</p></div></details>
       <details data-reveal><summary>What do I need?<i class="pm" aria-hidden="true"></i></summary><div class="a"><p>A laptop or desktop from the last few years, with Chrome, Edge or Safari 26. The recommended model is a 2.3 GB download; pictures add 6.6 GB. More memory lets you run bigger models.</p></div></details>
       <details data-reveal><summary>How do I delete things?<i class="pm" aria-hidden="true"></i></summary><div class="a"><p>Delete a chat from its menu and its pictures go with it. Models and the picture maker can be removed in Settings. It’s all on your computer, so deleting really deletes.</p></div></details>
@@ -397,7 +465,7 @@
   </section>
 
   <!-- take it -->
-  <section class="end day" data-tone="day">
+  <section class="end day" data-tone="day" data-chapter="Get Oriel">
     <div class="orbit" aria-hidden="true">
       <div class="ob" data-reveal="0.00" style="--x:9%;--y:16%;--xs:5%;--ys:8%;--fx:-30vw;--fy:-10vh;--r:-6deg"><span><svg class="i"><use href="#i-lock"/></svg>Is this mole something to worry about?</span></div>
       <div class="ob" data-reveal="0.12" style="--x:72%;--y:12%;--xs:44%;--ys:16%;--fx:30vw;--fy:-12vh;--r:5deg"><span><svg class="i"><use href="#i-lock"/></svg>bank-statement-march.pdf</span></div>
@@ -434,6 +502,9 @@
         <li><a href="https://fortune.com/2025/08/22/xai-grok-chats-public-on-google-search-elon-musk/" target="_blank" rel="noopener">Fortune — Grok chats public on Google search</a> (August 2025).</li>
         <li><a href="https://www.404media.co/massive-ai-chat-app-leaked-millions-of-users-private-conversations/" target="_blank" rel="noopener">404 Media — AI chat app leaked millions of users’ conversations</a> (January 2026).</li>
         <li><a href="https://decrypt.co/367164/your-ai-chatbot-leaking-chats-meta-tiktok-google" target="_blank" rel="noopener">Decrypt — your AI chatbot may be leaking your chats to Meta, TikTok and Google</a> (May 2026).</li>
+        <li><a href="https://help.openai.com/en/articles/8590148-memory-faq" target="_blank" rel="noopener">OpenAI Help Center — Memory in ChatGPT</a>: remembers details from past chats and connected apps.</li>
+        <li><a href="https://techcrunch.com/2025/10/01/meta-plans-to-sell-targeted-ads-based-on-data-in-your-ai-chats/" target="_blank" rel="noopener">TechCrunch — Meta plans to sell targeted ads based on data in your AI chats</a> (October 2025).</li>
+        <li><a href="https://www.macrumors.com/2026/02/09/chatgpt-now-has-ads/" target="_blank" rel="noopener">MacRumors — ChatGPT now has ads for Free and Go users</a> (February 2026).</li>
         <li><a href="https://networks.imdea.org/your-conversations-with-ai-may-not-be-as-private-as-you-think/" target="_blank" rel="noopener">IMDEA Networks — your conversations with AI may not be as private as you think</a> (May 2026).</li>
       </ol>
     </div>
@@ -445,6 +516,6 @@
     </div>
   </div>
 </footer>
-<script src="motion.js?v=4"></script>
+<script src="motion.js?v=5"></script>
 </body>
 </html>
