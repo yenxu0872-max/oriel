@@ -4,123 +4,411 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Oriel — private AI that never leaves your computer</title>
-<meta name="description" content="Cloud AI keeps, reads and trains on what you type. Oriel's AI runs on your own computer: chat, code and pictures — private, free, no account.">
+<meta name="description" content="Cloud AI keeps, reads and trains on what you type. Oriel’s AI runs on your own computer: chat, code and pictures — private, free, no account.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%2317171a'/%3E%3Ccircle cx='15' cy='17' r='8' fill='%237b8cf5'/%3E%3Ccircle cx='22.5' cy='9.5' r='3.6' fill='%23fff' stroke='%2317171a' stroke-width='1.6'/%3E%3C/svg%3E">
 <script>document.documentElement.classList.add(matchMedia('(prefers-reduced-motion: reduce)').matches ? 'still' : 'js')</script>
 <link rel="preload" href="fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="app.css?v=5">
+<link rel="stylesheet" href="app.css?v=6">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#050507">
+<meta name="theme-color" content="#ffffff">
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));</script>
 </head>
 <body>
-<header class="nav" data-tone="night">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M2 8.5a16 16 0 0 1 20 0M5.5 12.2a11 11 0 0 1 13 0M9 15.8a6 6 0 0 1 6 0M12 19.5h.01"/></symbol>
+  <symbol id="i-wifi-off" viewBox="0 0 24 24"><path d="M2 8.5a16 16 0 0 1 20 0M5.5 12.2a11 11 0 0 1 13 0M9 15.8a6 6 0 0 1 6 0M12 19.5h.01M3 3l18 18"/></symbol>
+  <symbol id="i-gift" viewBox="0 0 24 24"><path d="M20 12v8H4v-8M2 7h20v5H2zM12 22V7M12 7H8a2 2 0 1 1 0-4c3 0 4 4 4 4Zm0 0h4a2 2 0 1 0 0-4c-3 0-4 4-4 4Z"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+  <symbol id="i-archive" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v10h14V9M10 13h4"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></symbol>
+  <symbol id="i-bug" viewBox="0 0 24 24"><rect x="7" y="8" width="10" height="12" rx="5"/><path d="M12 8V5M9 4.5l1.5 1.5M15 4.5 13.5 6M3 13h4M17 13h4M4 19l3-2M20 19l-3-2M4 7l3 2M20 7l-3 2"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></symbol>
+  <symbol id="i-cast" viewBox="0 0 24 24"><path d="M3 10.5v3a1 1 0 0 0 1 1h3l6 5V4.5l-6 5H4a1 1 0 0 0-1 1ZM17 8.5a5 5 0 0 1 0 7M20 5.5a9 9 0 0 1 0 13"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></symbol>
+  <symbol id="i-browser" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 9h18M6.5 6.5h.01M9.5 6.5h.01"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1.1-4.6A8 8 0 1 1 21 12Z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 19h10a5 5 0 0 0 .7-9.95A7 7 0 0 0 4.3 11.5 4 4 0 0 0 7 19Z"/></symbol>
+</svg>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav" data-tone="day">
   <div class="in">
     <a class="brand" href="./"><span class="orb" aria-hidden="true"></span>Oriel</a>
     <span class="sp"></span>
     <a class="btn btn-line hide-sm" href="../models.html">Download models</a>
     <a class="btn btn-sm btn-glow" href="chat.html">Open Oriel</a>
   </div>
+  <i class="prog" aria-hidden="true"></i>
 </header>
 
 <main>
-  <!-- 1. the question -->
-  <section class="hero night">
-    <h1><span class="w" style="--i:0">Do</span> <span class="w" style="--i:1">you</span> <span class="w" style="--i:2">know</span> <span class="w" style="--i:3">what</span> <span class="w" style="--i:4">happens</span> <span class="w" style="--i:5">to</span> <span class="w" style="--i:6">your</span> <span class="w hot" style="--i:7">personal</span> <span class="w hot" style="--i:8">data</span> <span class="w" style="--i:9">in</span> <span class="w" style="--i:10">cloud</span> <span class="w" style="--i:11">AI?</span></h1>
-    <div class="cue" aria-hidden="true"><i></i>Scroll to find out</div>
+  <!-- the question, in daylight — then the lights go down -->
+  <section class="scene hero" data-scene="hero" data-tone="day">
+    <div class="stick">
+      <div class="sky" aria-hidden="true">
+        <div class="fl" style="--x:5%;--y:14%;--xs:4%;--ys:11%;--d:1.1;--r:-6deg;--i:0"><div class="fi"><div class="bub">Is this mole something to worry about?</div></div></div>
+        <div class="fl" style="--x:71%;--y:9%;--xs:52%;--ys:18%;--d:.8;--r:5deg;--i:1"><div class="fi b1"><div class="doc"><svg class="i"><use href="#i-file"/></svg><span>bank-statement-march.pdf<small>PDF · 3 pages</small></span></div></div></div>
+        <div class="fl x" style="--x:81%;--y:41%;--d:1.15;--r:4deg;--i:2"><div class="fi"><div class="bub">Rewrite my CV — I was let go last week.</div></div></div>
+        <div class="fl x" style="--x:3%;--y:44%;--d:.7;--r:-3deg;--i:3"><div class="fi b2"><div class="voice"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><span>0:42</span></div></div></div>
+        <div class="fl" style="--x:71%;--y:67%;--xs:58%;--ys:69%;--d:1;--r:-5deg;--i:4"><div class="fi"><div class="bub">My partner and I keep fighting. What should I do?</div></div></div>
+        <div class="fl" style="--x:6%;--y:71%;--xs:5%;--ys:77%;--d:1.15;--r:4deg;--i:5"><div class="fi"><div class="doc"><svg class="i"><use href="#i-file"/></svg><span>blood-test-results.pdf<small>PDF · 1 page</small></span></div></div></div>
+        <div class="fl" style="--x:57%;--y:82%;--xs:56%;--ys:84%;--d:.9;--r:3deg;--i:6"><div class="fi b1"><div class="bub">How do I tell my boss I’m pregnant?</div></div></div>
+        <div class="fl x" style="--x:23%;--y:87%;--d:.65;--r:-4deg;--i:7"><div class="fi b2"><div class="bub">Here’s our client list — tidy it up.</div></div></div>
+        <div class="fl x" style="--x:33%;--y:9%;--d:.72;--r:3deg;--i:8"><div class="fi b2"><div class="bub">Am I in too much debt?</div></div></div>
+        <div class="fl x" style="--x:85%;--y:84%;--d:.8;--r:-6deg;--i:9"><div class="fi b1"><div class="doc"><svg class="i"><use href="#i-file"/></svg><span>contract-final-v3.docx<small>Word · 12 pages</small></span></div></div></div>
+      </div>
+      <div class="q">
+        <h1><span class="w" style="--i:0">Do</span> <span class="w" style="--i:1">you</span> <span class="w" style="--i:2">know</span> <span class="w" style="--i:3">what</span> <span class="w" style="--i:4">happens</span> <span class="w" style="--i:5">to</span> <span class="w" style="--i:6">your</span> <span class="w hot" style="--i:7">personal</span> <span class="w hot" style="--i:8">data</span> <span class="w" style="--i:9">in</span> <span class="w" style="--i:10">cloud</span> <span class="w" style="--i:11">AI?</span></h1>
+      </div>
+      <div class="ans"><p class="a1">Most people don’t.</p><p class="a2">Here’s what happens.</p></div>
+      <div class="cue" aria-hidden="true"><i></i>Scroll</div>
+    </div>
   </section>
 
-  <!-- 2. it leaves -->
-  <section class="scene send night" data-scene="send">
+  <!-- 01: it leaves -->
+  <section class="scene belt night" data-scene="belt" data-tone="night">
     <div class="stick">
-      <div class="stage">
-        <div class="cloud" aria-hidden="true">
-          <svg viewBox="0 0 170 110" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M47 96H38a28 28 0 0 1-4-55.7A38 38 0 0 1 106 30a30 30 0 0 1 28 66H47Z"/><path d="M66 70h38M66 58h26" opacity=".55"/></svg>
-          <span>Their servers</span>
+      <div class="head">
+        <p class="chap"><b>01</b>It leaves your computer</p>
+        <h2>Everything you type goes to <em>their servers.</em></h2>
+      </div>
+      <div class="lane" aria-hidden="true">
+        <div class="gate"><span class="lbl"><svg class="i"><use href="#i-cloud"/></svg>Their servers</span><i class="beam"></i></div>
+        <div class="track">
+          <div class="m"><i>Health</i>I found a lump. Should I be worried?<b class="stamp">Saved</b></div>
+          <div class="m"><i>Money</i>Here’s my bank statement — where can I save?<b class="stamp">Saved</b></div>
+          <div class="m"><i>Work</i>Help me write my resignation letter.<b class="stamp">Saved</b></div>
+          <div class="m"><i>Love</i>My partner and I keep fighting. What should I do?<b class="stamp">Saved</b></div>
+          <div class="m"><i>Code</i>Fix this bug in our company’s login code.<b class="stamp">Saved</b></div>
+          <div class="m"><i>Legal</i>Is this clause in my contract bad for me?<b class="stamp">Saved</b></div>
         </div>
-        <div class="msgs">
-          <div class="bub" style="--dx:-9vw;--rise:-30svh">I found a lump. Should I be worried?</div>
-          <div class="bub" style="--dx:-14vw;--rise:-38svh">Here's my bank statement — where can I save?</div>
-          <div class="bub" style="--dx:-7vw;--rise:-46svh">Help me write my resignation letter.</div>
+        <div class="track">
+          <div class="m"><i>Health</i>Explain my blood test results.<b class="stamp">Saved</b></div>
+          <div class="m"><i>Mind</i>I haven’t slept properly in weeks. Is it anxiety?<b class="stamp">Saved</b></div>
+          <div class="m"><i>ID</i>Here’s a photo of my passport — fill in this form.<b class="stamp">Saved</b></div>
+          <div class="m"><i>Money</i>Make me a plan to pay off my credit card.<b class="stamp">Saved</b></div>
+          <div class="m"><i>Work</i>Summarise these confidential sales figures.<b class="stamp">Saved</b></div>
+          <div class="m"><i>Family</i>Help me reply to my ex.<b class="stamp">Saved</b></div>
         </div>
-        <p class="cap"><span class="a">Everything you type…</span><span class="b">…goes to <em>their computers.</em></span></p>
+      </div>
+      <p class="tally"><b class="n">0</b> <span class="w1">messages saved on their servers.</span></p>
+    </div>
+  </section>
+
+  <!-- 02: what happens there -->
+  <section class="scene stack night" data-scene="stack" data-tone="night">
+    <div class="stick">
+      <p class="chap"><b>02</b>What happens there</p>
+      <div class="deck">
+        <article class="card">
+          <div class="txt">
+            <h3>Read.</h3>
+            <p>Human reviewers — <strong>including outside contractors</strong> — read some Gemini chats.</p>
+            <a class="src" href="https://support.google.com/gemini/answer/13594961" target="_blank" rel="noopener">Google, Gemini privacy hub</a>
+          </div>
+          <div class="art a-read" aria-hidden="true">
+            <div class="win">
+              <div class="wbar"><i></i><i></i><i></i><span>Chat · in review</span></div>
+              <div class="wl"><span style="--w:84%"></span><span style="--w:62%"></span><span style="--w:91%"></span><span style="--w:47%"></span><span style="--w:76%"></span><span style="--w:58%"></span></div>
+              <i class="scanbar"></i>
+            </div>
+            <span class="tag"><svg class="i"><use href="#i-eye"/></svg>Reviewer</span>
+          </div>
+        </article>
+        <article class="card">
+          <div class="txt">
+            <h3>Kept.</h3>
+            <p>Chats they review are kept for <strong>up to three years</strong> — even after you delete them.</p>
+            <a class="src" href="https://support.google.com/gemini/answer/13594961" target="_blank" rel="noopener">Google, Gemini privacy hub</a>
+          </div>
+          <div class="art a-kept" aria-hidden="true">
+            <div class="ev"><svg class="i"><use href="#i-trash"/></svg><span><b>Today</b>You delete the chat</span></div>
+            <div class="tl"><i class="fill"></i><span>Year 1</span><span>Year 2</span><span>Year 3</span></div>
+            <div class="ev far"><svg class="i"><use href="#i-archive"/></svg><span><b>Up to 3 years later</b>A reviewed copy can still exist</span></div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="txt">
+            <h3>Trained on.</h3>
+            <p>ChatGPT learns from your chats <strong>unless you find the switch</strong> and turn it off.</p>
+            <a class="src" href="https://help.openai.com/en/articles/7730893-data-controls-faq" target="_blank" rel="noopener">OpenAI, data controls</a>
+          </div>
+          <div class="art a-train" aria-hidden="true">
+            <div class="panel">
+              <p class="ph">Settings · Data controls</p>
+              <div class="row"><span>Improve the model for everyone</span><span class="tog"><i></i></span></div>
+              <div class="row ghost"><span></span><span></span></div>
+              <div class="row ghost"><span></span><span></span></div>
+            </div>
+            <span class="tag">On unless you switch it off</span>
+          </div>
+        </article>
+        <article class="card">
+          <div class="txt">
+            <h3>Not deleted.</h3>
+            <p>In 2025, a court ordered OpenAI to <strong>keep ChatGPT chats people had deleted</strong>.</p>
+            <a class="src" href="https://openai.com/index/response-to-nyt-data-demands/" target="_blank" rel="noopener">OpenAI, on the court order</a>
+          </div>
+          <div class="art a-del" aria-hidden="true">
+            <div class="pill p1"><svg class="i"><use href="#i-trash"/></svg>You deleted it</div>
+            <svg class="i arr"><use href="#i-down"/></svg>
+            <div class="pill p2"><svg class="i"><use href="#i-archive"/></svg>Kept anyway</div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="txt">
+            <h3>Not protected.</h3>
+            <p>Unlike a doctor or a lawyer, ChatGPT has <strong>no legal confidentiality</strong>, says OpenAI’s CEO. In a lawsuit, chats can be handed over.</p>
+            <a class="src" href="https://techcrunch.com/2025/07/25/sam-altman-warns-theres-no-legal-confidentiality-when-using-chatgpt-as-a-therapist/" target="_blank" rel="noopener">TechCrunch, July 2025</a>
+          </div>
+          <div class="art a-law" aria-hidden="true">
+            <div class="page"><span style="--w:70%"></span><span style="--w:92%"></span><span style="--w:84%"></span><span style="--w:60%"></span><span style="--w:88%"></span><span style="--w:74%"></span><span style="--w:40%"></span><b class="stamp">Exhibit A</b></div>
+          </div>
+        </article>
+      </div>
+      <p class="count" aria-hidden="true"><b>1</b> of 5</p>
+    </div>
+  </section>
+
+  <!-- 03: when it goes wrong -->
+  <section class="scene leaks night" data-scene="leaks" data-tone="night">
+    <div class="stick">
+      <div class="head">
+        <p class="chap"><b>03</b>When it goes wrong</p>
+        <h2>It’s already <em>happened.</em></h2>
+      </div>
+      <ol class="row">
+        <li class="lk" data-when="2023.2"><div class="lk-in">
+          <time>Mar 2023</time><span class="who">ChatGPT</span>
+          <span class="ico"><svg class="i"><use href="#i-bug"/></svg></span>
+          <h3>A bug showed people other users’ chat titles.</h3>
+          <p>For 1.2% of paying subscribers, names, emails, addresses and card details were exposed too.</p>
+          <a class="src" href="https://openai.com/index/march-20-chatgpt-outage/" target="_blank" rel="noopener">OpenAI</a>
+        </div></li>
+        <li class="lk" data-when="2023.35"><div class="lk-in">
+          <time>May 2023</time><span class="who">Samsung</span>
+          <span class="ico"><svg class="i"><use href="#i-code"/></svg></span>
+          <h3>Staff pasted sensitive code into ChatGPT.</h3>
+          <p>Samsung banned AI chatbots on company devices.</p>
+          <a class="src" href="https://www.cnbc.com/2023/05/02/samsung-bans-use-of-ai-like-chatgpt-for-staff-after-misuse-of-chatbot.html" target="_blank" rel="noopener">CNBC</a>
+        </div></li>
+        <li class="lk" data-when="2025.45"><div class="lk-in">
+          <time>Jun 2025</time><span class="who">Meta AI</span>
+          <span class="ico"><svg class="i"><use href="#i-cast"/></svg></span>
+          <h3>People’s prompts showed up in a public feed.</h3>
+          <p>Many didn’t realise they were sharing them.</p>
+          <a class="src" href="https://www.cnbc.com/2025/06/13/meta-ai-app-turn-off-public-posting.html" target="_blank" rel="noopener">CNBC</a>
+        </div></li>
+        <li class="lk" data-when="2025.6"><div class="lk-in">
+          <time>Aug 2025</time><span class="who">ChatGPT</span>
+          <b class="big">~100,000</b>
+          <h3>shared chats turned up in Google search.</h3>
+          <p>Some held what looked like NDAs and confidential contracts.</p>
+          <a class="src" href="https://www.404media.co/nearly-100-000-chatgpt-conversations-were-searchable-on-google/" target="_blank" rel="noopener">404 Media</a>
+        </div></li>
+        <li class="lk" data-when="2025.64"><div class="lk-in">
+          <time>Aug 2025</time><span class="who">Grok</span>
+          <b class="big">370,000+</b>
+          <h3>chats could be found on Google.</h3>
+          <p>Including medical questions — and at least one password.</p>
+          <a class="src" href="https://fortune.com/2025/08/22/xai-grok-chats-public-on-google-search-elon-musk/" target="_blank" rel="noopener">Fortune</a>
+        </div></li>
+        <li class="lk" data-when="2026.08"><div class="lk-in">
+          <time>Jan 2026</time><span class="who">Chat &amp; Ask AI</span>
+          <b class="big">300 million</b>
+          <h3>messages from one AI chat app were left open.</h3>
+          <p>From more than 25 million people, through a badly set-up database.</p>
+          <a class="src" href="https://www.404media.co/massive-ai-chat-app-leaked-millions-of-users-private-conversations/" target="_blank" rel="noopener">404 Media</a>
+        </div></li>
+        <li class="lk" data-when="2026.35"><div class="lk-in">
+          <time>May 2026</time><span class="who">ChatGPT, Claude, Grok, Perplexity</span>
+          <b class="big">4 of 4</b>
+          <h3>AI assistants studied had trackers from Meta, Google, TikTok and others.</h3>
+          <p>With Grok, message text itself reached TikTok.</p>
+          <a class="src" href="https://networks.imdea.org/your-conversations-with-ai-may-not-be-as-private-as-you-think/" target="_blank" rel="noopener">IMDEA Networks</a>
+        </div></li>
+      </ol>
+      <div class="years" aria-hidden="true">
+        <div class="axis"><i class="done"></i><i class="dot"></i></div>
+        <div class="ticks"><span>2023</span><span>2024</span><span>2025</span><span>2026</span><span>Now</span></div>
       </div>
     </div>
   </section>
 
-  <!-- 3. what happens there -->
-  <section class="scene facts night" data-scene="facts" aria-label="What happens to it">
+  <!-- the turn: a light at the end -->
+  <section class="scene turn" data-scene="turn" data-tone="night">
     <div class="stick">
-      <div class="stage">
-        <p class="kick">What happens there</p>
-        <div class="fact"><b>Read.</b><p>Human reviewers — <strong>including outside contractors</strong> — read some Gemini chats.</p><a href="https://support.google.com/gemini/answer/13594961" target="_blank" rel="noopener">Google, Gemini privacy notice</a></div>
-        <div class="fact"><b>Kept.</b><p>Chats they review are kept for <strong>up to three years</strong> — even after you delete them.</p><a href="https://support.google.com/gemini/answer/13594961" target="_blank" rel="noopener">Google, Gemini privacy notice</a></div>
-        <div class="fact"><b>Trained on.</b><p>ChatGPT learns from your chats <strong>unless you find the switch</strong> and turn it off.</p><a href="https://help.openai.com/en/articles/7730893-data-controls-faq" target="_blank" rel="noopener">OpenAI, data controls</a></div>
-        <div class="fact"><b>Not deleted.</b><p>In 2025, a court made OpenAI <strong>keep ChatGPT chats people had deleted</strong>.</p><a href="https://openai.com/index/response-to-nyt-data-demands/" target="_blank" rel="noopener">OpenAI, on the court order</a></div>
-        <div class="fact"><b>Exposed.</b><p><strong>Nearly 100,000</strong> shared ChatGPT chats turned up in Google search.</p><a href="https://www.404media.co/nearly-100-000-chatgpt-conversations-were-searchable-on-google/" target="_blank" rel="noopener">404 Media, 2025</a></div>
-        <div class="meter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 4. the turn -->
-  <section class="scene turn" data-scene="turn">
-    <div class="stick">
-      <div class="orb-big" aria-hidden="true"></div>
+      <div class="rings" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div class="core" aria-hidden="true"></div>
+      <p class="pre">There’s another way.</p>
       <div class="say">
         <h2>Oriel is <em>different.</em></h2>
-        <p>Its AI lives on your computer.</p>
+        <p>Its AI lives on your computer. Not on theirs.</p>
       </div>
     </div>
   </section>
 
-  <!-- 5. what you get -->
-  <section class="scene gets day" data-scene="gets" data-at="0">
+  <!-- on your computer: the laptop walk-through -->
+  <section class="scene lap day" data-scene="lap" data-tone="day" data-at="0">
     <div class="stick">
       <div class="stage">
-        <div class="laptop" aria-hidden="true">
+        <div class="device" aria-hidden="true">
           <div class="screen">
-            <div class="bar"><i></i><i></i><i></i><span style="margin-left:6px">Oriel</span><span class="st"><span class="s0">On this device</span><span class="s1">Offline — still working</span></span></div>
-            <div class="chat">
-              <div class="me">Plan a surprise party for my mum</div>
-              <div class="ai">Here's a plan: invite her friends for Saturday lunch, then…</div>
-              <div class="me">Make a picture of a lighthouse at sunset</div>
-              <div class="ai"><span class="wait">Painting it on this laptop…</span><span class="done">Here it is — made on this laptop.</span><div class="frame"><img class="pic" src="img/lighthouse.jpg" alt=""></div></div>
+            <div class="bar">
+              <span class="dots3"><i></i><i></i><i></i></span><span class="ttl">Oriel</span>
+              <span class="net"><svg class="i"><use href="#i-up"/></svg><b>0 bytes</b>&nbsp;sent</span>
+              <span class="wifi"><svg class="i on"><use href="#i-wifi"/></svg><svg class="i off"><use href="#i-wifi-off"/></svg></span>
+              <span class="st"><span class="s0">On this device</span><span class="s1">Offline — still working</span></span>
             </div>
+            <div class="view">
+              <div class="thread">
+                <div class="me" data-k="0">I found a lump. Should I be worried?</div>
+                <div class="ai" data-k="0"><span class="typing"><i></i><i></i><i></i></span><span class="txt">Most lumps turn out to be harmless, but it’s worth getting it checked. Here’s what to tell your doctor: when you noticed it, whether it’s changed…</span></div>
+                <div class="me" data-k="1">Wait — my Wi-Fi is off. Are you still working?</div>
+                <div class="ai" data-k="1"><span class="typing"><i></i><i></i><i></i></span><span class="txt">Yes. I run on this laptop, so I don’t need the internet.</span></div>
+                <div class="me" data-k="2">Write a function that checks how strong a password is</div>
+                <div class="ai code" data-k="2"><span class="typing"><i></i><i></i><i></i></span><pre class="txt"><b>function</b> strength(pw) {
+  <b>let</b> score = 0;
+  <b>if</b> (pw.length &gt;= 12) score++;
+  <b>if</b> (<u>/[A-Z]/</u>.test(pw) &amp;&amp; <u>/\d/</u>.test(pw)) score++;
+  <b>if</b> (<u>/[^\w]/</u>.test(pw)) score++;
+  <b>return</b> [<s>'weak'</s>, <s>'okay'</s>, <s>'good'</s>, <s>'strong'</s>][score];
+}</pre></div>
+                <div class="me" data-k="3">Make a picture of a lighthouse at sunset</div>
+                <div class="ai pic" data-k="3"><span class="wait">Painting on this laptop · step <b class="stp">1</b> of 9</span><span class="done">Here it is — made on this laptop.</span><div class="frame"><img src="img/lighthouse.jpg" alt=""></div></div>
+                <div class="me" data-k="4">How much do I owe you?</div>
+                <div class="ai" data-k="4"><span class="typing"><i></i><i></i><i></i></span><span class="txt">Nothing. No account, no subscription, no ads — ever.</span></div>
+              </div>
+            </div>
+            <div class="bar2"><span>Ask anything — it stays here</span><i class="send"><svg class="i"><use href="#i-up"/></svg></i></div>
           </div>
-          <div class="badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Stays on this laptop</div>
-          <div class="badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a16 16 0 0 1 20 0M5.5 12.2a11 11 0 0 1 13 0M9 15.8a6 6 0 0 1 6 0M12 19.5h.01M3 3l18 18"/></svg>No internet needed</div>
-          <div class="badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v8H4v-8M2 7h20v5H2zM12 22V7M12 7H8a2 2 0 1 1 0-4c3 0 4 4 4 4Zm0 0h4a2 2 0 1 0 0-4c-3 0-4 4-4 4Z"/></svg>$0 · no account</div>
-          <div class="badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></svg>Painted on your graphics chip</div>
+          <div class="base"></div>
+          <div class="badge"><svg class="i"><use href="#i-lock"/></svg>Stays on this laptop</div>
+          <div class="badge"><svg class="i"><use href="#i-wifi-off"/></svg>No internet needed</div>
+          <div class="badge"><svg class="i"><use href="#i-code"/></svg>Code, privately</div>
+          <div class="badge"><svg class="i"><use href="#i-spark"/></svg>Painted by your graphics chip</div>
+          <div class="badge"><svg class="i"><use href="#i-gift"/></svg>$0 · no account</div>
         </div>
         <div class="say">
-          <div class="get"><h3>Nothing <em>leaves.</em></h3><p>Your words, files and pictures never touch a server.</p></div>
-          <div class="get"><h3>Works <em>offline.</em></h3><p>Turn off the Wi-Fi. It keeps going.</p></div>
-          <div class="get"><h3>Free. <em>Forever.</em></h3><p>No account. No subscription. No ads.</p></div>
-          <div class="get"><h3>Chat. Code. <em>Pictures.</em></h3><p>One assistant for everything — on your own computer.</p></div>
+          <p class="chap">On your computer</p>
+          <div class="gets">
+            <div class="get"><h3>Nothing <em>leaves.</em></h3><p>Your words, files and pictures never touch a server.</p></div>
+            <div class="get"><h3>Works <em>offline.</em></h3><p>Turn off the Wi-Fi. It keeps going.</p></div>
+            <div class="get"><h3>Writes <em>code.</em></h3><p>Explains it, fixes it, writes it — and your code stays yours.</p></div>
+            <div class="get"><h3>Makes <em>pictures.</em></h3><p>Painted by your computer’s own graphics chip.</p></div>
+            <div class="get"><h3>Free. <em>Forever.</em></h3><p>No account. No subscription. No ads.</p></div>
+          </div>
+          <div class="pips" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 6. yours -->
-  <section class="scene lines day" data-scene="lines">
+  <!-- the numbers -->
+  <section class="stats day" data-tone="day">
+    <div class="wrap">
+      <div class="board" data-reveal>
+        <div class="stat"><b class="odo" data-to="0">0</b><em>bytes</em><span>of your chats ever leave your computer</span></div>
+        <div class="stat"><b class="odo" data-to="0">0</b><em>accounts</em><span>no sign-up, no email, no phone number</span></div>
+        <div class="stat"><b><small>$</small><span class="odo" data-to="0">0</span></b><em>forever</em><span>no subscription, no message limits</span></div>
+        <div class="stat"><b><span class="odo" data-to="100">100</span><small>%</small></b><em>yours</em><span>the AI runs on your own computer</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- how it works -->
+  <section class="how day" data-tone="day">
+    <div class="wrap">
+      <h2 class="sec-h" data-reveal>Ready in <em>three steps.</em></h2>
+      <ol class="steps">
+        <li class="step s1" data-reveal>
+          <span class="no">1</span>
+          <div class="mini m-browser" aria-hidden="true"><div class="mb"><i></i><i></i><i></i><span>oriel · private AI</span></div><div class="mc"><span class="o"></span><span class="l1"></span><span class="l2"></span></div></div>
+          <h3>Open Oriel</h3>
+          <p>It runs in Chrome, Edge or Safari. Nothing to install.</p>
+        </li>
+        <li class="step s2" data-reveal=".12">
+          <span class="no">2</span>
+          <div class="mini m-ring" aria-hidden="true"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" class="bg"/><circle cx="60" cy="60" r="50" class="fg" pathLength="100"/></svg><b><span class="gb">2.3</span> GB</b><svg class="i dl"><use href="#i-download"/></svg></div>
+          <h3>Download a model, once</h3>
+          <p>The recommended one is 2.3 GB. It stays on your computer.</p>
+        </li>
+        <li class="step s3" data-reveal=".24">
+          <span class="no">3</span>
+          <div class="mini m-off" aria-hidden="true"><span class="w"><svg class="i"><use href="#i-wifi-off"/></svg></span><span class="c c1">Plan my week</span><span class="c c2">Sure — here’s a plan…</span></div>
+          <h3>Ask anything</h3>
+          <p>Chat, write, code and make pictures — even with the Wi-Fi off.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- side by side -->
+  <section class="versus day" data-tone="day">
+    <div class="wrap">
+      <h2 class="sec-h" data-reveal>Cloud AI vs <em>Oriel</em></h2>
+      <table class="vs">
+        <thead><tr><th scope="col"><span class="sr">Question</span></th><th scope="col">Cloud AI</th><th scope="col" class="o"><span class="orb" aria-hidden="true"></span>Oriel</th></tr></thead>
+        <tbody>
+          <tr data-reveal><th scope="row">Where your chats are kept</th><td class="bad" data-l="Cloud AI"><svg class="i"><use href="#i-x"/></svg>On the company’s servers</td><td class="good" data-l="Oriel"><svg class="i"><use href="#i-check"/></svg>On your computer</td></tr>
+          <tr data-reveal><th scope="row">Who else can read them</th><td class="bad" data-l="Cloud AI"><svg class="i"><use href="#i-x"/></svg>Reviewers, for some chats<sup>1</sup></td><td class="good" data-l="Oriel"><svg class="i"><use href="#i-check"/></svg>No one</td></tr>
+          <tr data-reveal><th scope="row">Used to train AI</th><td class="bad" data-l="Cloud AI"><svg class="i"><use href="#i-x"/></svg>Often, by default<sup>2</sup></td><td class="good" data-l="Oriel"><svg class="i"><use href="#i-check"/></svg>Never</td></tr>
+          <tr data-reveal><th scope="row">Gone when you delete</th><td class="bad" data-l="Cloud AI"><svg class="i"><use href="#i-x"/></svg>Not always<sup>3</sup></td><td class="good" data-l="Oriel"><svg class="i"><use href="#i-check"/></svg>Yes</td></tr>
+          <tr data-reveal><th scope="row">Works without internet</th><td class="bad" data-l="Cloud AI"><svg class="i"><use href="#i-x"/></svg>No</td><td class="good" data-l="Oriel"><svg class="i"><use href="#i-check"/></svg>Yes</td></tr>
+          <tr data-reveal><th scope="row">Price</th><td class="bad" data-l="Cloud AI"><svg class="i"><use href="#i-x"/></svg>Free with limits, or a subscription</td><td class="good" data-l="Oriel"><svg class="i"><use href="#i-check"/></svg>Free</td></tr>
+        </tbody>
+      </table>
+      <p class="notes" data-reveal><sup>1</sup> <a href="https://support.google.com/gemini/answer/13594961" target="_blank" rel="noopener">Gemini</a> · <sup>2</sup> <a href="https://help.openai.com/en/articles/7730893-data-controls-faq" target="_blank" rel="noopener">ChatGPT</a>, unless you turn it off · <sup>3</sup> <a href="https://support.google.com/gemini/answer/13594961" target="_blank" rel="noopener">Gemini</a> keeps reviewed chats up to 3 years; a <a href="https://openai.com/index/response-to-nyt-data-demands/" target="_blank" rel="noopener">2025 court order</a> made OpenAI keep deleted chats</p>
+    </div>
+  </section>
+
+  <!-- yours -->
+  <section class="scene lines day" data-scene="lines" data-tone="day">
     <div class="stick">
       <p class="lit"><span>Your</span> <span>questions.</span> <span>Your</span> <span>ideas.</span> <span>Your</span> <span>secrets.</span> <span class="g">They</span> <span class="g">stay</span> <span class="g">yours.</span></p>
     </div>
   </section>
 
-  <!-- 7. take it -->
-  <section class="end day">
-    <h2>Take your AI back.</h2>
-    <p>Chat, code and pictures — private, free, and yours.</p>
-    <div class="row">
-      <a class="btn btn-lg btn-glow" href="chat.html">Open Oriel — it's free</a>
-      <a class="btn btn-lg btn-line" href="../models.html">Download models
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></a>
+  <!-- questions -->
+  <section class="faq day" data-tone="day">
+    <div class="wrap narrow">
+      <h2 class="sec-h" data-reveal>Fair <em>questions.</em></h2>
+      <details data-reveal><summary>Is it really private?<i class="pm" aria-hidden="true"></i></summary><div class="a"><p>Yes. Oriel’s AI runs inside your browser, on your own computer, and your chats are saved there too. Nothing you type is sent anywhere — once a model has downloaded, you can turn off the Wi-Fi and keep going.</p></div></details>
+      <details data-reveal><summary>How can it be free?<i class="pm" aria-hidden="true"></i></summary><div class="a"><p>Your computer does the work, so there are no servers to pay for. No account, no subscription, no ads.</p></div></details>
+      <details data-reveal><summary>Is it as smart as ChatGPT?<i class="pm" aria-hidden="true"></i></summary><div class="a"><p>Not at everything. Cloud AI runs giant models in data centres; Oriel runs smaller ones that fit on your computer. They’re very good at everyday questions, writing, code and pictures — and they keep your secrets.</p></div></details>
+      <details data-reveal><summary>What do I need?<i class="pm" aria-hidden="true"></i></summary><div class="a"><p>A laptop or desktop from the last few years, with Chrome, Edge or Safari 26. The recommended model is a 2.3 GB download; pictures add 6.6 GB. More memory lets you run bigger models.</p></div></details>
+      <details data-reveal><summary>How do I delete things?<i class="pm" aria-hidden="true"></i></summary><div class="a"><p>Delete a chat from its menu and its pictures go with it. Models and the picture maker can be removed in Settings. It’s all on your computer, so deleting really deletes.</p></div></details>
+      <details data-reveal><summary>Where do the models come from?<i class="pm" aria-hidden="true"></i></summary><div class="a"><p>They’re open models from Alibaba, Google, Meta, Microsoft, Mistral and others, downloaded once from Hugging Face. See them all on <a href="../models.html">Oriel Models</a>.</p></div></details>
+      <details data-reveal><summary>Who makes Oriel?<i class="pm" aria-hidden="true"></i></summary><div class="a"><p>An independent project — not affiliated with Google, OpenAI or any model maker. The code is <a href="https://github.com/yenxu0872-max/oriel" target="_blank" rel="noopener">public on GitHub</a>, so anyone can check what it does.</p></div></details>
     </div>
-    <p class="fine">Runs in Chrome, Edge and Safari 26 · a one-time download · nothing to install</p>
+  </section>
+
+  <!-- take it -->
+  <section class="end day" data-tone="day">
+    <div class="orbit" aria-hidden="true">
+      <div class="ob" data-reveal="0.00" style="--x:9%;--y:16%;--xs:5%;--ys:8%;--fx:-30vw;--fy:-10vh;--r:-6deg"><span><svg class="i"><use href="#i-lock"/></svg>Is this mole something to worry about?</span></div>
+      <div class="ob" data-reveal="0.12" style="--x:72%;--y:12%;--xs:44%;--ys:16%;--fx:30vw;--fy:-12vh;--r:5deg"><span><svg class="i"><use href="#i-lock"/></svg>bank-statement-march.pdf</span></div>
+      <div class="ob x" data-reveal="0.24" style="--x:4%;--y:70%;--fx:-30vw;--fy:10vh;--r:4deg"><span><svg class="i"><use href="#i-lock"/></svg>My partner and I keep fighting.</span></div>
+      <div class="ob" data-reveal="0.36" style="--x:74%;--y:76%;--xs:24%;--ys:86%;--fx:30vw;--fy:12vh;--r:-4deg"><span><svg class="i"><use href="#i-lock"/></svg>How do I tell my boss I’m pregnant?</span></div>
+    </div>
+    <div class="in" data-reveal>
+      <h2>Take your AI back.</h2>
+      <p>Chat, code and pictures — private, free, and yours.</p>
+      <div class="row">
+        <a class="btn btn-lg btn-glow" href="chat.html">Open Oriel — it’s free</a>
+        <a class="btn btn-lg btn-line" href="../models.html">Download models<svg class="i"><use href="#i-download"/></svg></a>
+      </div>
+      <p class="fine">Runs in Chrome, Edge and Safari 26 · a one-time download · nothing to install</p>
+    </div>
   </section>
 </main>
 
@@ -132,16 +420,24 @@
         <li><a href="https://support.google.com/gemini/answer/13594961" target="_blank" rel="noopener">Google — Gemini Apps privacy hub</a>: human review by staff and service providers; reviewed chats kept up to three years.</li>
         <li><a href="https://help.openai.com/en/articles/7730893-data-controls-faq" target="_blank" rel="noopener">OpenAI — data controls</a>: “Improve the model for everyone” is on by default for personal plans.</li>
         <li><a href="https://openai.com/index/response-to-nyt-data-demands/" target="_blank" rel="noopener">OpenAI — response to The New York Times’ data demands</a>: the 2025 order to keep deleted chats.</li>
-        <li><a href="https://www.404media.co/nearly-100-000-chatgpt-conversations-were-searchable-on-google/" target="_blank" rel="noopener">404 Media — nearly 100,000 ChatGPT conversations were searchable on Google</a> (2025).</li>
+        <li><a href="https://techcrunch.com/2025/07/25/sam-altman-warns-theres-no-legal-confidentiality-when-using-chatgpt-as-a-therapist/" target="_blank" rel="noopener">TechCrunch — Sam Altman on legal confidentiality</a> (July 2025).</li>
+        <li><a href="https://openai.com/index/march-20-chatgpt-outage/" target="_blank" rel="noopener">OpenAI — March 20 ChatGPT outage: here’s what happened</a> (2023).</li>
+        <li><a href="https://www.cnbc.com/2023/05/02/samsung-bans-use-of-ai-like-chatgpt-for-staff-after-misuse-of-chatbot.html" target="_blank" rel="noopener">CNBC — Samsung bans use of AI like ChatGPT for staff</a> (May 2023).</li>
+        <li><a href="https://www.cnbc.com/2025/06/13/meta-ai-app-turn-off-public-posting.html" target="_blank" rel="noopener">CNBC — keeping Meta AI from sharing your prompts</a> (June 2025).</li>
+        <li><a href="https://www.404media.co/nearly-100-000-chatgpt-conversations-were-searchable-on-google/" target="_blank" rel="noopener">404 Media — nearly 100,000 ChatGPT conversations were searchable on Google</a> (August 2025).</li>
+        <li><a href="https://fortune.com/2025/08/22/xai-grok-chats-public-on-google-search-elon-musk/" target="_blank" rel="noopener">Fortune — Grok chats public on Google search</a> (August 2025).</li>
+        <li><a href="https://www.404media.co/massive-ai-chat-app-leaked-millions-of-users-private-conversations/" target="_blank" rel="noopener">404 Media — AI chat app leaked millions of users’ conversations</a> (January 2026).</li>
+        <li><a href="https://networks.imdea.org/your-conversations-with-ai-may-not-be-as-private-as-you-think/" target="_blank" rel="noopener">IMDEA Networks — your conversations with AI may not be as private as you think</a> (May 2026).</li>
       </ol>
     </div>
     <div>
       <h4>Oriel</h4>
-      <p>Oriel runs open AI models on your own device. It isn’t affiliated with Google, OpenAI or any model maker. Policies as of September 2026.</p>
+      <p>Oriel runs open AI models on your own device. It isn’t affiliated with Google, OpenAI, Meta, xAI or any model maker. Policies and reports as of September 2026.</p>
       <p><a href="../">Oriel Models</a> — every model worth trying, and how to get it.</p>
+      <p><a href="https://github.com/yenxu0872-max/oriel" target="_blank" rel="noopener">Source code on GitHub</a></p>
     </div>
   </div>
 </footer>
-<script src="motion.js?v=3"></script>
+<script src="motion.js?v=4"></script>
 </body>
 </html>

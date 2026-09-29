@@ -9,7 +9,7 @@
      the picture maker's folder), so they pass straight through here
 
    Nothing is ever sent anywhere by this file; it only keeps copies. */
-const APP = 'oriel-app-v3', LIBS = 'oriel-libs-v1';
+const APP = 'oriel-app-v4', LIBS = 'oriel-libs-v1';
 const PINNED = /^https:\/\/cdn\.jsdelivr\.net\/npm\/(?:@[^/]+\/)?[^/@]+@\d+\.\d+\.\d+[^/]*\//;
 
 self.addEventListener('install', e => {
