@@ -387,6 +387,7 @@
     // the rail sits mid-screen, so it follows the scene there rather than the one under the header
     const rt = mid?.dataset.tone || 'day';
     if (rail && rt !== railTone) { railTone = rt; rail.dataset.tone = rt; }
+    rail?.classList.toggle('show', scrollY > H * .6);   // not over the opening screen
     if (busy) ask();
   }
   const ask = () => { if (!queued) { queued = true; requestAnimationFrame(frame); } };
