@@ -359,9 +359,25 @@ j = match_close(tpl, i, "sc-for")
 block = tpl[i:j]
 k = block.find("<p ")
 prose_p = block[k:block.rfind("</p>") + 4]
-tpl = tpl[:i] + ('<sc-for list="{{ m.paras }}" as="p"><sc-if value="{{ p.isProse }}">' + prose_p
-                 + "</sc-if>" + CODE_BLOCK + "</sc-for>") + tpl[j:]
-print("  replaced paragraph renderer: prose + highlighted code")
+# prose comes in three shapes — a paragraph, a heading, a list — each drawing
+# **bold**, `code` and citation chips inside it (the design's own <p> style)
+p_style = re.search(r'style="([^"]*)"', prose_p[:prose_p.index(">") + 1]).group(1)
+cite = re.search(r'<sc-if value="\{\{ s\.isCite \}\}">.*?</sc-if>', prose_p, re.S).group(0)
+def segs(src):
+    return ('<sc-for list="{{ ' + src + ' }}" as="s"><sc-if value="{{ s.isText }}">{{ s.t }}</sc-if>'
+            '<sc-if value="{{ s.isBold }}"><strong style="font-weight:620">{{ s.t }}</strong></sc-if>'
+            '<sc-if value="{{ s.isEm }}"><em>{{ s.t }}</em></sc-if>'
+            '<sc-if value="{{ s.isMono }}"><code style="font-family:\'Geist Mono\',ui-monospace,monospace;font-size:.88em;'
+            'padding:1px 5px;border-radius:5px;background:#f0f0f3">{{ s.t }}</code></sc-if>' + cite + '</sc-for>')
+PROSE = ('<sc-if value="{{ p.isPlain }}"><p style="' + p_style + '">' + segs('p.segs') + '</p></sc-if>'
+         '<sc-if value="{{ p.isHeading }}"><p style="' + p_style + ';margin-top:6px;font-size:16.5px;font-weight:650;letter-spacing:-.01em">'
+         + segs('p.segs') + '</p></sc-if>'
+         '<sc-if value="{{ p.isList }}"><div style="display:grid;gap:6px">'
+         '<sc-for list="{{ p.items }}" as="it"><div style="display:flex;gap:10px;align-items:baseline;padding-left:{{ it.pad }}">'
+         '<span style="flex:0 0 auto;min-width:18px;text-align:right;font-size:15px;color:#8a8a84;font-variant-numeric:tabular-nums">{{ it.mark }}</span>'
+         '<p style="' + p_style + ';flex:1;min-width:0">' + segs('it.segs') + '</p></div></sc-for></div></sc-if>')
+tpl = tpl[:i] + ('<sc-for list="{{ m.paras }}" as="p">' + PROSE + CODE_BLOCK + "</sc-for>") + tpl[j:]
+print("  replaced paragraph renderer: paragraphs, headings, lists (bold, code, citations) + highlighted code")
 
 # share → Copy chat, with Export beside it
 i = tpl.find('<button onClick="{{ share }}"')
