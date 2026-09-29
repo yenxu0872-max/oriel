@@ -196,6 +196,11 @@ still references any remote resource. After changing the server, `oriel restart`
 
 ## The websites (web/)
 
+Live on GitHub Pages — published by `.github/workflows/pages.yml` on every push that changes `web/`:
+
+- **Oriel Models** — <https://yenxu0872-max.github.io/oriel/>
+- **Oriel**, the app — <https://yenxu0872-max.github.io/oriel/app/>
+
 Two products, one static site:
 
 **Oriel Models** — the model finder, for people starting out: every AI model worth trying from the
