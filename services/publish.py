@@ -67,7 +67,7 @@ def build(app_url, models_url):
     _copy(WEB / "app", app)
     _copy(WEB, models, skip=("app", "_build", "_lab"))
     # the app's links to the finder
-    _rewrite(app / "index.html", [('href="../"', f'href="{models_url}"')])
+    _rewrite(app / "index.html", [('href="../', f'href="{models_url}')])      # ../ and ../models.html
     _rewrite(app / "chat.html", [('"browse": "../models.html"', f'"browse": "{models_url}models.html"')])
     # the finder's links to the app
     for page in ("index.html", "models.html"):

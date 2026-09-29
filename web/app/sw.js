@@ -9,12 +9,12 @@
      the picture maker's folder), so they pass straight through here
 
    Nothing is ever sent anywhere by this file; it only keeps copies. */
-const APP = 'oriel-app-v2', LIBS = 'oriel-libs-v1';
+const APP = 'oriel-app-v3', LIBS = 'oriel-libs-v1';
 const PINNED = /^https:\/\/cdn\.jsdelivr\.net\/npm\/(?:@[^/]+\/)?[^/@]+@\d+\.\d+\.\d+[^/]*\//;
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(APP).then(c => c.addAll(['./', 'chat.html', 'app.css', 'manifest.webmanifest', 'support.js',
-    'engine-worker.js', 'image-worker.js', 'models.json', 'img/icon-192.png', 'fonts/Geist-Variable.woff2'])).then(() => self.skipWaiting()));
+    'engine-worker.js', 'image-worker.js', 'motion.js', 'models.json', 'img/icon-192.png', 'fonts/Geist-Variable.woff2'])).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k.startsWith('oriel-') && ![APP, LIBS].includes(k)).map(k => caches.delete(k))))

@@ -3,170 +3,145 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Oriel — private AI that lives on your computer</title>
-<meta name="description" content="Chat, write code and create images with an AI that runs on your own computer. Free, no account, and nothing you type ever leaves your device.">
+<title>Oriel — private AI that never leaves your computer</title>
+<meta name="description" content="Cloud AI keeps, reads and trains on what you type. Oriel's AI runs on your own computer: chat, code and pictures — private, free, no account.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%2317171a'/%3E%3Ccircle cx='15' cy='17' r='8' fill='%237b8cf5'/%3E%3Ccircle cx='22.5' cy='9.5' r='3.6' fill='%23fff' stroke='%2317171a' stroke-width='1.6'/%3E%3C/svg%3E">
-<script>try{var t=localStorage.getItem('oriel-theme');if(t==='Dark')document.documentElement.dataset.theme='dark';else if(t==='Light')document.documentElement.dataset.theme='light';}catch(e){}</script>
+<script>document.documentElement.classList.add(matchMedia('(prefers-reduced-motion: reduce)').matches ? 'still' : 'js')</script>
 <link rel="preload" href="fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="app.css?v=1">
+<link rel="stylesheet" href="app.css?v=5">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#17171a">
+<meta name="theme-color" content="#050507">
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));</script>
 </head>
 <body>
-<header class="nav-wrap">
-  <nav class="pill-nav" aria-label="Main">
-    <a class="brand" href="./"><span class="orb" aria-hidden="true"></span><b>Oriel</b></a>
-    <div class="nav-links"><a href="#what">What it does</a><a href="#private">Privacy</a><a href="#faq">Questions</a></div>
-    <span class="nav-spacer"></span>
-    <a class="btn btn-sm btn-white nav-hide" href="../">Oriel Models</a>
-    <a class="btn btn-sm btn-brand" href="chat.html">Open Oriel</a>
-    <button class="nav-menu" aria-label="Menu" aria-expanded="false"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
-  </nav>
-  <div class="nav-drop"><a href="chat.html">Open Oriel</a><a href="#what">What it does</a><a href="#private">Privacy</a><a href="#faq">Questions</a><a href="../">Oriel Models</a></div>
+<header class="nav" data-tone="night">
+  <div class="in">
+    <a class="brand" href="./"><span class="orb" aria-hidden="true"></span>Oriel</a>
+    <span class="sp"></span>
+    <a class="btn btn-line hide-sm" href="../models.html">Download models</a>
+    <a class="btn btn-sm btn-glow" href="chat.html">Open Oriel</a>
+  </div>
 </header>
 
 <main>
-  <section class="app-hero">
-    <div class="glow" aria-hidden="true"></div>
-    <div class="wrap">
-      <div>
-        <h1>Your own AI.<br><em>It never leaves your computer.</em></h1>
-        <p class="lede">Chat, write code and create pictures with an AI that runs on your own device — free, with no account. <b>Nothing you type is ever sent anywhere.</b></p>
-        <div class="cta-row">
-          <a class="btn btn-lg btn-brand" href="chat.html">Open Oriel — it's free</a>
-          <a class="btn btn-lg" href="#private">How it stays private</a>
+  <!-- 1. the question -->
+  <section class="hero night">
+    <h1><span class="w" style="--i:0">Do</span> <span class="w" style="--i:1">you</span> <span class="w" style="--i:2">know</span> <span class="w" style="--i:3">what</span> <span class="w" style="--i:4">happens</span> <span class="w" style="--i:5">to</span> <span class="w" style="--i:6">your</span> <span class="w hot" style="--i:7">personal</span> <span class="w hot" style="--i:8">data</span> <span class="w" style="--i:9">in</span> <span class="w" style="--i:10">cloud</span> <span class="w" style="--i:11">AI?</span></h1>
+    <div class="cue" aria-hidden="true"><i></i>Scroll to find out</div>
+  </section>
+
+  <!-- 2. it leaves -->
+  <section class="scene send night" data-scene="send">
+    <div class="stick">
+      <div class="stage">
+        <div class="cloud" aria-hidden="true">
+          <svg viewBox="0 0 170 110" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M47 96H38a28 28 0 0 1-4-55.7A38 38 0 0 1 106 30a30 30 0 0 1 28 66H47Z"/><path d="M66 70h38M66 58h26" opacity=".55"/></svg>
+          <span>Their servers</span>
         </div>
-        <div class="promise">
-          <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Free forever</span>
-          <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>No account</span>
-          <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Nothing to install</span>
-          <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>No data collected</span>
+        <div class="msgs">
+          <div class="bub" style="--dx:-9vw;--rise:-30svh">I found a lump. Should I be worried?</div>
+          <div class="bub" style="--dx:-14vw;--rise:-38svh">Here's my bank statement — where can I save?</div>
+          <div class="bub" style="--dx:-7vw;--rise:-46svh">Help me write my resignation letter.</div>
+        </div>
+        <p class="cap"><span class="a">Everything you type…</span><span class="b">…goes to <em>their computers.</em></span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. what happens there -->
+  <section class="scene facts night" data-scene="facts" aria-label="What happens to it">
+    <div class="stick">
+      <div class="stage">
+        <p class="kick">What happens there</p>
+        <div class="fact"><b>Read.</b><p>Human reviewers — <strong>including outside contractors</strong> — read some Gemini chats.</p><a href="https://support.google.com/gemini/answer/13594961" target="_blank" rel="noopener">Google, Gemini privacy notice</a></div>
+        <div class="fact"><b>Kept.</b><p>Chats they review are kept for <strong>up to three years</strong> — even after you delete them.</p><a href="https://support.google.com/gemini/answer/13594961" target="_blank" rel="noopener">Google, Gemini privacy notice</a></div>
+        <div class="fact"><b>Trained on.</b><p>ChatGPT learns from your chats <strong>unless you find the switch</strong> and turn it off.</p><a href="https://help.openai.com/en/articles/7730893-data-controls-faq" target="_blank" rel="noopener">OpenAI, data controls</a></div>
+        <div class="fact"><b>Not deleted.</b><p>In 2025, a court made OpenAI <strong>keep ChatGPT chats people had deleted</strong>.</p><a href="https://openai.com/index/response-to-nyt-data-demands/" target="_blank" rel="noopener">OpenAI, on the court order</a></div>
+        <div class="fact"><b>Exposed.</b><p><strong>Nearly 100,000</strong> shared ChatGPT chats turned up in Google search.</p><a href="https://www.404media.co/nearly-100-000-chatgpt-conversations-were-searchable-on-google/" target="_blank" rel="noopener">404 Media, 2025</a></div>
+        <div class="meter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. the turn -->
+  <section class="scene turn" data-scene="turn">
+    <div class="stick">
+      <div class="orb-big" aria-hidden="true"></div>
+      <div class="say">
+        <h2>Oriel is <em>different.</em></h2>
+        <p>Its AI lives on your computer.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. what you get -->
+  <section class="scene gets day" data-scene="gets" data-at="0">
+    <div class="stick">
+      <div class="stage">
+        <div class="laptop" aria-hidden="true">
+          <div class="screen">
+            <div class="bar"><i></i><i></i><i></i><span style="margin-left:6px">Oriel</span><span class="st"><span class="s0">On this device</span><span class="s1">Offline — still working</span></span></div>
+            <div class="chat">
+              <div class="me">Plan a surprise party for my mum</div>
+              <div class="ai">Here's a plan: invite her friends for Saturday lunch, then…</div>
+              <div class="me">Make a picture of a lighthouse at sunset</div>
+              <div class="ai"><span class="wait">Painting it on this laptop…</span><span class="done">Here it is — made on this laptop.</span><div class="frame"><img class="pic" src="img/lighthouse.jpg" alt=""></div></div>
+            </div>
+          </div>
+          <div class="badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Stays on this laptop</div>
+          <div class="badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a16 16 0 0 1 20 0M5.5 12.2a11 11 0 0 1 13 0M9 15.8a6 6 0 0 1 6 0M12 19.5h.01M3 3l18 18"/></svg>No internet needed</div>
+          <div class="badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v8H4v-8M2 7h20v5H2zM12 22V7M12 7H8a2 2 0 1 1 0-4c3 0 4 4 4 4Zm0 0h4a2 2 0 1 0 0-4c-3 0-4 4-4 4Z"/></svg>$0 · no account</div>
+          <div class="badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></svg>Painted on your graphics chip</div>
+        </div>
+        <div class="say">
+          <div class="get"><h3>Nothing <em>leaves.</em></h3><p>Your words, files and pictures never touch a server.</p></div>
+          <div class="get"><h3>Works <em>offline.</em></h3><p>Turn off the Wi-Fi. It keeps going.</p></div>
+          <div class="get"><h3>Free. <em>Forever.</em></h3><p>No account. No subscription. No ads.</p></div>
+          <div class="get"><h3>Chat. Code. <em>Pictures.</em></h3><p>One assistant for everything — on your own computer.</p></div>
         </div>
       </div>
-      <div class="mock" aria-label="Oriel chatting, writing code and drawing a picture" role="img">
-        <div class="mock-bar"><i></i><i></i><i></i><span style="margin-left:6px">Oriel</span><span class="ok">On this device</span></div>
-        <div class="mock-body">
-          <div class="bub me">Make a picture of a lighthouse at sunset</div>
-          <div class="bub ai">Here it is — made right here on your computer.<img class="pic" src="img/lighthouse.jpg" alt="A lighthouse at sunset over a calm sea, painted by Oriel on a MacBook Air"></div>
-          <div class="bub me">Now a Python function that checks for palindromes</div>
-          <div class="bub ai">Sure:<pre><span class="k">def</span> <span class="f">is_palindrome</span>(word):
-    w = word.<span class="f">lower</span>()
-    <span class="k">return</span> w == w[::-<span class="s">1</span>]</pre></div>
-        </div>
-      </div>
     </div>
   </section>
 
-  <section class="block" id="what">
-    <div class="wrap">
-      <div class="center"><span class="kicker">What it does</span><h2 class="h2">One assistant for everything.</h2>
-        <p class="sub">Ask it anything, get help with code, or describe a picture and watch it appear — all without an internet company in the middle.</p></div>
-      <div class="trio">
-        <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12Z"/></svg></div>
-          <h3>Chat</h3><p>Questions, emails, essays, ideas and explanations. It reads your PDFs and notes too.</p><p class="eg">“Explain photosynthesis like I'm 12”</p></div>
-        <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 7-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></svg></div>
-          <h3>Code</h3><p>Writes, explains and fixes code in Python, JavaScript and more — with copy buttons and clear formatting.</p><p class="eg">“Why does my loop never end?”</p></div>
-        <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/></svg></div>
-          <h3>Pictures</h3><p>Describe it, and Oriel paints it — photos, posters, drawings — on your own graphics chip.</p><p class="eg">“A cosy cabin in the snow, watercolour”</p></div>
-      </div>
+  <!-- 6. yours -->
+  <section class="scene lines day" data-scene="lines">
+    <div class="stick">
+      <p class="lit"><span>Your</span> <span>questions.</span> <span>Your</span> <span>ideas.</span> <span>Your</span> <span>secrets.</span> <span class="g">They</span> <span class="g">stay</span> <span class="g">yours.</span></p>
     </div>
   </section>
 
-  <section class="block" id="private">
-    <div class="wrap">
-      <div class="private">
-        <div class="center"><span class="kicker">Private by design</span><h2 class="h2">Your words stay yours.</h2>
-          <p class="sub">Most AI apps send everything you type to a company's computers. Oriel's AI runs on <b>your</b> computer instead, so there's nothing to send.</p></div>
-        <div class="flow" aria-hidden="true">
-          <div class="node"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12Z"/></svg></b>What you type</div>
-          <span class="arrow">→</span>
-          <div class="node"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></b>Your computer</div>
-          <span class="arrow">→</span>
-          <div class="node"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></b>The answer</div>
-          <span class="arrow" style="margin-left:10px">·</span>
-          <div class="node cloud"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a5 5 0 1 1 .6-9.97A6 6 0 0 1 19 10a4 4 0 0 1-1 7.9"/></svg></b>No company server</div>
-        </div>
-        <div class="checks">
-          <div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><p style="margin:0"><b>Nothing you type leaves your device</b><span>Your messages, files and pictures are handled on your own computer. We never see them — we couldn't if we tried.</span></p></div>
-          <div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><p style="margin:0"><b>No account, no tracking</b><span>No sign-up, no email, no ads, and no analytics watching what you do.</span></p></div>
-          <div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><p style="margin:0"><b>Never used to train anything</b><span>Your chats aren't collected, sold or used to train AI — there's nothing to collect.</span></p></div>
-          <div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><p style="margin:0"><b>Works with no internet</b><span>Once it's set up, turn off your Wi-Fi: Oriel keeps going. Your chats are saved only on this device.</span></p></div>
-        </div>
-      </div>
+  <!-- 7. take it -->
+  <section class="end day">
+    <h2>Take your AI back.</h2>
+    <p>Chat, code and pictures — private, free, and yours.</p>
+    <div class="row">
+      <a class="btn btn-lg btn-glow" href="chat.html">Open Oriel — it's free</a>
+      <a class="btn btn-lg btn-line" href="../models.html">Download models
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></a>
     </div>
+    <p class="fine">Runs in Chrome, Edge and Safari 26 · a one-time download · nothing to install</p>
   </section>
-
-  <section class="block">
-    <div class="wrap" style="max-width:920px">
-      <div class="center"><span class="kicker">Honestly</span><h2 class="h2">Oriel or a cloud AI?</h2>
-        <p class="sub">Cloud AIs like ChatGPT run huge models on big computers, so they're cleverer. Oriel trades some of that for privacy, and costs nothing.</p></div>
-      <table class="compare">
-        <thead><tr><th></th><th class="us">Oriel</th><th>Cloud AI apps</th></tr></thead>
-        <tbody>
-          <tr><td>Where it runs</td><td class="us yes">On your computer</td><td>On the company's servers</td></tr>
-          <tr><td>What you type</td><td class="us yes">Stays on your device</td><td>Sent to the company, and may be kept to improve its AI</td></tr>
-          <tr><td>Account</td><td class="us yes">None</td><td>Usually needed</td></tr>
-          <tr><td>Price</td><td class="us yes">Free, no limits</td><td>Free with limits, or a monthly fee</td></tr>
-          <tr><td>How clever</td><td class="us">Great for everyday help, writing, code and pictures</td><td class="yes">Better at hard questions and the latest news</td></tr>
-          <tr><td>First start</td><td class="us">A one-time download</td><td class="yes">Instant</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="block">
-    <div class="wrap">
-      <div class="center"><span class="kicker">What you need</span><h2 class="h2">A recent computer and a browser.</h2></div>
-      <div class="needs">
-        <div><b>Chrome, Edge or Safari 26</b><span>On a Mac, Windows PC, Linux or Chromebook — nothing to install.</span></div>
-        <div><b>8 GB of memory</b><span>16 GB or more makes it faster, and lets it paint pictures.</span></div>
-        <div><b>A one-time download</b><span>About 2 GB for chat, and 6.6 GB more for pictures. Then it starts in seconds — even offline.</span></div>
-      </div>
-      <p class="also">Want a different AI model? <a href="../">Oriel Models</a> lists every model worth trying, and how to get it.</p>
-    </div>
-  </section>
-
-  <section class="block" id="faq">
-    <div class="wrap" style="max-width:860px">
-      <div class="center"><span class="kicker">Questions</span><h2 class="h2">Good to know</h2></div>
-      <div class="faq">
-        <details open><summary>Is it really private?</summary><p>Yes. The AI itself — the model — downloads into your browser and runs on your own computer's graphics chip. What you type, the files you add and the pictures you make are never sent to a server: not ours, not anyone's. The only things Oriel downloads are the AI models, from Hugging Face where their makers publish them, and the open-source code that runs them, from the jsDelivr network — never anything you type or make.</p></details>
-        <details><summary>Is it really free? What's the catch?</summary><p>There's no catch. Because the AI runs on your computer, it costs us nothing when you use it — so there's nothing to charge for, and no reason to collect your data.</p></details>
-        <details><summary>How good is it?</summary><p>Very good for everyday things: explaining, writing, brainstorming, homework help, code and pictures. It isn't as clever as the biggest cloud AIs on hard questions, and it doesn't know today's news. Like every AI, it can make mistakes — check anything important.</p></details>
-        <details><summary>Why does it download so much the first time?</summary><p>That's the AI itself: about 2 GB for chatting, plus 6.6 GB the first time you ask for a picture (it asks first). It's saved on your computer, so it only downloads once — and if the download is interrupted, it carries on where it stopped.</p></details>
-        <details><summary>Does it work offline?</summary><p>Yes. Once Oriel has downloaded its AI, it works with no internet at all — turn off your Wi-Fi and it keeps going. You can also install it from your browser's menu, to open it like any other app.</p></details>
-        <details><summary>How long does a picture take?</summary><p>About a minute on a MacBook Air — the whole picture is painted by your own computer's graphics chip. Faster computers are quicker. Chat answers start in about a second.</p></details>
-        <details><summary>Which AI models does it use?</summary><p>Open models from leading labs: a Qwen model from Alibaba for chat and code, and Z-Image Turbo from Alibaba's Tongyi lab for pictures. Oriel picks the best one your computer can run; you can choose another in the menu.</p></details>
-        <details><summary>How do I delete everything?</summary><p>Delete chats in Oriel's sidebar, and remove downloaded models in Settings. Clearing this site's data in your browser removes everything at once.</p></details>
-      </div>
-    </div>
-  </section>
-
-  <div class="wrap">
-    <div class="cta-box">
-      <h2>Your own AI, in one click</h2>
-      <p>No account, nothing to install, and nothing you type ever leaves your device.</p>
-      <a class="btn btn-lg btn-brand" href="chat.html">Open Oriel</a>
-    </div>
-  </div>
 </main>
 
 <footer>
-  <div class="wrap"><div class="foot">
-    <div><a class="brand" href="./" style="margin-bottom:10px"><span class="orb" aria-hidden="true"></span><b>Oriel</b></a>
-      <p>Private AI that lives on your computer.</p></div>
+  <div class="wrap cols">
     <div>
-      <p>Oriel runs open AI models made by others, on your own device. Model names belong to their makers; Oriel isn't affiliated with or endorsed by them.</p>
-      <p>Looking for a specific model? <a href="../">Oriel Models</a> lists every model worth trying.</p>
+      <h4>Sources</h4>
+      <ol>
+        <li><a href="https://support.google.com/gemini/answer/13594961" target="_blank" rel="noopener">Google — Gemini Apps privacy hub</a>: human review by staff and service providers; reviewed chats kept up to three years.</li>
+        <li><a href="https://help.openai.com/en/articles/7730893-data-controls-faq" target="_blank" rel="noopener">OpenAI — data controls</a>: “Improve the model for everyone” is on by default for personal plans.</li>
+        <li><a href="https://openai.com/index/response-to-nyt-data-demands/" target="_blank" rel="noopener">OpenAI — response to The New York Times’ data demands</a>: the 2025 order to keep deleted chats.</li>
+        <li><a href="https://www.404media.co/nearly-100-000-chatgpt-conversations-were-searchable-on-google/" target="_blank" rel="noopener">404 Media — nearly 100,000 ChatGPT conversations were searchable on Google</a> (2025).</li>
+      </ol>
     </div>
-  </div></div>
+    <div>
+      <h4>Oriel</h4>
+      <p>Oriel runs open AI models on your own device. It isn’t affiliated with Google, OpenAI or any model maker. Policies as of September 2026.</p>
+      <p><a href="../">Oriel Models</a> — every model worth trying, and how to get it.</p>
+    </div>
+  </div>
 </footer>
-<script>
-document.querySelector('.nav-menu').addEventListener('click', e => {
-  const d = document.querySelector('.nav-drop'); d.classList.toggle('open'); e.currentTarget.setAttribute('aria-expanded', String(d.classList.contains('open')));
-});
-</script>
+<script src="motion.js?v=3"></script>
 </body>
 </html>
