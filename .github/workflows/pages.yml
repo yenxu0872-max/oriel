@@ -1,0 +1,40 @@
+# Publishes the two websites to GitHub Pages on every push that changes them:
+#   https://<user>.github.io/oriel/       Oriel Models — every model, explained
+#   https://<user>.github.io/oriel/app/   Oriel — private AI that runs on your device
+# Only web/ goes up, without its build tools and caches (_build, _lab).
+name: Websites
+
+on:
+  push:
+    branches: [main]
+    paths: ["web/**", ".github/workflows/pages.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: The two sites, without build tools
+        run: |
+          mkdir _site
+          rsync -a --exclude '_build' --exclude '_lab' --exclude '.DS_Store' web/ _site/
+          du -sh _site
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v5
